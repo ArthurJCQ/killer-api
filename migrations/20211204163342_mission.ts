@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id');
     table.string('content');
     table.integer('authorId').unsigned();
-    table.foreign('authorId').references('id').inTable('user');
+    table.foreign('authorId').references('id').inTable('player');
   });
 }
 

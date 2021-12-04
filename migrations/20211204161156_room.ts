@@ -9,7 +9,10 @@ export async function up(knex: Knex): Promise<void> {
     table.string('code').unique();
     table.integer('nbPlayer');
     table.datetime('createdAt').notNullable();
-    table.datetime('duration');
+    table
+      .datetime('duration')
+      .notNullable()
+      .defaultTo(knex.raw(`? + INTERVAL '? day'`, [knex.fn.now(), 30]));
     table.enum('status', ['PENDING', 'IN_GAME']);
   });
 }

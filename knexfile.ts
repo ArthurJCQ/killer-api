@@ -1,14 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
-const { DB_NAME, DB_FILEPATH, DB_HOST, DB_USER, DB_PASSWORD, DB_PORT } =
-  process.env;
+const { DB_NAME, DB_HOST, DB_USER, DB_PASSWORD, DB_PORT } = process.env;
 
 module.exports = {
   development: {
-    client: 'sqlite3',
+    client: 'pg',
+    version: '13',
     connection: {
-      filename: DB_FILEPATH,
+      database: DB_NAME,
+      host: DB_HOST,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      port: DB_PORT,
     },
   },
   production: {
