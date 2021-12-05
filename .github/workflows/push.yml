@@ -7,7 +7,7 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-      - run: echo "🎉 ${{ github.event_name }} event on ${{ github.ref }} tirggered this action."
+      - run: echo "🎉 ${{ github.event_name }} event on ${{ github.ref }} triggered this action."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server."
 
       - name: Copy Repository
