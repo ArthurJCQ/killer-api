@@ -10,6 +10,6 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema.table(ROOM_TABLE, (table) => {
-    table.dropColumn('owner');
+    table.dropColumn('ownerId');
   });
 }

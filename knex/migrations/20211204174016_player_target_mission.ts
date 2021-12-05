@@ -12,6 +12,6 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema.table(PLAYER_TABLE, (table) => {
-    table.dropColumns('target', 'mission');
+    table.dropColumns('targetId', 'missionId');
   });
 }
