@@ -2,6 +2,13 @@ import { Module } from '@nestjs/common';
 import { KnexModule } from 'nest-knexjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig, databaseConfig } from './app.config';
+import { PlayerService } from './modules/player/player.service';
+import { MissionService } from './modules/mission/mission.service';
+import { RoomService } from './modules/room/room.service';
+import { RoomModule } from './modules/room/room.module';
+import { NimpModule } from './modules/nimp/nimp.module';
+import { PlayerModule } from './modules/player/player.module';
+import { MissionModule } from './modules/mission/mission.module';
 
 @Module({
   imports: [
@@ -26,8 +33,12 @@ import { appConfig, databaseConfig } from './app.config';
         },
       }),
     }),
+    RoomModule,
+    NimpModule,
+    PlayerModule,
+    MissionModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [PlayerService, MissionService, RoomService],
 })
 export class AppModule {}

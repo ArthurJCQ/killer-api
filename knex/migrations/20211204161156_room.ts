@@ -1,16 +1,15 @@
 import { Knex } from 'knex';
-
-const tableName = 'room';
+import { ROOM_TABLE } from '../constants';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable(tableName, (table) => {
+  return knex.schema.createTable(ROOM_TABLE, (table) => {
     table.increments('id');
     table.string('name');
     table.string('code').unique();
     table.integer('nbPlayer');
     table.datetime('createdAt').notNullable();
     table
-      .datetime('duration')
+      .datetime('dateEnd')
       .notNullable()
       .defaultTo(knex.raw(`? + INTERVAL '? day'`, [knex.fn.now(), 30]));
     table.enum('status', ['PENDING', 'IN_GAME']);
@@ -18,5 +17,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists(tableName);
+  return knex.schema.dropTableIfExists(ROOM_TABLE);
 }
