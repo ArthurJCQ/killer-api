@@ -6,7 +6,6 @@ import { PlayerService } from './modules/player/player.service';
 import { MissionService } from './modules/mission/mission.service';
 import { RoomService } from './modules/room/room.service';
 import { RoomModule } from './modules/room/room.module';
-import { NimpModule } from './modules/nimp/nimp.module';
 import { PlayerModule } from './modules/player/player.module';
 import { MissionModule } from './modules/mission/mission.module';
 
@@ -34,7 +33,6 @@ import { MissionModule } from './modules/mission/mission.module';
       }),
     }),
     RoomModule,
-    NimpModule,
     PlayerModule,
     MissionModule,
   ],
