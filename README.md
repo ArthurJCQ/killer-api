@@ -83,7 +83,7 @@ Create seed file :
 $ knex seed:make seed_name
 ```
 
-See more on [https://knexjs.org/](Knex)
+See more on [Knex](https://knexjs.org/)
 
 ## License
 
