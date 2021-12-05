@@ -8,7 +8,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('name');
     table.string('code').unique();
     table.integer('nbPlayer');
-    table.datetime('createdAt').notNullable();
+    table.datetime('createdAt').notNullable().defaultTo(knex.fn.now());
     table
       .datetime('dateEnd')
       .notNullable()
