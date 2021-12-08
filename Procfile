@@ -1,1 +1,1 @@
-web: yarn start:prod
+web: knex migrate:latest && yarn start:prod
