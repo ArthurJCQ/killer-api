@@ -2,6 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 export const appConfig = registerAs('app', () => ({
   env: process.env.NODE_ENV,
+  port: process.env.port,
 }));
 
 export const databaseConfig = registerAs('database', () => ({
