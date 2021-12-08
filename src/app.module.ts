@@ -22,14 +22,7 @@ import { MissionModule } from './modules/mission/mission.module';
         config: {
           client: 'pg',
           useNullAsDefault: true,
-          connection: {
-            database: configService.get<string>('database.pg.database'),
-            user: configService.get<string>('database.pg.user'),
-            password: configService.get<string>('database.pg.password'),
-            host: configService.get<string>('database.pg.host'),
-            port: configService.get<string>('database.pg.port'),
-          },
-        },
+          connection: configService.get<string>('database.pg.url')},
       }),
     }),
     RoomModule,

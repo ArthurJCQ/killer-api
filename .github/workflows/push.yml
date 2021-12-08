@@ -27,8 +27,8 @@ jobs:
       - name: Unit test code
         run: yarn test
 
-      - name: E2E Tests
-        run: yarn test:e2e
+#      - name: E2E Tests
+#        run: yarn test:e2e
 
       - name: Build API
         run: yarn build
