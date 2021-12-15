@@ -3758,11 +3758,6 @@ neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nest-knexjs@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/nest-knexjs/-/nest-knexjs-0.0.6.tgz#45f19c3564a018b79b3b99bef7270a8e89a5ccdb"
-  integrity sha512-MnWEgaFbyehfwi5O9v1di0xzSSuIqSjsLGM2edb3HSKr6HocEEr4YubvfPyDhxM+1z0kB+Ohunn86BEXiHpiXA==
-
 node-emoji@1.11.0:
   version "1.11.0"
   resolved "https://registry.npmjs.org/node-emoji/-/node-emoji-1.11.0.tgz"
