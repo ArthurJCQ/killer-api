@@ -20,9 +20,13 @@ export class PlayerService {
   private async generateNewUsersInfo(): Promise<
     Pick<PlayerModel, 'name' | 'passcode'>
   > {
+    const randomAdjective =
+      adjectives[Math.floor(1 + Math.random() * adjectives.length)];
+    const randomFruit = getRandomFruitsName('en', { maxWords: 1 });
+
     const name = `${
-      adjectives[Math.floor(Math.random()) * adjectives.length]
-    } ${getRandomFruitsName('en')}`;
+      randomAdjective.charAt(0).toUpperCase() + randomAdjective.slice(1)
+    } ${randomFruit}`;
 
     const alreadyExistingPlayer = await this.playerRepo.getPlayerByPseudo(name);
 
