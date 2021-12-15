@@ -13,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
       .datetime('dateEnd')
       .notNullable()
       .defaultTo(knex.raw(`? + INTERVAL '? day'`, [knex.fn.now(), 30]));
-    table.enum('status', [RoomStatus.PENDING, RoomStatus.IN_GAME]);
+    table.enum('status', [RoomStatus.PENDING, RoomStatus.IN_GAME]).defaultTo(RoomStatus.PENDING);
   });
 }
 

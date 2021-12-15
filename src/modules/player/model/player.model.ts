@@ -8,6 +8,6 @@ export interface PlayerModel {
   name: string;
   passcode: number;
   status: PlayerStatus;
-  targetId: number;
-  missionId: number;
+  targetId?: number;
+  missionId?: number;
 }

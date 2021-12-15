@@ -7,7 +7,9 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id');
     table.string('name');
     table.integer('passcode');
-    table.enum('status', [PlayerStatus.ALIVE, PlayerStatus.KILLED]);
+    table
+      .enum('status', [PlayerStatus.ALIVE, PlayerStatus.KILLED])
+      .defaultTo(PlayerStatus.ALIVE);
   });
 }
 

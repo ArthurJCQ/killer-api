@@ -4,11 +4,9 @@ services:
     image: postgres:13-alpine
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      DATABASE_URL: ${DATABASE_URL}
     ports:
-      - ${DB_PORT}:5432
+      - ${DATABASE_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
 volumes:
