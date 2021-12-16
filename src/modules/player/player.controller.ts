@@ -2,8 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { PlayerService } from './player.service';
 import { PlayerDto } from './dtos/player.dto';
+import { Serialize } from '../../interceptors/serializer.interceptor';
 
 @Controller('player')
+@Serialize(PlayerDto)
 export class PlayerController {
   constructor(private playerService: PlayerService) {}
 
