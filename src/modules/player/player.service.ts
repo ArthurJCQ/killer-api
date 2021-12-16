@@ -21,7 +21,7 @@ export class PlayerService {
     Pick<PlayerModel, 'name' | 'passcode'>
   > {
     const randomAdjective =
-      adjectives[Math.floor(1 + Math.random() * adjectives.length)];
+      adjectives[Math.floor(Math.random() * adjectives.length)];
     const randomFruit = getRandomFruitsName('en', { maxWords: 1 });
 
     const name = `${
