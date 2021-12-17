@@ -16,11 +16,11 @@ class SerializerInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
-      map((data) => {
-        return plainToInstance(this.dto, data, {
+      map((data) =>
+        plainToInstance(this.dto, data, {
           excludeExtraneousValues: true,
-        });
-      }),
+        }),
+      ),
     );
   }
 }

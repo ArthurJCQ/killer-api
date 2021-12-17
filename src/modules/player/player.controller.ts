@@ -3,8 +3,9 @@ import { CreatePlayerDto } from './dtos/create-player.dto';
 import { PlayerService } from './player.service';
 import { PlayerDto } from './dtos/player.dto';
 import { Serialize } from '../../interceptors/serializer.interceptor';
+import { PLAYER } from '../../../knex/constants';
 
-@Controller('player')
+@Controller(PLAYER)
 @Serialize(PlayerDto)
 export class PlayerController {
   constructor(private playerService: PlayerService) {}

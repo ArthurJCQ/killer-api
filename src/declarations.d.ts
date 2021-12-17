@@ -1,3 +1,3 @@
 interface Class {
-  new (...args: any[]): any;
+  new (...args: unknown[]): unknown;
 }
