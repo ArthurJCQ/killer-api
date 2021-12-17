@@ -9,12 +9,11 @@ export class PlayerController {
 
   @Post()
   async createPlayer(@Body() player: CreatePlayerDto): Promise<PlayerDto> {
-    const newPlayer = await this.playerService.createPlayer();
-
     if (!player.roomId) {
-      //TODO create a room with newPlayer.id as room.ownerId
+      //TODO create a room first, and give the roomId to the following new player
     }
 
-    return newPlayer;
+    //TODO ajouter le roomId précédemment créé ou récupérer dans le Body dans le createPlayer()
+    return this.playerService.createPlayer();
   }
 }
