@@ -6,15 +6,15 @@ export class AdminGuard implements CanActivate {
   constructor(private playerService: PlayerService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // TODO Won't work for now : Add user and roomId to the request first
+    // TODO Won't work for now : Add player and roomId to the request first
     const { playerId, roomId } = context.switchToHttp().getRequest();
 
     if (!roomId || !playerId) {
       return false;
     }
 
-    const user = await this.playerService.getPlayerById(playerId);
+    const player = await this.playerService.getPlayerById(playerId);
 
-    return user.id === roomId && user.role === PlayerRole.ADMIN;
+    return player.id === roomId && player.role === PlayerRole.ADMIN;
   }
 }
