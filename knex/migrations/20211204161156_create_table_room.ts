@@ -1,9 +1,9 @@
 import { Knex } from 'knex';
-import { ROOM_TABLE } from '../constants';
+import { ROOM } from '../constants';
 import { RoomStatus } from '../../src/modules/room/model/room.model';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable(ROOM_TABLE, (table) => {
+  return knex.schema.createTable(ROOM, (table) => {
     table.increments('id');
     table.string('name');
     table.string('code').unique();
@@ -24,5 +24,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists(ROOM_TABLE);
+  return knex.schema.dropTableIfExists(ROOM);
 }
