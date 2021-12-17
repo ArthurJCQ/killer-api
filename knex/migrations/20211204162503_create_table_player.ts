@@ -1,9 +1,10 @@
 import { Knex } from 'knex';
 import {
+  PLAYER,
   PlayerRole,
   PlayerStatus,
-} from '../../src/modules/player/model/player.model';
-import { PLAYER } from '../constants';
+} from '../../src/modules/player/constants';
+import { ROOM } from '../../src/modules/room/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(PLAYER, (table) => {
@@ -17,7 +18,7 @@ export async function up(knex: Knex): Promise<void> {
       .enum('role', [PlayerRole.PLAYER, PlayerRole.ADMIN])
       .defaultTo(PlayerRole.PLAYER);
     table.integer('roomId').unsigned();
-    table.foreign('roomId').references('id').inTable('room');
+    table.foreign('roomId').references('id').inTable(ROOM);
   });
 }
 

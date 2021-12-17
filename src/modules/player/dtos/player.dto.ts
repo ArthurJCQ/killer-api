@@ -1,6 +1,5 @@
-import { PlayerStatus } from '../model/player.model';
 import { Expose } from 'class-transformer';
-
+import { PlayerStatus } from '../constants';
 export class PlayerDto {
   @Expose()
   name: string;
