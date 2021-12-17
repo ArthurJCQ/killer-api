@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { PlayerService } from './player.service';
 import { PlayerDto } from './dtos/player.dto';
+import { AdminGuard } from './guards/admin.guard';
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PLAYER } from '../../../knex/constants';
 
@@ -18,5 +19,11 @@ export class PlayerController {
 
     //TODO ajouter le roomId précédemment créé ou récupérer dans le Body dans le createPlayer()
     return this.playerService.createPlayer();
+  }
+
+  @Post()
+  @UseGuards(AdminGuard)
+  somePrivateFunction() {
+    return 'this route is reserved for room admins';
   }
 }

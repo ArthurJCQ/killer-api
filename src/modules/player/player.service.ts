@@ -38,4 +38,8 @@ export class PlayerService {
 
     return { name, passcode };
   }
+
+  async getPlayerById(id: number): Promise<PlayerModel> {
+    return this.playerRepo.getPlayerById(id);
+  }
 }

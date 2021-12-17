@@ -19,4 +19,10 @@ export class PlayerRepository {
       .where('name', pseudo);
     return players.at(0);
   }
+
+  async getPlayerById(id: number): Promise<PlayerModel> {
+    const player = await this.db.client<PlayerModel>('player').where('id', id);
+
+    return player.at(0);
+  }
 }
