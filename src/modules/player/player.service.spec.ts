@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PlayerService } from './player.service';
 import { PlayerRepository } from './repository/player.repository';
 import { DatabaseService } from '../database/database.service';
-import { PlayerModel, PlayerStatus } from './model/player.model';
+import { PlayerModel, PlayerRole, PlayerStatus } from './model/player.model';
 import { ConfigModule } from '@nestjs/config';
 
 describe('PlayerService', () => {
@@ -17,6 +17,8 @@ describe('PlayerService', () => {
           name,
           passcode,
           status: PlayerStatus.ALIVE,
+          role: PlayerRole.PLAYER,
+          roomId: 1,
         };
         players.push(player);
         return Promise.resolve(player);
