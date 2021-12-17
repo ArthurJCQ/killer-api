@@ -48,7 +48,6 @@ describe('PlayerService', () => {
 
   it('should create a user', async () => {
     const player = await service.createPlayer();
-    console.log(player);
     expect(player).toBeDefined();
   });
 });
