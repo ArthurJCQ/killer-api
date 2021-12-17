@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { MISSION } from '../constants';
+import { MISSION } from '../../src/modules/mission/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(MISSION, (table) => {

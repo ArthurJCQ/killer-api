@@ -4,7 +4,7 @@ import { PlayerService } from './player.service';
 import { PlayerDto } from './dtos/player.dto';
 import { AdminGuard } from './guards/admin.guard';
 import { Serialize } from '../../interceptors/serializer.interceptor';
-import { PLAYER } from '../../../knex/constants';
+import { PLAYER } from './constants';
 
 @Controller(PLAYER)
 @Serialize(PlayerDto)
