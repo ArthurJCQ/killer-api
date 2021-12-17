@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PlayerModel } from '../model/player.model';
-import { DatabaseService } from '../../database/database.service';
+import { PlayerModel } from './player.model';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class PlayerRepository {

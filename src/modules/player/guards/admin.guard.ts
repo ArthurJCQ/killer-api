@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { PlayerService } from '../player.service';
-import { PlayerRole } from '../model/player.model';
+import { PlayerRole } from '../constants';
 
 export class AdminGuard implements CanActivate {
   constructor(private playerService: PlayerService) {}

@@ -1,12 +1,4 @@
-export enum PlayerStatus {
-  ALIVE = 'ALIVE',
-  KILLED = 'KILLED',
-}
-
-export enum PlayerRole {
-  PLAYER = 'PLAYER',
-  ADMIN = 'ADMIN',
-}
+import { PlayerRole, PlayerStatus } from './constants';
 
 export interface PlayerModel {
   id: number;
