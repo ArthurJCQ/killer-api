@@ -38,4 +38,8 @@ export class PlayerService {
 
     return { name, passcode };
   }
+
+  getPlayerById(id: number) {
+    return this.playerRepo.getPlayerById(id);
+  }
 }
