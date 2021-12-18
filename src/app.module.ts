@@ -11,8 +11,7 @@ import { PlayerModule } from './modules/player/player.module';
 import { MissionModule } from './modules/mission/mission.module';
 import { APP_PIPE } from '@nestjs/core';
 import { DatabaseModule } from './modules/database/database.module';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const cookieSession = require('cookie-session');
+import cookieSession from 'cookie-session';
 
 @Module({
   imports: [

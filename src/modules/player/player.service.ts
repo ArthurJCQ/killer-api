@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PlayerRepository } from './player.repository';
 import { PlayerModel } from './player.model';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const getRandomFruitsName = require('random-fruits-name');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const adjectives = require('adjectives');
+import getRandomFruitsName from 'random-fruits-name';
+import adjectives from 'adjectives';
 
 @Injectable()
 export class PlayerService {
