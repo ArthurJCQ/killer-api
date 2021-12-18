@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PlayerRepository } from './player.repository';
-import { PlayerModel } from './player.model';
-import getRandomFruitsName from 'random-fruits-name';
 import adjectives from 'adjectives';
+import getRandomFruitsName from 'random-fruits-name';
+
+import { PlayerModel } from './player.model';
+import { PlayerRepository } from './player.repository';
 
 @Injectable()
 export class PlayerService {
