@@ -1,17 +1,18 @@
 import { Knex } from 'knex';
-import { PLAYER_TABLE } from '../constants';
+import { PLAYER } from '../../src/modules/player/constants';
+import { MISSION } from '../../src/modules/mission/constants';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.table(PLAYER_TABLE, (table) => {
+  return knex.schema.table(PLAYER, (table) => {
     table.integer('targetId').unsigned();
     table.integer('missionId').unsigned();
-    table.foreign('targetId').references('id').inTable('player');
-    table.foreign('missionId').references('id').inTable('mission');
+    table.foreign('targetId').references('id').inTable(PLAYER);
+    table.foreign('missionId').references('id').inTable(MISSION);
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.table(PLAYER_TABLE, (table) => {
+  return knex.schema.table(PLAYER, (table) => {
     table.dropColumns('targetId', 'missionId');
   });
 }

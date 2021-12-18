@@ -1,13 +1,36 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+import { config } from 'dotenv';
+
+config();
+
+const {
+  DATABASE_URL,
+  DATABASE_NAME,
+  DATABASE_USER,
+  DATABASE_PASSWORD,
+  DATABASE_HOST,
+  DATABASE_PORT,
+} = process.env;
 
 module.exports = {
-  client: 'pg',
-  version: '13',
-  connection: process.env.DATABASE_URL,
-  useNullAsDefault: true,
-  migrations: {
-    tableName: 'knex_migrations',
-    directory: './knex/migrations',
+  development: {
+    client: 'pg',
+    version: '13',
+    connection: {
+      host: DATABASE_HOST,
+      user: DATABASE_USER,
+      password: DATABASE_PASSWORD,
+      database: DATABASE_NAME,
+      port: parseInt(DATABASE_PORT, 10),
+    },
+    useNullAsDefault: true,
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './knex/migrations',
+    },
+  },
+  production: {
+    client: 'pg',
+    version: '13',
+    connection: DATABASE_URL,
   },
 };

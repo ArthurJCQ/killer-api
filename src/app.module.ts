@@ -1,13 +1,17 @@
-import { Module } from '@nestjs/common';
-import { KnexModule } from 'nest-knexjs';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig, databaseConfig } from './app.config';
-import { PlayerService } from './modules/player/player.service';
-import { MissionService } from './modules/mission/mission.service';
-import { RoomService } from './modules/room/room.service';
 import { RoomModule } from './modules/room/room.module';
 import { PlayerModule } from './modules/player/player.module';
 import { MissionModule } from './modules/mission/mission.module';
+import { APP_PIPE } from '@nestjs/core';
+import { DatabaseModule } from './modules/database/database.module';
+import cookieSession from 'cookie-session';
 
 @Module({
   imports: [
@@ -15,21 +19,30 @@ import { MissionModule } from './modules/mission/mission.module';
       load: [appConfig, databaseConfig],
       isGlobal: true,
     }),
-    KnexModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        config: {
-          client: 'pg',
-          useNullAsDefault: true,
-          connection: configService.get<string>('database.pg.url')},
-      }),
-    }),
     RoomModule,
     PlayerModule,
     MissionModule,
+    DatabaseModule,
   ],
-  controllers: [],
-  providers: [PlayerService, MissionService, RoomService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  constructor(readonly configService: ConfigService) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cookieSession({
+          keys: [this.configService.get<string>('app.cookieSessionKey')],
+        }),
+      )
+      .forRoutes('*');
+  }
+}

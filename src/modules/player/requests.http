@@ -1,0 +1,7 @@
+### POST player
+POST http://localhost:3000/player
+Content-Type: application/json
+
+{
+  "roomId": 1
+}

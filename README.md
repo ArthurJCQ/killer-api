@@ -6,6 +6,14 @@ Killer Api.
 
 ## Installation
 
+Install global Nest CLI if not already done :
+
+```bash
+$ npm install -g @nestjs/cli
+```
+
+Then install dependencies :
+
 ```bash
 $ yarn
 ```
