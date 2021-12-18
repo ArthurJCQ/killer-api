@@ -5,3 +5,7 @@ Content-Type: application/json
 {
   "roomId": 1
 }
+
+### POST test-private
+POST http://localhost:3000/player/test-private
+Content-Type: application/json
