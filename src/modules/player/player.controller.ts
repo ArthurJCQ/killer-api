@@ -1,12 +1,11 @@
-import { Body, Controller, Post, Session, UseGuards } from '@nestjs/common';
-import { CreatePlayerDto } from './dtos/create-player.dto';
-import { PlayerService } from './player.service';
-import { PlayerDto } from './dtos/player.dto';
-import { AdminGuard } from './guards/admin.guard';
+import { Body, Controller, Post, Session } from '@nestjs/common';
+
 import { Serialize } from '../../interceptors/serializer.interceptor';
+
 import { PLAYER } from './constants';
-import { Player } from './decorators/player.decorator';
-import { PlayerModel } from './player.model';
+import { CreatePlayerDto } from './dtos/create-player.dto';
+import { PlayerDto } from './dtos/player.dto';
+import { PlayerService } from './player.service';
 
 @Controller(PLAYER)
 @Serialize(PlayerDto)

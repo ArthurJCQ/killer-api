@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PlayerModel } from './player.model';
+
 import { DatabaseService } from '../database/database.service';
+
+import { PlayerModel } from './player.model';
 
 @Injectable()
 export class PlayerRepository {
@@ -22,6 +24,7 @@ export class PlayerRepository {
     const players = await this.db
       .client<PlayerModel>('player')
       .where('name', pseudo);
+
     return players.at(0);
   }
 

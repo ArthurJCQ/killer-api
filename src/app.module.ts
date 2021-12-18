@@ -5,13 +5,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { appConfig, databaseConfig } from './app.config';
-import { RoomModule } from './modules/room/room.module';
-import { PlayerModule } from './modules/player/player.module';
-import { MissionModule } from './modules/mission/mission.module';
 import { APP_PIPE } from '@nestjs/core';
-import { DatabaseModule } from './modules/database/database.module';
 import cookieSession from 'cookie-session';
+
+import { appConfig, databaseConfig } from './app.config';
+import { DatabaseModule } from './modules/database/database.module';
+import { MissionModule } from './modules/mission/mission.module';
+import { PlayerModule } from './modules/player/player.module';
+import { RoomModule } from './modules/room/room.module';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import cookieSession from 'cookie-session';
 export class AppModule implements NestModule {
   constructor(readonly configService: ConfigService) {}
 
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(
         cookieSession({
