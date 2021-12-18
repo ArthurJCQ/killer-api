@@ -3,6 +3,7 @@ import { registerAs } from '@nestjs/config';
 export const appConfig = registerAs('app', () => ({
   env: process.env.NODE_ENV,
   port: process.env.PORT,
+  cookieSessionKey: process.env.COOKIE_SESSION_KEY,
 }));
 
 export const databaseConfig = registerAs('database', () => ({

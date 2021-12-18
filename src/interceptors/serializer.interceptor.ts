@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { map } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
+import { Class } from '../declarations';
 
 export function Serialize(dto: Class) {
   return UseInterceptors(new SerializerInterceptor(dto));

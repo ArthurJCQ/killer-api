@@ -7,10 +7,15 @@ export class PlayerRepository {
   constructor(readonly db: DatabaseService) {}
 
   async createPlayer(name: string, passcode: number): Promise<PlayerModel> {
-    return this.db.client.table<PlayerModel>('player').returning('*').insert({
-      name,
-      passcode,
-    });
+    const player = await this.db.client
+      .table<PlayerModel>('player')
+      .returning('*')
+      .insert<PlayerModel[]>({
+        name,
+        passcode,
+      });
+
+    return player.at(0);
   }
 
   async getPlayerByPseudo(pseudo: string): Promise<PlayerModel> {

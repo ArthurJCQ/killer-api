@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import adjectives from 'adjectives';
 import { PlayerRepository } from './player.repository';
 import { PlayerModel } from './player.model';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
