@@ -1,8 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PlayerService } from '../player.service';
-import { PlayerRepository } from '../player.repository';
-import { DatabaseService } from '../../database/database.service';
 import { ConfigModule } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { DatabaseService } from '../../database/database.service';
+import { PlayerRepository } from '../player.repository';
+import { PlayerService } from '../player.service';
+
 import { playerRepositoryMock } from './mocks';
 
 describe('PlayerService', () => {

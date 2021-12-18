@@ -1,7 +1,8 @@
 import { PlayerRole, PlayerStatus } from '../constants';
 import { PlayerModel } from '../player.model';
+import { PlayerRepository } from '../player.repository';
 
-export const playerRepositoryMock = () => {
+export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
   const dummyPlayers: PlayerModel[] = [];
 
   return {
@@ -21,7 +22,16 @@ export const playerRepositoryMock = () => {
     },
 
     getPlayerByPseudo: (name: string): Promise<PlayerModel> => {
-      const user = dummyPlayers.find((player) => player.name === name);
+      const user = dummyPlayers.find(
+        ({ name: playerName }) => playerName === name,
+      );
+
+      return Promise.resolve(user);
+    },
+
+    getPlayerById: (id: number): Promise<PlayerModel> => {
+      const user = dummyPlayers.find(({ id: playerId }) => playerId === id);
+
       return Promise.resolve(user);
     },
   };
