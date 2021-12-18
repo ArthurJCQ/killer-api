@@ -30,11 +30,4 @@ export class PlayerController {
 
     return newPlayer;
   }
-
-  @Post('test-private')
-  @UseGuards(AdminGuard)
-  somePrivateFunction(@Player() player: PlayerModel) {
-    console.log(player);
-    return 'this route is reserved for room admins';
-  }
 }
