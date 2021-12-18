@@ -22,6 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.1.5",
