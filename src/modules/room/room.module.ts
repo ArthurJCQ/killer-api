@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { RoomService } from './room.service';
+
 import { RoomController } from './room.controller';
+import { RoomService } from './room.service';
 
 @Module({
   providers: [RoomService],

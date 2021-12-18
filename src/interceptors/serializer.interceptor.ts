@@ -4,18 +4,15 @@ import {
   NestInterceptor,
   UseInterceptors,
 } from '@nestjs/common';
-import { map } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
-import { Class } from '../declarations';
+import { map, Observable } from 'rxjs';
 
-export function Serialize(dto: Class) {
-  return UseInterceptors(new SerializerInterceptor(dto));
-}
+import { Class } from '../declarations';
 
 class SerializerInterceptor implements NestInterceptor {
   constructor(private dto: Class) {}
 
-  intercept(context: ExecutionContext, next: CallHandler) {
+  intercept(_: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       map((data) =>
         plainToInstance(this.dto, data, {
@@ -24,4 +21,8 @@ class SerializerInterceptor implements NestInterceptor {
       ),
     );
   }
+}
+
+export function Serialize(dto: Class): MethodDecorator & ClassDecorator {
+  return UseInterceptors(new SerializerInterceptor(dto));
 }
