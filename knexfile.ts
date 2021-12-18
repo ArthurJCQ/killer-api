@@ -32,5 +32,10 @@ module.exports = {
     client: 'pg',
     version: '13',
     connection: DATABASE_URL,
+    useNullAsDefault: true,
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './knex/migrations',
+    },
   },
 };
