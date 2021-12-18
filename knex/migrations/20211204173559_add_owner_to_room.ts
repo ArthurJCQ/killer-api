@@ -1,15 +1,16 @@
 import { Knex } from 'knex';
-import { ROOM_TABLE } from '../constants';
+import { ROOM } from '../../src/modules/room/constants';
+import { PLAYER } from '../../src/modules/player/constants';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.table(ROOM_TABLE, (table) => {
+  return knex.schema.table(ROOM, (table) => {
     table.integer('ownerId').unsigned();
-    table.foreign('ownerId').references('id').inTable('player');
+    table.foreign('ownerId').references('id').inTable(PLAYER);
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.table(ROOM_TABLE, (table) => {
+  return knex.schema.table(ROOM, (table) => {
     table.dropColumn('ownerId');
   });
 }

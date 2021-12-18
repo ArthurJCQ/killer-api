@@ -1,7 +1,4 @@
-export enum RoomStatus {
-  PENDING = 'PENDING',
-  IN_GAME = 'IN_GAME',
-}
+import { RoomStatus } from './constants';
 
 export interface RoomModel {
   id: number;
