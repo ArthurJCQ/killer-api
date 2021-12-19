@@ -22,17 +22,17 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
     },
 
     getPlayerByPseudo: (name: string): Promise<PlayerModel> => {
-      const user = dummyPlayers.find(
+      const player = dummyPlayers.find(
         ({ name: playerName }) => playerName === name,
       );
 
-      return Promise.resolve(user);
+      return Promise.resolve(player);
     },
 
     getPlayerById: (id: number): Promise<PlayerModel> => {
-      const user = dummyPlayers.find(({ id: playerId }) => playerId === id);
+      const player = dummyPlayers.find(({ id: playerId }) => playerId === id);
 
-      return Promise.resolve(user);
+      return Promise.resolve(player);
     },
   };
 };
