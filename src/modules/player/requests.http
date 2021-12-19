@@ -5,11 +5,3 @@ Content-Type: application/json
 {
   "roomId": 1
 }
-
-### POST player prod
-POST https://api.killerparty.app/player
-Content-Type: application/json
-
-{
-  "roomId": 1
-}
