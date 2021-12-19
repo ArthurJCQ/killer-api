@@ -8,22 +8,12 @@ export class PlayerService {
   constructor(private playerRepo: PlayerRepository) {}
 
   async createPlayer(name: string): Promise<PlayerModel> {
-    const passcode = this.generatePassCode();
+    const passcode = Math.floor(1000 + Math.random() * 9000);
 
     return this.playerRepo.createPlayer(name, passcode);
   }
 
   async getPlayerById(id: number): Promise<PlayerModel> {
     return this.playerRepo.getPlayerById(id);
-  }
-
-  private generatePassCode(): number {
-    const passcode = Math.floor(1000 + Math.random() * 9000);
-
-    if (0 === passcode) {
-      return this.generatePassCode();
-    }
-
-    return passcode;
   }
 }
