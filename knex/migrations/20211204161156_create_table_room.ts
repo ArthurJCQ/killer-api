@@ -1,12 +1,13 @@
 import { Knex } from 'knex';
+
 import { ROOM, RoomStatus } from '../../src/modules/room/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(ROOM, (table) => {
     table.increments('id');
-    table.string('name');
+    table.string('name').defaultTo('');
     table.string('code').unique();
-    table.integer('nbPlayer');
+    table.integer('nbPlayer').defaultTo(0);
     table.datetime('createdAt').notNullable().defaultTo(knex.fn.now());
     table
       .datetime('dateEnd')

@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+
 import { MISSION } from '../../src/modules/mission/constants';
 
 export async function up(knex: Knex): Promise<void> {
