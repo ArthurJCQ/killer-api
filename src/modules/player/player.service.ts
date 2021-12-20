@@ -21,7 +21,7 @@ export class PlayerService {
       const room = await this.roomService.createRoom();
       roomId = room.id;
 
-      const newPlayer = await this.playerRepo.createPlayer(
+      const newPlayerAdmin = await this.playerRepo.createPlayer(
         player.name,
         roomId,
         PlayerRole.ADMIN,
@@ -29,7 +29,7 @@ export class PlayerService {
 
       this.roomService.updateNbPlayersRoom(room.id);
 
-      return newPlayer;
+      return newPlayerAdmin;
     }
 
     const newPlayer = await this.playerRepo.createPlayer(player.name, roomId);

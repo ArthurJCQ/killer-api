@@ -11,7 +11,7 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
       const date = new Date();
 
       const room = {
-        id: Math.floor(Math.random() * 999999),
+        id: roomDummies.length,
         name: 'TestRoom',
         code: 'X22XR',
         nbPlayer: 0,
@@ -41,7 +41,7 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       const date = new Date();
 
       const room = {
-        id: Math.floor(Math.random() * 999999),
+        id: roomDummies.length,
         name: 'TestRoom',
         code: roomCode,
         nbPlayer: 0,
