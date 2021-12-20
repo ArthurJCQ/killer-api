@@ -1,7 +1,5 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DatabaseService } from '../../database/database.service';
 import { roomServiceMock } from '../../room/__tests__/mocks';
 import { RoomService } from '../../room/room.service';
 import { PlayerRepository } from '../player.repository';
