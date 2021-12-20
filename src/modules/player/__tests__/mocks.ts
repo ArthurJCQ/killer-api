@@ -6,11 +6,10 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
   const dummyPlayers: PlayerModel[] = [];
 
   return {
-    createPlayer: (name: string, passcode: number): Promise<PlayerModel> => {
+    createPlayer: (name: string): Promise<PlayerModel> => {
       const player = {
         id: Math.floor(Math.random() * 999999),
         name,
-        passcode,
         status: PlayerStatus.ALIVE,
         role: PlayerRole.PLAYER,
         roomId: 1,
