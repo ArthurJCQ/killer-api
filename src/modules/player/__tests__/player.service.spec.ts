@@ -30,8 +30,9 @@ describe('PlayerService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should create a user', async () => {
-    const player = await service.createPlayer();
+  it('should create a player', async () => {
+    const player = await service.createPlayer('John');
     expect(player).toBeDefined();
+    expect(player.name).toEqual('John');
   });
 });

@@ -23,7 +23,7 @@ export class PlayerController {
 
     //TODO ajouter le roomId précédemment créé ou récupérer dans le Body dans le createPlayer()
 
-    const newPlayer = await this.playerService.createPlayer();
+    const newPlayer = await this.playerService.createPlayer(player.name);
 
     session.playerId = newPlayer.id;
 

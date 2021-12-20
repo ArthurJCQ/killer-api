@@ -8,6 +8,9 @@ declare global {
   namespace Express {
     interface Request {
       currentPlayer?: PlayerModel;
+      session?: {
+        playerId?: number;
+      };
     }
   }
 }

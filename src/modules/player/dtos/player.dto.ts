@@ -8,9 +8,9 @@ export class PlayerDto {
   @Expose()
   name: string;
   @Expose()
-  passcode: number;
-  @Expose()
   status: PlayerStatus;
+  @Expose()
+  passcode?: number;
   @Expose()
   targetId?: number;
   @Expose()
