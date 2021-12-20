@@ -24,6 +24,12 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(room);
     },
+
+    async updateNbPlayersRoom(roomId: number): Promise<number> {
+      const room = roomDummies[roomId];
+
+      return Promise.resolve(room.nbPlayer);
+    },
   };
 };
 
@@ -47,6 +53,12 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       roomDummies.push(room);
 
       return Promise.resolve(room);
+    },
+
+    async updateNbPlayers(roomId: number): Promise<number> {
+      const room = roomDummies[roomId];
+
+      return Promise.resolve(room.nbPlayer);
     },
   };
 };
