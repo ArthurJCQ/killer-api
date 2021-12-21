@@ -16,23 +16,19 @@ export class PlayerService {
 
   async createPlayer(player: CreatePlayerDto): Promise<PlayerModel> {
     let roomId = player.roomId;
+    let playerRole = PlayerRole.PLAYER;
 
     if (!roomId) {
+      playerRole = PlayerRole.ADMIN;
       const room = await this.roomService.createRoom();
       roomId = room.id;
-
-      const newPlayerAdmin = await this.playerRepo.createPlayer(
-        player.name,
-        roomId,
-        PlayerRole.ADMIN,
-      );
-
-      this.roomService.updateNbPlayersRoom(room.id);
-
-      return newPlayerAdmin;
     }
 
-    const newPlayer = await this.playerRepo.createPlayer(player.name, roomId);
+    const newPlayer = await this.playerRepo.createPlayer(
+      player.name,
+      roomId,
+      playerRole,
+    );
 
     this.roomService.updateNbPlayersRoom(roomId);
 
