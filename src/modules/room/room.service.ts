@@ -16,8 +16,4 @@ export class RoomService {
 
     return this.roomRepo.createRoom(roomCode);
   }
-
-  async updateNbPlayersRoom(roomId: number): Promise<number> {
-    return this.roomRepo.updateNbPlayers(roomId);
-  }
 }

@@ -37,5 +37,13 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
 
       return Promise.resolve(player);
     },
+
+    async getNbPlayersByRoomId(roomId: number): Promise<number> {
+      const playersRoom = dummyPlayers.filter(
+        (player) => player.roomId === roomId,
+      );
+
+      return Promise.resolve(playersRoom.length);
+    },
   };
 };

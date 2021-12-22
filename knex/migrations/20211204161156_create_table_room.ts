@@ -6,8 +6,7 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(ROOM, (table) => {
     table.increments('id');
     table.string('name').defaultTo('');
-    table.string('code').unique();
-    table.integer('nbPlayer').defaultTo(0);
+    table.string('code', 5).unique();
     table.datetime('createdAt').notNullable().defaultTo(knex.fn.now());
     table
       .datetime('dateEnd')

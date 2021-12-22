@@ -14,7 +14,6 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
         id: roomDummies.length,
         name: 'TestRoom',
         code: 'X22XR',
-        nbPlayer: 0,
         status: RoomStatus.PENDING,
         createdAt: date,
         dateEnd: new Date(date.getDate() + 30),
@@ -23,12 +22,6 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
       roomDummies.push(room);
 
       return Promise.resolve(room);
-    },
-
-    async updateNbPlayersRoom(roomId: number): Promise<number> {
-      const room = roomDummies[roomId];
-
-      return Promise.resolve(room.nbPlayer);
     },
   };
 };
@@ -44,7 +37,6 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
         id: roomDummies.length,
         name: 'TestRoom',
         code: roomCode,
-        nbPlayer: 0,
         status: RoomStatus.PENDING,
         createdAt: date,
         dateEnd: new Date(date.getDate() + 30),
@@ -53,12 +45,6 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       roomDummies.push(room);
 
       return Promise.resolve(room);
-    },
-
-    async updateNbPlayers(roomId: number): Promise<number> {
-      const room = roomDummies[roomId];
-
-      return Promise.resolve(room.nbPlayer);
     },
   };
 };

@@ -24,15 +24,7 @@ export class PlayerService {
       roomId = room.id;
     }
 
-    const newPlayer = await this.playerRepo.createPlayer(
-      player.name,
-      roomId,
-      playerRole,
-    );
-
-    this.roomService.updateNbPlayersRoom(roomId);
-
-    return newPlayer;
+    return this.playerRepo.createPlayer(player.name, roomId, playerRole);
   }
 
   async getPlayerById(id: number): Promise<PlayerModel> {

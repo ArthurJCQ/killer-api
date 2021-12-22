@@ -39,4 +39,14 @@ export class PlayerRepository {
 
     return player.at(0);
   }
+
+  async getNbPlayersByRoomId(roomId: number): Promise<number> {
+    const nbPlayers = await this.db
+      .client<PlayerModel>(PLAYER)
+      .count()
+      .returning('count')
+      .where({ roomId });
+
+    return nbPlayers.at(0).count;
+  }
 }
