@@ -6,13 +6,17 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
   const dummyPlayers: PlayerModel[] = [];
 
   return {
-    createPlayer: (name: string): Promise<PlayerModel> => {
+    createPlayer: (
+      name: string,
+      roomId: number,
+      role: PlayerRole = PlayerRole.PLAYER,
+    ): Promise<PlayerModel> => {
       const player = {
         id: Math.floor(Math.random() * 999999),
         name,
         status: PlayerStatus.ALIVE,
-        role: PlayerRole.PLAYER,
-        roomId: 1,
+        role,
+        roomId,
       };
 
       dummyPlayers.push(player);
@@ -32,6 +36,14 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       const player = dummyPlayers.find(({ id: playerId }) => playerId === id);
 
       return Promise.resolve(player);
+    },
+
+    async getNbPlayersByRoomId(roomId: number): Promise<number> {
+      const playersRoom = dummyPlayers.filter(
+        (player) => player.roomId === roomId,
+      );
+
+      return Promise.resolve(playersRoom.length);
     },
   };
 };

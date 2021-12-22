@@ -17,13 +17,7 @@ export class PlayerController {
     @Body() player: CreatePlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
-    if (!player.roomId) {
-      //TODO create a room first, and give the roomId to the following new player
-    }
-
-    //TODO ajouter le roomId précédemment créé ou récupérer dans le Body dans le createPlayer()
-
-    const newPlayer = await this.playerService.createPlayer(player.name);
+    const newPlayer = await this.playerService.createPlayer(player);
 
     session.playerId = newPlayer.id;
 

@@ -1,8 +1,17 @@
-### POST player
+### POST player without existing room (will create a room)
 POST http://localhost:3000/player
 Content-Type: application/json
 
 {
-  "roomId": 1,
   "name": "John"
 }
+
+### POST player with existing room (create room first)
+POST http://localhost:3000/player
+Content-Type: application/json
+
+{
+  "roomId": 24,
+  "name": "John"
+}
+

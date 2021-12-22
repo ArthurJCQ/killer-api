@@ -1,7 +1,7 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DatabaseService } from '../../database/database.service';
+import { roomServiceMock } from '../../room/__tests__/mocks';
+import { RoomService } from '../../room/room.service';
 import { PlayerRepository } from '../player.repository';
 import { PlayerService } from '../player.service';
 
@@ -12,14 +12,16 @@ describe('PlayerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule],
       providers: [
         PlayerService,
         {
           provide: PlayerRepository,
           useValue: playerRepositoryMock(),
         },
-        DatabaseService,
+        {
+          provide: RoomService,
+          useValue: roomServiceMock(),
+        },
       ],
     }).compile();
 
@@ -31,7 +33,9 @@ describe('PlayerService', () => {
   });
 
   it('should create a player', async () => {
-    const player = await service.createPlayer('John');
+    const player = await service.createPlayer({
+      name: 'John',
+    });
     expect(player).toBeDefined();
     expect(player.name).toEqual('John');
   });
