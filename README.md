@@ -38,6 +38,12 @@ Then run knex migrations (install knex CLI before perform these actions) :
 $ knex migrate:latest
 ```
 
+To load fixtures from seeds files :
+
+```bash
+$ knex seed:run
+```
+
 ## Running the app
 
 ```bash
