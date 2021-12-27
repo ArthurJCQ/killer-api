@@ -18,11 +18,12 @@ export class PlayerRoleGuard implements CanActivate {
     return this.matchRole(request.currentPlayer?.role, routeRole);
   }
 
-  matchRole(playerRole: PlayerRole, routeRole: PlayerRole): boolean {
+  matchRole(playerRole?: PlayerRole, routeRole?: PlayerRole): boolean {
     if (!routeRole) return true;
 
     return (
-      routeRole && (playerRole === PlayerRole.ADMIN || playerRole === routeRole)
+      playerRole &&
+      (playerRole === PlayerRole.ADMIN || playerRole === routeRole)
     );
   }
 }
