@@ -20,7 +20,7 @@ export const missionRepositoryMock = (): Omit<MissionRepository, 'db'> => {
       dummyMissions.push(mission);
       dummyPlayerMissions.push(playerMission);
 
-      return mission;
+      return Promise.resolve(mission);
     },
   };
 };
