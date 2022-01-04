@@ -3,5 +3,5 @@ POST http://localhost:3000/mission
 Content-Type: application/json
 
 {
-  "content": "Push your friend in the stairs"
+  "content": "Push your friend in the stairs 2"
 }

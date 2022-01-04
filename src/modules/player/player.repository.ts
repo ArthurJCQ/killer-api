@@ -14,7 +14,7 @@ export class PlayerRepository {
     roomId: number,
     role: PlayerRole = PlayerRole.PLAYER,
   ): Promise<PlayerModel> {
-    const player = await this.db.client
+    const [player] = await this.db.client
       .table<PlayerModel>(PLAYER)
       .returning('*')
       .insert<PlayerModel[]>({
@@ -23,7 +23,7 @@ export class PlayerRepository {
         role,
       });
 
-    return player.at(0);
+    return player;
   }
 
   async getPlayerByPseudo(pseudo: string): Promise<PlayerModel> {
