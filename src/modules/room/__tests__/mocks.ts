@@ -51,10 +51,10 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       return Promise.resolve(room);
     },
 
-    async getRoomByCode(roomCode: string): Promise<string> {
+    async getRoomByCode(roomCode: string): Promise<string> | undefined {
       const room = roomDummies.find((room) => room.code === roomCode);
 
-      return Promise.resolve(room.code);
+      return Promise.resolve(room?.code);
     },
   };
 };
