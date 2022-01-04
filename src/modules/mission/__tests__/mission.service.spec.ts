@@ -31,6 +31,5 @@ describe('MissionService', () => {
 
     expect(mission).toBeDefined();
     expect(mission.content).toEqual('Mission');
-    expect(mission.authorId).toEqual(1);
   });
 });

@@ -7,9 +7,6 @@ import {
 } from '../../src/modules/player/constants';
 
 export async function seed(knex: Knex): Promise<void> {
-  // Deletes ALL existing entries
-  await knex(PLAYER).del();
-
   // Inserts seed entries
   await knex(PLAYER).insert([
     {
