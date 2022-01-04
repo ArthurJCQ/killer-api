@@ -23,6 +23,10 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(room);
     },
+
+    async generateRoomCode(): Promise<string> {
+      return Promise.resolve('RND99');
+    },
   };
 };
 
@@ -45,6 +49,12 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       roomDummies.push(room);
 
       return Promise.resolve(room);
+    },
+
+    async getRoomByCode(roomCode: string): Promise<string> {
+      const room = roomDummies.find((room) => room.code === roomCode);
+
+      return Promise.resolve(room.code);
     },
   };
 };
