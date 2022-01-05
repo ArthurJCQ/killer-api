@@ -13,7 +13,7 @@ export const missionRepositoryMock = (): Omit<MissionRepository, 'db'> => {
       };
 
       const playerMission = {
-        playerId: playerId,
+        playerId,
         missionId: mission.id,
       };
 
