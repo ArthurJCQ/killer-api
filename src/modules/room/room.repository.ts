@@ -19,4 +19,13 @@ export class RoomRepository {
 
     return room.at(0);
   }
+
+  async getRoomByCode(roomCode: string): Promise<string> | undefined {
+    const [room] = await this.db
+      .client<RoomModel>(ROOM)
+      .returning('code')
+      .where({ code: roomCode });
+
+    return room;
+  }
 }
