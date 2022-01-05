@@ -26,7 +26,6 @@ export class RoomRepository {
       .returning('code')
       .where({ code: roomCode });
 
-    console.log(room);
     return room;
   }
 }
