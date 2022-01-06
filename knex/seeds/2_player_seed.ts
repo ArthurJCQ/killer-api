@@ -10,7 +10,6 @@ export async function seed(knex: Knex): Promise<void> {
   // Inserts seed entries
   await knex(PLAYER).insert([
     {
-      id: 1,
       name: 'Roco',
       status: PlayerStatus.ALIVE,
       role: PlayerRole.ADMIN,
@@ -20,7 +19,6 @@ export async function seed(knex: Knex): Promise<void> {
       missionId: null,
     },
     {
-      id: 2,
       name: 'Sifredi',
       status: PlayerStatus.ALIVE,
       role: PlayerRole.PLAYER,

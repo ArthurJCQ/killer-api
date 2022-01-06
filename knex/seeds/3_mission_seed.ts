@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import {MISSION, PLAYER_MISSION} from '../../src/modules/mission/constants';
+import { MISSION, PLAYER_MISSION } from '../../src/modules/mission/constants';
 
 export async function seed(knex: Knex): Promise<void> {
   // Inserts seed entries
@@ -17,12 +17,10 @@ export async function seed(knex: Knex): Promise<void> {
 
   await knex(PLAYER_MISSION).insert([
     {
-      id: 1,
       playerId: 1,
       missionId: 1,
     },
     {
-      id: 2,
       playerId: 2,
       missionId: 2,
     },

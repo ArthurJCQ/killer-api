@@ -14,7 +14,6 @@ export async function seed(knex: Knex): Promise<void> {
   // Inserts seed entries
   await knex(ROOM).insert([
     {
-      id: 1,
       name: 'Room 1',
       code: 'XNXX1',
       status: RoomStatus.PENDING,
@@ -22,7 +21,6 @@ export async function seed(knex: Knex): Promise<void> {
       dateEnd: '2022-01-25',
     },
     {
-      id: 2,
       name: 'Room 2',
       code: 'XHAM2',
       status: RoomStatus.IN_GAME,
@@ -30,7 +28,6 @@ export async function seed(knex: Knex): Promise<void> {
       dateEnd: '2022-01-25',
     },
     {
-      id: 3,
       name: 'Room 3',
       code: 'GANG3',
       status: RoomStatus.ENDED,
