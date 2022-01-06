@@ -14,7 +14,6 @@ export class RoomRepository {
       .client<RoomModel>(ROOM)
       .returning('*')
       .insert<RoomModel[]>({
-        id: 5,
         code: roomCode,
       });
 
