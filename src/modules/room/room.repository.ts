@@ -10,7 +10,6 @@ export class RoomRepository {
   constructor(private db: DatabaseService) {}
 
   async createRoom(roomCode: string): Promise<RoomModel> {
-    console.log(roomCode);
     const [room] = await this.db
       .client<RoomModel>(ROOM)
       .returning('*')
