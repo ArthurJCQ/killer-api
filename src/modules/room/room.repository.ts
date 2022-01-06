@@ -10,14 +10,14 @@ export class RoomRepository {
   constructor(private db: DatabaseService) {}
 
   async createRoom(roomCode: string): Promise<RoomModel> {
-    const room = await this.db
+    const [room] = await this.db
       .client<RoomModel>(ROOM)
       .returning('*')
       .insert<RoomModel[]>({
         code: roomCode,
       });
 
-    return room.at(0);
+    return room;
   }
 
   async getRoomByCode(roomCode: string): Promise<string> | undefined {

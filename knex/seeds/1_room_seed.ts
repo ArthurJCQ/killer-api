@@ -1,10 +1,13 @@
 import { Knex } from 'knex';
 
+import { MISSION, PLAYER_MISSION } from '../../src/modules/mission/constants';
 import { PLAYER } from '../../src/modules/player/constants';
 import { ROOM, RoomStatus } from '../../src/modules/room/constants';
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
+  await knex(PLAYER_MISSION).del();
+  await knex(MISSION).del();
   await knex(PLAYER).del();
   await knex(ROOM).del();
 
