@@ -9,18 +9,19 @@ import { RoomModel } from './room.model';
 export class RoomRepository {
   constructor(private db: DatabaseService) {}
 
-  async createRoom(roomCode: string): Promise<RoomModel> {
+  async createRoom(roomCode: string, playerName: string): Promise<RoomModel> {
     const [room] = await this.db
       .client<RoomModel>(ROOM)
       .returning('*')
       .insert<RoomModel[]>({
         code: roomCode,
+        name: `${playerName}'s room`,
       });
 
     return room;
   }
 
-  async getRoomByCode(roomCode: string): Promise<string> | undefined {
+  async getRoomByCode(roomCode: string): Promise<string> {
     const [room] = await this.db
       .client<RoomModel>(ROOM)
       .returning('code')

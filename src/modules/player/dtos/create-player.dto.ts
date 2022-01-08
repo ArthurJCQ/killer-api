@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreatePlayerDto {
   @IsNumber()
@@ -6,5 +6,6 @@ export class CreatePlayerDto {
   roomId?: number;
 
   @IsString()
+  @MinLength(1)
   name: string;
 }

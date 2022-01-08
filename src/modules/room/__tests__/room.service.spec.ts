@@ -4,6 +4,7 @@ import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
 
 import { roomRepositoryMock } from './mocks';
+import {PlayerService} from "../../player/player.service";
 
 describe('RoomService', () => {
   let service: RoomService;
@@ -16,6 +17,10 @@ describe('RoomService', () => {
           provide: RoomRepository,
           useValue: roomRepositoryMock(),
         },
+        {
+          provide: PlayerService,
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -27,7 +32,7 @@ describe('RoomService', () => {
   });
 
   it('should create a room', async () => {
-    const room = await service.createRoom();
+    const room = await service.createRoom(1, 'Arty');
     expect(room).toBeDefined();
     expect(room.code).toHaveLength(5);
   });

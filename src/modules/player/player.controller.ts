@@ -1,10 +1,23 @@
-import { Body, Controller, Post, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Session,
+} from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 
-import { PLAYER } from './constants';
+import { PLAYER, PlayerRole } from './constants';
+import { Player } from './decorators/player.decorator';
+import { Role } from './decorators/role.decorator';
 import { CreatePlayerDto } from './dtos/create-player.dto';
+import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { PlayerDto } from './dtos/player.dto';
+import { UpdatePlayerDto } from './dtos/update-player.dto';
+import { PlayerModel } from './player.model';
 import { PlayerService } from './player.service';
 
 @Controller(PLAYER)
@@ -22,5 +35,46 @@ export class PlayerController {
     session.playerId = newPlayer.id;
 
     return newPlayer;
+  }
+
+  @Post('/update')
+  @Role(PlayerRole.PLAYER)
+  async updatePlayer(
+    @Body() player: UpdatePlayerDto,
+    @Session() session,
+  ): Promise<PlayerDto> {
+    if (session.playerId !== player.id) {
+      throw new HttpException(
+        'You can not update data of this user',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (!player.name && !player.passcode) {
+      throw new HttpException(
+        'There is no update data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.playerService.updatePlayer(player);
+  }
+
+  @Post('/my-player')
+  async getMyPlayer(
+    @Body() myPlayer: GetMyPlayerDto,
+    @Session() session,
+  ): Promise<PlayerDto> {
+    const player = await this.playerService.getMyPlayer(myPlayer);
+
+    session.playerId = player.id;
+
+    return player;
+  }
+
+  @Get('/me')
+  @Role(PlayerRole.PLAYER)
+  me(@Player() player: PlayerModel): PlayerDto {
+    return player;
   }
 }
