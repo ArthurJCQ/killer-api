@@ -1,7 +1,9 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { roomServiceMock } from '../../room/__tests__/mocks';
 import { RoomService } from '../../room/room.service';
+import { PlayerRole, PlayerStatus } from '../constants';
 import { PlayerRepository } from '../player.repository';
 import { PlayerService } from '../player.service';
 
@@ -38,5 +40,84 @@ describe('PlayerService', () => {
     });
     expect(player).toBeDefined();
     expect(player.name).toEqual('John');
+    expect(player.status).toEqual(PlayerStatus.ALIVE);
+    expect(player.role).toEqual(PlayerRole.ADMIN);
+  });
+
+  it('should create a player in an existing room', async () => {
+    const player = await service.createPlayer({
+      name: 'John',
+      roomCode: 'CODE1',
+    });
+
+    expect(player).toBeDefined();
+    expect(player.name).toEqual('John');
+    expect(player.roomCode).toEqual('CODE1');
+  });
+
+  it('should prevent from creating a player in a not pending room', async () => {
+    await expect(
+      service.createPlayer({
+        name: 'John',
+        roomCode: 'CODE2',
+      }),
+    ).rejects.toThrowError(BadRequestException);
+  });
+
+  it('should prevent from creating a player in a not existing room', async () => {
+    await expect(
+      service.createPlayer({
+        name: 'John',
+        roomCode: 'CODE3',
+      }),
+    ).rejects.toThrowError(NotFoundException);
+  });
+
+  it('should return my player', async () => {
+    const player = await service.getMyPlayer({
+      name: 'Arty',
+      passcode: 1234,
+      roomCode: 'CODE1',
+    });
+
+    expect(player).toBeDefined();
+  });
+
+  it('should not return unexisting player', async () => {
+    await expect(
+      service.getMyPlayer({
+        name: 'Arty',
+        passcode: 1235,
+        roomCode: 'CODE1',
+      }),
+    ).rejects.toThrowError(NotFoundException);
+  });
+
+  it('should return player by id', async () => {
+    const player = service.getPlayerById(1);
+
+    expect(player).toBeDefined();
+  });
+
+  it('should update a player', async () => {
+    const player = await service.updatePlayer({
+      id: 1,
+      name: 'Arthur',
+      passcode: 4567,
+    });
+
+    expect(player).toBeDefined();
+    expect(player.name).toEqual('Arthur');
+    expect(player.passcode).toEqual(4567);
+  });
+
+  it('should not update unexisting player', async () => {
+    await expect(
+      service.updatePlayer({
+        id: -1,
+        name: 'Arthur',
+        passcode: 4567,
+      }),
+    ).rejects.toThrowError(NotFoundException);
   });
 });

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../database/database.module';
-import { PlayerModule } from '../player/player.module';
 
 import { RoomController } from './room.controller';
 import { RoomRepository } from './room.repository';
 import { RoomService } from './room.service';
 
 @Module({
-  imports: [DatabaseModule, PlayerModule],
+  imports: [DatabaseModule],
   providers: [RoomService, RoomRepository],
   controllers: [RoomController],
+  exports: [RoomService],
 })
 export class RoomModule {}

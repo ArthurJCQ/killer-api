@@ -12,7 +12,7 @@ export class PlayerRepository {
   async createPlayer(
     name: string,
     role: PlayerRole = PlayerRole.PLAYER,
-    roomId?: number,
+    roomCode?: string,
   ): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
@@ -20,7 +20,7 @@ export class PlayerRepository {
       .insert<PlayerModel[]>({
         name,
         role,
-        roomId,
+        roomCode,
       });
 
     return player;
@@ -45,30 +45,17 @@ export class PlayerRepository {
     return player;
   }
 
-  async setRoomToPlayer(
-    playerId: number,
-    roomId: number,
-  ): Promise<PlayerModel> {
-    const [player] = await this.db
-      .client<PlayerModel>(PLAYER)
-      .where('id', playerId)
-      .update('roomId', roomId)
-      .returning('*');
-
-    return player;
-  }
-
   async getMyPlayer(
     name: string,
     passcode: number,
-    roomId: number,
+    roomCode: string,
   ): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
       .where({
         name,
         passcode,
-        roomId,
+        roomCode,
       })
       .returning('*');
 
@@ -76,12 +63,12 @@ export class PlayerRepository {
   }
 
   async getPlayerByNameInRoom(
-    roomId: number,
+    roomCode: string,
     name: string,
   ): Promise<PlayerModel> {
     const [player] = await this.db.client<PlayerModel>(PLAYER).where({
       name,
-      roomId,
+      roomCode,
     });
 
     return player;
@@ -93,12 +80,12 @@ export class PlayerRepository {
     return player;
   }
 
-  async getNbPlayersByRoomId(roomId: number): Promise<number> {
+  async getNbPlayersByRoomCode(roomCode: string): Promise<number> {
     const [nbPlayers] = await this.db
       .client<PlayerModel>(PLAYER)
       .count()
       .returning('count')
-      .where({ roomId });
+      .where({ roomCode });
 
     return nbPlayers.count;
   }

@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { RoomStatus } from '../room/constants';
+import { RoomService } from '../room/room.service';
 
 import { PlayerRole } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
@@ -9,58 +16,70 @@ import { PlayerRepository } from './player.repository';
 
 @Injectable()
 export class PlayerService {
-  constructor(private playerRepo: PlayerRepository) {}
+  constructor(
+    private playerRepo: PlayerRepository,
+    private roomService: RoomService,
+  ) {}
 
-  async createPlayer(player: CreatePlayerDto): Promise<PlayerModel> {
-    if (player.roomId) {
+  async createPlayer({
+    name,
+    roomCode,
+  }: CreatePlayerDto): Promise<PlayerModel> {
+    if (roomCode) {
+      const room = await this.roomService.getRoomByCode(roomCode);
+
+      if (room.status !== RoomStatus.PENDING) {
+        throw new BadRequestException(
+          'You can only create player in Pending Status Room',
+        );
+      }
+
       const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
-        player.roomId,
-        player.name,
+        roomCode,
+        name,
       );
 
       if (existingPlayer) {
-        throw new HttpException(
+        throw new BadRequestException(
           'Player with this pseudo already exists in this room',
-          HttpStatus.BAD_REQUEST,
         );
       }
     }
 
-    const playerRole = player.roomId ? PlayerRole.PLAYER : PlayerRole.ADMIN;
+    const playerRole = roomCode ? PlayerRole.PLAYER : PlayerRole.ADMIN;
 
-    return this.playerRepo.createPlayer(player.name, playerRole, player.roomId);
+    return this.playerRepo.createPlayer(name, playerRole, roomCode);
   }
 
-  async getMyPlayer(getMyPlayer: GetMyPlayerDto): Promise<PlayerModel> {
-    const player = await this.playerRepo.getMyPlayer(
-      getMyPlayer.name,
-      getMyPlayer.passcode,
-      getMyPlayer.roomId,
-    );
+  async getMyPlayer({
+    name,
+    passcode,
+    roomCode,
+  }: GetMyPlayerDto): Promise<PlayerModel> {
+    const player = await this.playerRepo.getMyPlayer(name, passcode, roomCode);
 
     if (!player) {
-      throw new HttpException('Player not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('Player not found');
     }
 
     return player;
-  }
-
-  async setRoomToPlayer(
-    playerId: number,
-    roomId: number,
-  ): Promise<PlayerModel> {
-    return this.playerRepo.setRoomToPlayer(playerId, roomId);
   }
 
   async getPlayerById(id: number): Promise<PlayerModel> {
     return this.playerRepo.getPlayerById(id);
   }
 
-  async updatePlayer(player: UpdatePlayerDto): Promise<PlayerModel> {
-    return this.playerRepo.updatePlayer(
-      player.id,
-      player.name,
-      player.passcode,
-    );
+  async updatePlayer({
+    id,
+    passcode,
+    name,
+  }: UpdatePlayerDto): Promise<PlayerModel> {
+    const player = await this.playerRepo.getPlayerById(id);
+
+    if (!player) {
+      throw new NotFoundException('No player found to update');
+    }
+
+    return this.playerRepo.updatePlayer(id, name, passcode);
   }
 }

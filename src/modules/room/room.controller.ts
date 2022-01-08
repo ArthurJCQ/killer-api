@@ -1,4 +1,10 @@
-import { Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
@@ -17,14 +23,12 @@ export class RoomController {
 
   @Post()
   @Role(PlayerRole.ADMIN)
-  async creatRoom(@Player() currentPlayer: PlayerModel): Promise<RoomDto> {
-    if (currentPlayer.roomId) {
-      throw new HttpException(
-        'Player is already in a room',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  async createRoom(@Player() currentPlayer: PlayerModel): Promise<RoomDto> {
+    return this.roomService.createRoom(currentPlayer);
+  }
 
-    return this.roomService.createRoom(currentPlayer.id, currentPlayer.name);
+  @Get('/:code')
+  async getRoom(@Param('code') code: string): Promise<RoomDto> {
+    return this.roomService.getRoomByCode(code);
   }
 }

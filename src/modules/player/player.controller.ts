@@ -1,10 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
-  HttpException,
-  HttpStatus,
   Post,
+  Put,
   Session,
 } from '@nestjs/common';
 
@@ -37,24 +38,18 @@ export class PlayerController {
     return newPlayer;
   }
 
-  @Post('/update')
+  @Put('/update')
   @Role(PlayerRole.PLAYER)
   async updatePlayer(
     @Body() player: UpdatePlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
     if (session.playerId !== player.id) {
-      throw new HttpException(
-        'You can not update data of this user',
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException('You can not update data of this user');
     }
 
     if (!player.name && !player.passcode) {
-      throw new HttpException(
-        'There is no update data',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('There is no update data');
     }
 
     return this.playerService.updatePlayer(player);

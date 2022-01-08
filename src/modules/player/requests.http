@@ -11,17 +11,17 @@ POST http://localhost:3000/player
 Content-Type: application/json
 
 {
-  "roomId": 21,
-  "name": "Lucky"
+  "roomCode": "XNXX1",
+  "name": "Arty"
 }
 
-### POST update for a player
-POST http://localhost:3000/player/update
+### PUT update for a player
+PUT http://localhost:3000/player/update
 Content-Type: application/json
 
 {
-  "id": 15,
-  "name": "NewName",
+  "id": 16,
+  "name": "Arty",
   "passcode": 1234
 }
 
@@ -30,9 +30,9 @@ POST http://localhost:3000/player/my-player
 Content-Type: application/json
 
 {
-  "name": "Lucky",
-  "passcode": 4567,
-  "roomId": 21
+  "name": "Arty",
+  "passcode": 1234,
+  "roomCode": "XNXX1"
 }
 
 ### GET current player in session
