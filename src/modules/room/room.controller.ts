@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
