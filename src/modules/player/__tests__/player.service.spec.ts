@@ -81,6 +81,8 @@ describe('PlayerService', () => {
     });
 
     expect(player).toBeDefined();
+    expect(player.name).toEqual('Arty');
+    expect(player.passcode).toEqual(1234);
   });
 
   it('should not return unexisting player', async () => {
@@ -94,9 +96,11 @@ describe('PlayerService', () => {
   });
 
   it('should return player by id', async () => {
-    const player = service.getPlayerById(1);
+    const player = await service.getPlayerById(1);
 
     expect(player).toBeDefined();
+    expect(player.name).toEqual('Arty');
+    expect(player.passcode).toEqual(1234);
   });
 
   it('should update a player', async () => {
