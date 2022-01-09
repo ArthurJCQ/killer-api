@@ -32,7 +32,6 @@ export class RoomRepository {
         return room;
       });
     } catch (error) {
-      console.log('ERROR');
       throw new Error(`Something went wrong : ${error}. Rollback DB.`);
     }
   }
