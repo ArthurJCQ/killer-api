@@ -25,11 +25,7 @@ export class RoomService {
 
     const newRoomCode = await this.generateRoomCode();
 
-    const room = await this.roomRepo.createRoom(newRoomCode, name);
-
-    this.roomRepo.setRoomToPlayer(id, room.code);
-
-    return room;
+    return this.roomRepo.createRoom(newRoomCode, name, id);
   }
 
   async getRoomByCode(code: string): Promise<RoomModel> {

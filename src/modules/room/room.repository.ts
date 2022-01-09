@@ -11,16 +11,30 @@ import { RoomModel } from './room.model';
 export class RoomRepository {
   constructor(private db: DatabaseService) {}
 
-  async createRoom(roomCode: string, playerName: string): Promise<RoomModel> {
-    const [room] = await this.db
-      .client<RoomModel>(ROOM)
-      .returning('*')
-      .insert<RoomModel[]>({
-        code: roomCode,
-        name: `${playerName}'s room`,
-      });
+  async createRoom(
+    roomCode: string,
+    playerName: string,
+    playerId: number,
+  ): Promise<RoomModel> {
+    try {
+      return this.db.client.transaction(async (trx) => {
+        const [room] = await trx<RoomModel>(ROOM)
+          .returning('*')
+          .insert<RoomModel[]>({
+            code: roomCode,
+            name: `${playerName}'s room`,
+          });
 
-    return room;
+        await trx<PlayerModel>(PLAYER)
+          .where('id', playerId)
+          .update('roomCodee', roomCode);
+
+        return room;
+      });
+    } catch (error) {
+      console.log('ERROR');
+      throw new Error(`Something went wrong : ${error}. Rollback DB.`);
+    }
   }
 
   async getRoomByCode(roomCode: string): Promise<RoomModel> {
@@ -30,12 +44,5 @@ export class RoomRepository {
       .where({ code: roomCode });
 
     return room;
-  }
-
-  setRoomToPlayer(playerId: number, roomCode: string): void {
-    this.db
-      .client<PlayerModel>(PLAYER)
-      .where('id', playerId)
-      .update('roomCode', roomCode);
   }
 }

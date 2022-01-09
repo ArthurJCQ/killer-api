@@ -132,11 +132,5 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
 
       return Promise.resolve(room);
     },
-
-    setRoomToPlayer(playerId: number, roomCode: string): void {
-      const player = playerDummies.find((player) => player.id === playerId);
-
-      player.roomCode = roomCode;
-    },
   };
 };
