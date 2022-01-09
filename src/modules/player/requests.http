@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### PUT update for a player
-PUT http://localhost:3000/player/update
+PUT http://localhost:3000/player
 Content-Type: application/json
 
 {

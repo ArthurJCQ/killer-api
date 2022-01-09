@@ -38,7 +38,7 @@ export class PlayerController {
     return newPlayer;
   }
 
-  @Put('/update')
+  @Put()
   @Role(PlayerRole.PLAYER)
   async updatePlayer(
     @Body() player: UpdatePlayerDto,
