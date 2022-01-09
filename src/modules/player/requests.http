@@ -22,7 +22,7 @@ Content-Type: application/json
 {
   "id": 16,
   "name": "Arty",
-  "passcode": 1234
+  "passcode": "1234"
 }
 
 ### POST getMyPlayer
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 {
   "name": "Arty",
-  "passcode": 1234,
+  "passcode": "1234",
   "roomCode": "XNXX1"
 }
 
