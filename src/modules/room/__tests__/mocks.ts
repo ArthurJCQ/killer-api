@@ -99,16 +99,6 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       dateEnd: new Date(date.getDate() + 7),
     },
   ];
-  const playerDummies: PlayerModel[] = [
-    {
-      id: 1,
-      name: 'Arty',
-      passcode: 1234,
-      roomCode: 'CODE1',
-      role: PlayerRole.PLAYER,
-      status: PlayerStatus.ALIVE,
-    },
-  ];
 
   return {
     async createRoom(roomCode: string): Promise<RoomModel> {
