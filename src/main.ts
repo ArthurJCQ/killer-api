@@ -6,7 +6,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: process.env.WEBSITE_URL,
+    origin: new RegExp(process.env.WEBSITE_DOMAIN),
     credentials: true,
   });
 
