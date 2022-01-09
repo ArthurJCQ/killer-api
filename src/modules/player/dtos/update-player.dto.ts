@@ -1,4 +1,10 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class UpdatePlayerDto {
   @IsNumber()
@@ -8,7 +14,8 @@ export class UpdatePlayerDto {
   @IsOptional()
   name: string;
 
-  @IsNumber()
+  @IsNumberString()
+  @Length(4)
   @IsOptional()
-  passcode: number;
+  passcode: string;
 }

@@ -7,7 +7,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
     {
       id: 1,
       name: 'Arty',
-      passcode: 1234,
+      passcode: '1234',
       roomCode: 'CODE1',
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,
@@ -61,7 +61,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
     async updatePlayer(
       id: number,
       name?: string,
-      passcode?: number,
+      passcode?: string,
     ): Promise<PlayerModel> {
       const player = dummyPlayers.find((player) => player.id === id);
 
@@ -78,7 +78,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
 
     async getMyPlayer(
       name: string,
-      passcode: number,
+      passcode: string,
       roomCode: string,
     ): Promise<PlayerModel> {
       const player = dummyPlayers.find(

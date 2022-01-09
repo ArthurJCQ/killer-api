@@ -29,7 +29,7 @@ export class PlayerRepository {
   async updatePlayer(
     id: number,
     name?: string,
-    passcode?: number,
+    passcode?: string,
   ): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
@@ -47,7 +47,7 @@ export class PlayerRepository {
 
   async getMyPlayer(
     name: string,
-    passcode: number,
+    passcode: string,
     roomCode: string,
   ): Promise<PlayerModel> {
     const [player] = await this.db

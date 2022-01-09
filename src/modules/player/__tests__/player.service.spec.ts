@@ -76,20 +76,20 @@ describe('PlayerService', () => {
   it('should return my player', async () => {
     const player = await service.getMyPlayer({
       name: 'Arty',
-      passcode: 1234,
+      passcode: '1234',
       roomCode: 'CODE1',
     });
 
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arty');
-    expect(player.passcode).toEqual(1234);
+    expect(player.passcode).toEqual('1234');
   });
 
   it('should not return unexisting player', async () => {
     await expect(
       service.getMyPlayer({
         name: 'Arty',
-        passcode: 1235,
+        passcode: '1235',
         roomCode: 'CODE1',
       }),
     ).rejects.toThrowError(NotFoundException);
@@ -100,19 +100,19 @@ describe('PlayerService', () => {
 
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arty');
-    expect(player.passcode).toEqual(1234);
+    expect(player.passcode).toEqual('1234');
   });
 
   it('should update a player', async () => {
     const player = await service.updatePlayer({
       id: 1,
       name: 'Arthur',
-      passcode: 4567,
+      passcode: '4567',
     });
 
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arthur');
-    expect(player.passcode).toEqual(4567);
+    expect(player.passcode).toEqual('4567');
   });
 
   it('should not update unexisting player', async () => {
@@ -120,7 +120,7 @@ describe('PlayerService', () => {
       service.updatePlayer({
         id: -1,
         name: 'Arthur',
-        passcode: 4567,
+        passcode: '4567',
       }),
     ).rejects.toThrowError(NotFoundException);
   });

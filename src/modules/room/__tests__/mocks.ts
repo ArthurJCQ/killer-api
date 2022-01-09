@@ -30,7 +30,7 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
     {
       id: 1,
       name: 'Arty',
-      passcode: 1234,
+      passcode: '1234',
       roomCode: 'CODE1',
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,

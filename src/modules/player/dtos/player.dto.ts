@@ -12,8 +12,6 @@ export class PlayerDto {
   @Expose()
   roomCode: string;
   @Expose()
-  passcode?: number;
-  @Expose()
   targetId?: number;
   @Expose()
   missionId?: number;

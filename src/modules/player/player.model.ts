@@ -6,7 +6,7 @@ export interface PlayerModel {
   status: PlayerStatus;
   role: PlayerRole;
   roomCode: string;
-  passcode?: number;
+  passcode?: string;
   targetId?: number;
   missionId?: number;
 }

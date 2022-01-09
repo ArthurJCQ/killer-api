@@ -1,13 +1,13 @@
-import { IsNumber, IsString, Length, Min, MinLength } from 'class-validator';
+import { IsNumberString, IsString, Length, MinLength } from 'class-validator';
 
 export class GetMyPlayerDto {
   @IsString()
   @MinLength(1)
   name: string;
 
-  @IsNumber()
-  @Min(1000)
-  passcode: number;
+  @IsNumberString()
+  @Length(4)
+  passcode: string;
 
   @IsString()
   @Length(5)
