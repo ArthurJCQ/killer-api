@@ -11,42 +11,82 @@ export class PlayerRepository {
 
   async createPlayer(
     name: string,
-    roomId: number,
     role: PlayerRole = PlayerRole.PLAYER,
+    roomCode?: string,
   ): Promise<PlayerModel> {
-    const [player] = await this.db.client
-      .table<PlayerModel>(PLAYER)
+    const [player] = await this.db
+      .client<PlayerModel>(PLAYER)
       .returning('*')
       .insert<PlayerModel[]>({
         name,
-        roomId,
         role,
+        roomCode,
       });
 
     return player;
   }
 
-  async getPlayerByPseudo(pseudo: string): Promise<PlayerModel> {
-    const players = await this.db
+  async updatePlayer(
+    id: number,
+    name?: string,
+    passcode?: string,
+  ): Promise<PlayerModel> {
+    const [player] = await this.db
       .client<PlayerModel>(PLAYER)
-      .where('name', pseudo);
+      .where({
+        id,
+      })
+      .update({
+        name,
+        passcode,
+      })
+      .returning('*');
 
-    return players.at(0);
+    return player;
+  }
+
+  async getMyPlayer(
+    name: string,
+    passcode: string,
+    roomCode: string,
+  ): Promise<PlayerModel> {
+    const [player] = await this.db
+      .client<PlayerModel>(PLAYER)
+      .where({
+        name,
+        passcode,
+        roomCode,
+      })
+      .returning('*');
+
+    return player;
+  }
+
+  async getPlayerByNameInRoom(
+    roomCode: string,
+    name: string,
+  ): Promise<PlayerModel> {
+    const [player] = await this.db.client<PlayerModel>(PLAYER).where({
+      name,
+      roomCode,
+    });
+
+    return player;
   }
 
   async getPlayerById(id: number): Promise<PlayerModel> {
-    const player = await this.db.client<PlayerModel>(PLAYER).where('id', id);
+    const [player] = await this.db.client<PlayerModel>(PLAYER).where('id', id);
 
-    return player.at(0);
+    return player;
   }
 
-  async getNbPlayersByRoomId(roomId: number): Promise<number> {
-    const nbPlayers = await this.db
+  async getNbPlayersByRoomCode(roomCode: string): Promise<number> {
+    const [nbPlayers] = await this.db
       .client<PlayerModel>(PLAYER)
       .count()
       .returning('count')
-      .where({ roomId });
+      .where({ roomCode });
 
-    return nbPlayers.at(0).count;
+    return nbPlayers.count;
   }
 }

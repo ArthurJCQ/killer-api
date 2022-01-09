@@ -1,10 +1,12 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, Length, MinLength } from 'class-validator';
 
 export class CreatePlayerDto {
-  @IsNumber()
+  @IsString()
+  @Length(5)
   @IsOptional()
-  roomId?: number;
+  roomCode?: string;
 
   @IsString()
+  @MinLength(1)
   name: string;
 }

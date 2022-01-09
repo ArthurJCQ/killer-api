@@ -3,20 +3,29 @@ import { PlayerModel } from '../player.model';
 import { PlayerRepository } from '../player.repository';
 
 export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
-  const dummyPlayers: PlayerModel[] = [];
+  const dummyPlayers: PlayerModel[] = [
+    {
+      id: 1,
+      name: 'Arty',
+      passcode: '1234',
+      roomCode: 'CODE1',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+  ];
 
   return {
     createPlayer: (
       name: string,
-      roomId: number,
       role: PlayerRole = PlayerRole.PLAYER,
+      roomCode?: string,
     ): Promise<PlayerModel> => {
       const player = {
         id: Math.floor(Math.random() * 999999),
         name,
         status: PlayerStatus.ALIVE,
         role,
-        roomId,
+        roomCode,
       };
 
       dummyPlayers.push(player);
@@ -24,9 +33,12 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(player);
     },
 
-    getPlayerByPseudo: (name: string): Promise<PlayerModel> => {
+    getPlayerByNameInRoom: (
+      roomCode: string,
+      name: string,
+    ): Promise<PlayerModel> => {
       const player = dummyPlayers.find(
-        ({ name: playerName }) => playerName === name,
+        (player) => player.name === name && player.roomCode === roomCode,
       );
 
       return Promise.resolve(player);
@@ -38,12 +50,45 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(player);
     },
 
-    async getNbPlayersByRoomId(roomId: number): Promise<number> {
+    async getNbPlayersByRoomCode(roomCode: string): Promise<number> {
       const playersRoom = dummyPlayers.filter(
-        (player) => player.roomId === roomId,
+        (player) => player.roomCode === roomCode,
       );
 
       return Promise.resolve(playersRoom.length);
+    },
+
+    async updatePlayer(
+      id: number,
+      name?: string,
+      passcode?: string,
+    ): Promise<PlayerModel> {
+      const player = dummyPlayers.find((player) => player.id === id);
+
+      if (name) {
+        player.name = name;
+      }
+
+      if (passcode) {
+        player.passcode = passcode;
+      }
+
+      return Promise.resolve(player);
+    },
+
+    async getMyPlayer(
+      name: string,
+      passcode: string,
+      roomCode: string,
+    ): Promise<PlayerModel> {
+      const player = dummyPlayers.find(
+        (player) =>
+          player.name === name &&
+          player.passcode === passcode &&
+          player.roomCode === roomCode,
+      );
+
+      return Promise.resolve(player);
     },
   };
 };

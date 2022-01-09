@@ -1,0 +1,6 @@
+### POST a new room
+POST http://localhost:3000/room
+
+
+### GET a room
+GET http://localhost:3000/room/XNXX1

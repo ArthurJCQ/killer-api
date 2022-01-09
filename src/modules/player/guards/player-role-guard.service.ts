@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { PlayerRole } from '../constants';
@@ -15,15 +20,16 @@ export class PlayerRoleGuard implements CanActivate {
       context.getHandler(),
     );
 
-    return this.matchRole(request.currentPlayer?.role, routeRole);
+    if (!routeRole) return true;
+
+    if (!request.currentPlayer) {
+      throw new ForbiddenException('Forbidden: There is no player in session');
+    }
+
+    return this.matchRole(request.currentPlayer.role, routeRole);
   }
 
   matchRole(playerRole?: PlayerRole, routeRole?: PlayerRole): boolean {
-    if (!routeRole) return true;
-
-    return (
-      playerRole &&
-      (playerRole === PlayerRole.ADMIN || playerRole === routeRole)
-    );
+    return playerRole === PlayerRole.ADMIN || playerRole === routeRole;
   }
 }

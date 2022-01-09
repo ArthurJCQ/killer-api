@@ -1,23 +1,62 @@
+import { NotFoundException } from '@nestjs/common';
+import randomstring from 'randomstring';
+
+import { PlayerRole, PlayerStatus } from '../../player/constants';
+import { PlayerModel } from '../../player/player.model';
 import { RoomStatus } from '../constants';
 import { RoomModel } from '../room.model';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
 
 export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
-  const roomDummies: RoomModel[] = [];
+  const date = new Date();
+  const roomDummies: RoomModel[] = [
+    {
+      code: 'CODE1',
+      name: 'Room Name',
+      status: RoomStatus.PENDING,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE2',
+      name: 'Room Name',
+      status: RoomStatus.ENDED,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+  ];
+  const playerDummies: PlayerModel[] = [
+    {
+      id: 1,
+      name: 'Arty',
+      passcode: '1234',
+      roomCode: 'CODE1',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+  ];
 
   return {
-    async createRoom(): Promise<RoomModel> {
+    async createRoom({
+      id,
+      name,
+    }: Pick<PlayerModel, 'id' | 'name' | 'roomCode'>): Promise<RoomModel> {
       const date = new Date();
 
+      const roomCode = this.generateRoomCode();
+
       const room = {
-        id: roomDummies.length,
-        name: 'TestRoom',
-        code: 'X22XR',
+        code: roomCode,
+        name: `${name}'s room`,
         status: RoomStatus.PENDING,
         createdAt: date,
         dateEnd: new Date(date.getDate() + 30),
       };
+
+      const player = playerDummies.find((player) => player.id === id);
+
+      player.roomCode = roomCode;
 
       roomDummies.push(room);
 
@@ -25,22 +64,49 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
     },
 
     async generateRoomCode(): Promise<string> {
-      return Promise.resolve('RND99');
+      const code = randomstring.generate({
+        length: 5,
+        capitalization: 'uppercase',
+      });
+
+      const room = await this.getRoomByCode(code);
+
+      if (room) {
+        return this.generateRoomCode();
+      }
+    },
+
+    async getRoomByCode(code: string): Promise<RoomModel> {
+      const room = roomDummies.find((room) => room.code === code);
+
+      if (!room) {
+        throw new NotFoundException();
+      }
+
+      return Promise.resolve(room);
     },
   };
 };
 
 export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
-  const roomDummies: RoomModel[] = [];
+  const date = new Date();
+  const roomDummies: RoomModel[] = [
+    {
+      code: 'CODE1',
+      name: 'Room Name',
+      status: RoomStatus.ENDED,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+  ];
 
   return {
     async createRoom(roomCode: string): Promise<RoomModel> {
       const date = new Date();
 
       const room = {
-        id: roomDummies.length,
-        name: 'TestRoom',
         code: roomCode,
+        name: 'TestRoom',
         status: RoomStatus.PENDING,
         createdAt: date,
         dateEnd: new Date(date.getDate() + 30),
@@ -51,10 +117,10 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
       return Promise.resolve(room);
     },
 
-    async getRoomByCode(roomCode: string): Promise<string> | undefined {
+    async getRoomByCode(roomCode: string): Promise<RoomModel> {
       const room = roomDummies.find((room) => room.code === roomCode);
 
-      return Promise.resolve(room?.code);
+      return Promise.resolve(room);
     },
   };
 };

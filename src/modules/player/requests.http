@@ -1,4 +1,4 @@
-### POST player without existing room (will create a room)
+### POST player without existing room (will be admin)
 POST http://localhost:3000/player
 Content-Type: application/json
 
@@ -6,12 +6,34 @@ Content-Type: application/json
   "name": "Lucky"
 }
 
-### POST player with existing room (create room first)
+### POST player with existing room
 POST http://localhost:3000/player
 Content-Type: application/json
 
 {
-  "roomId": 1,
-  "name": "Luke"
+  "roomCode": "XNXX1",
+  "name": "Arty"
 }
 
+### PUT update for a player
+PUT http://localhost:3000/player
+Content-Type: application/json
+
+{
+  "id": 16,
+  "name": "Arty",
+  "passcode": "1234"
+}
+
+### POST getMyPlayer
+POST http://localhost:3000/player/my-player
+Content-Type: application/json
+
+{
+  "name": "Arty",
+  "passcode": "1234",
+  "roomCode": "XNXX1"
+}
+
+### GET current player in session
+GET http://localhost:3000/player/me

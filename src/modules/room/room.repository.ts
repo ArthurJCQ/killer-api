@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
+import { PLAYER } from '../player/constants';
+import { PlayerModel } from '../player/player.model';
 
 import { ROOM } from './constants';
 import { RoomModel } from './room.model';
@@ -9,21 +11,35 @@ import { RoomModel } from './room.model';
 export class RoomRepository {
   constructor(private db: DatabaseService) {}
 
-  async createRoom(roomCode: string): Promise<RoomModel> {
+  async createRoom(
+    roomCode: string,
+    playerName: string,
+    playerId: number,
+  ): Promise<RoomModel> {
+    try {
+      return this.db.client.transaction(async (trx) => {
+        const [room] = await trx<RoomModel>(ROOM)
+          .returning('*')
+          .insert<RoomModel[]>({
+            code: roomCode,
+            name: `${playerName}'s room`,
+          });
+
+        await trx<PlayerModel>(PLAYER)
+          .where('id', playerId)
+          .update('roomCodee', roomCode);
+
+        return room;
+      });
+    } catch (error) {
+      throw new Error(`Something went wrong : ${error}. Rollback DB.`);
+    }
+  }
+
+  async getRoomByCode(roomCode: string): Promise<RoomModel> {
     const [room] = await this.db
       .client<RoomModel>(ROOM)
       .returning('*')
-      .insert<RoomModel[]>({
-        code: roomCode,
-      });
-
-    return room;
-  }
-
-  async getRoomByCode(roomCode: string): Promise<string> | undefined {
-    const [room] = await this.db
-      .client<RoomModel>(ROOM)
-      .returning('code')
       .where({ code: roomCode });
 
     return room;
