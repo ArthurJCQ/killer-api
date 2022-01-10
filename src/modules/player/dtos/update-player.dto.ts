@@ -12,10 +12,10 @@ export class UpdatePlayerDto {
 
   @IsString()
   @IsOptional()
-  name: string;
+  name?: string;
 
   @IsNumberString()
   @Length(4)
   @IsOptional()
-  passcode: string;
+  passcode?: string;
 }

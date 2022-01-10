@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 
 import { PLAYER, PlayerRole } from './constants';
+import { GetMyPlayerDto } from './dtos/get-my-player.dto';
+import { UpdatePlayerDto } from './dtos/update-player.dto';
 import { PlayerModel } from './player.model';
 
 @Injectable()
@@ -26,11 +28,11 @@ export class PlayerRepository {
     return player;
   }
 
-  async updatePlayer(
-    id: number,
-    name?: string,
-    passcode?: string,
-  ): Promise<PlayerModel> {
+  async updatePlayer({
+    id,
+    name,
+    passcode,
+  }: UpdatePlayerDto): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
       .where({
@@ -45,11 +47,11 @@ export class PlayerRepository {
     return player;
   }
 
-  async getMyPlayer(
-    name: string,
-    passcode: string,
-    roomCode: string,
-  ): Promise<PlayerModel> {
+  async getMyPlayer({
+    name,
+    passcode,
+    roomCode,
+  }: GetMyPlayerDto): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
       .where({

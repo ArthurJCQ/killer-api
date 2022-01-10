@@ -56,7 +56,11 @@ export class PlayerService {
     passcode,
     roomCode,
   }: GetMyPlayerDto): Promise<PlayerModel> {
-    const player = await this.playerRepo.getMyPlayer(name, passcode, roomCode);
+    const player = await this.playerRepo.getMyPlayer({
+      name,
+      passcode,
+      roomCode,
+    });
 
     if (!player) {
       throw new NotFoundException('Player not found');
@@ -80,6 +84,6 @@ export class PlayerService {
       throw new NotFoundException('No player found to update');
     }
 
-    return this.playerRepo.updatePlayer(id, name, passcode);
+    return this.playerRepo.updatePlayer({ id, name, passcode });
   }
 }
