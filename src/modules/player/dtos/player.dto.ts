@@ -10,7 +10,7 @@ export class PlayerDto {
   @Expose()
   status: PlayerStatus;
   @Expose()
-  roomCode: string;
+  roomCode?: string;
   @Expose()
   targetId?: number;
   @Expose()

@@ -10,18 +10,23 @@ export class MissionRepository {
   constructor(private readonly db: DatabaseService) {}
 
   async create(content: string, playerId: number): Promise<MissionModel> {
-    const [mission] = await this.db
-      .client(MISSION)
-      .insert<MissionModel[]>({
-        content,
-      })
-      .returning('*');
+    try {
+      return this.db.client.transaction(async (trx) => {
+        const [mission] = await trx(MISSION)
+          .insert<MissionModel[]>({
+            content,
+          })
+          .returning('*');
 
-    await this.db.client(PLAYER_MISSION).insert({
-      missionId: mission.id,
-      playerId,
-    });
+        await trx(PLAYER_MISSION).insert({
+          missionId: mission.id,
+          playerId,
+        });
 
-    return mission;
+        return mission;
+      });
+    } catch (error) {
+      throw new Error(`Something went wrong : ${error}. Rollback DB.`);
+    }
   }
 }
