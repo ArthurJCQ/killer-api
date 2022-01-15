@@ -1,5 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { PlayerRole, PlayerStatus } from '../constants';
 import { GetMyPlayerDto } from '../dtos/get-my-player.dto';
 import { UpdatePlayerDto } from '../dtos/update-player.dto';
@@ -62,10 +60,6 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       { name, passcode, status }: UpdatePlayerDto,
       id: number,
     ): Promise<PlayerModel> {
-      if (!name && !passcode && !status) {
-        throw new BadRequestException();
-      }
-
       const player = dummyPlayers.find((player) => player.id === id);
 
       if (name) {
@@ -77,7 +71,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       }
 
       if (status) {
-        player.passcode = passcode;
+        player.status = status;
       }
 
       return Promise.resolve(player);

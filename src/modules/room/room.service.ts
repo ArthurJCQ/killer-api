@@ -62,7 +62,7 @@ export class RoomService {
       throw new NotFoundException('No room found with this code');
     }
 
-    if (room.status === RoomStatus.ENDED) {
+    if (existingRoom.status === RoomStatus.ENDED) {
       throw new BadRequestException('Can not update ended room');
     }
 

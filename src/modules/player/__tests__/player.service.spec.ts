@@ -108,6 +108,7 @@ describe('PlayerService', () => {
       {
         name: 'Arthur',
         passcode: '4567',
+        status: PlayerStatus.KILLED,
       },
       1,
     );
@@ -115,6 +116,7 @@ describe('PlayerService', () => {
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arthur');
     expect(player.passcode).toEqual('4567');
+    expect(player.status).toEqual(PlayerStatus.KILLED);
   });
 
   it('should not update unexisting player', async () => {

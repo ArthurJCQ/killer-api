@@ -124,6 +124,13 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
     {
       code: 'CODE1',
       name: 'Room Name',
+      status: RoomStatus.IN_GAME,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE2',
+      name: 'Room Name',
       status: RoomStatus.ENDED,
       createdAt: date,
       dateEnd: new Date(date.getDate() + 7),

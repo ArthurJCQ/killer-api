@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
 
@@ -57,5 +58,21 @@ describe('RoomService', () => {
     await expect(service.getRoomByCode('CODE3')).rejects.toThrowError(
       NotFoundException,
     );
+  });
+
+  it('should start a game', async () => {
+    const room = await service.updateRoom(
+      { status: RoomStatus.IN_GAME },
+      'CODE1',
+    );
+
+    expect(room).toBeDefined();
+    expect(room.status).toEqual(RoomStatus.IN_GAME);
+  });
+
+  it('should prevent from update an ended game', async () => {
+    await expect(
+      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE2'),
+    ).rejects.toThrowError(BadRequestException);
   });
 });
