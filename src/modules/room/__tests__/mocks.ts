@@ -1,9 +1,10 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import randomstring from 'randomstring';
 
 import { PlayerRole, PlayerStatus } from '../../player/constants';
 import { PlayerModel } from '../../player/player.model';
 import { RoomStatus } from '../constants';
+import { UpdateRoomDto } from '../dtos/update-room.dto';
 import { RoomModel } from '../room.model';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
@@ -85,6 +86,35 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(room);
     },
+
+    async updateRoom(
+      { name, status, dateEnd }: UpdateRoomDto,
+      code: string,
+    ): Promise<RoomModel> {
+      const room = roomDummies.find((room) => room.code === code);
+
+      if (!room) {
+        throw new NotFoundException();
+      }
+
+      if (room.status === RoomStatus.ENDED) {
+        throw new BadRequestException();
+      }
+
+      if (name) {
+        room.name = name;
+      }
+
+      if (status) {
+        room.status = status;
+      }
+
+      if (dateEnd) {
+        room.dateEnd = dateEnd;
+      }
+
+      return Promise.resolve(room);
+    },
   };
 };
 
@@ -119,6 +149,27 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
 
     async getRoomByCode(roomCode: string): Promise<RoomModel> {
       const room = roomDummies.find((room) => room.code === roomCode);
+
+      return Promise.resolve(room);
+    },
+
+    async updateRoom(
+      { name, status, dateEnd }: UpdateRoomDto,
+      code: string,
+    ): Promise<RoomModel> {
+      const room = roomDummies.find((room) => room.code === code);
+
+      if (name) {
+        room.name = name;
+      }
+
+      if (status) {
+        room.status = status;
+      }
+
+      if (dateEnd) {
+        room.dateEnd = dateEnd;
+      }
 
       return Promise.resolve(room);
     },

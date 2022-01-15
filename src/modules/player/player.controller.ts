@@ -1,13 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  Post,
-  Put,
-  Session,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Session } from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 
@@ -44,23 +35,15 @@ export class PlayerController {
     @Body() player: UpdatePlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
-    if (session.playerId !== player.id) {
-      throw new ForbiddenException('You can not update data of this user');
-    }
-
-    if (!player.name && !player.passcode) {
-      throw new BadRequestException('There is no update data');
-    }
-
-    return this.playerService.updatePlayer(player);
+    return this.playerService.updatePlayer(player, session.playerId);
   }
 
-  @Post('/my-player')
-  async getMyPlayer(
+  @Post('/login')
+  async login(
     @Body() myPlayer: GetMyPlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
-    const player = await this.playerService.getMyPlayer(myPlayer);
+    const player = await this.playerService.login(myPlayer);
 
     session.playerId = player.id;
 

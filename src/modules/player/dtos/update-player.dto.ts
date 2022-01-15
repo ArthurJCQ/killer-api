@@ -1,15 +1,14 @@
 import {
-  IsNumber,
+  Equals,
   IsNumberString,
   IsOptional,
   IsString,
   Length,
 } from 'class-validator';
 
-export class UpdatePlayerDto {
-  @IsNumber()
-  id: number;
+import { PlayerStatus } from '../constants';
 
+export class UpdatePlayerDto {
   @IsString()
   @IsOptional()
   name?: string;
@@ -18,4 +17,8 @@ export class UpdatePlayerDto {
   @Length(4)
   @IsOptional()
   passcode?: string;
+
+  @IsOptional()
+  @Equals(PlayerStatus.KILLED)
+  status?: PlayerStatus.KILLED;
 }

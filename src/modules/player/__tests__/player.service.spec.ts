@@ -41,7 +41,7 @@ describe('PlayerService', () => {
     expect(player).toBeDefined();
     expect(player.name).toEqual('John');
     expect(player.status).toEqual(PlayerStatus.ALIVE);
-    expect(player.role).toEqual(PlayerRole.ADMIN);
+    expect(player.role).toEqual(PlayerRole.PLAYER);
   });
 
   it('should create a player in an existing room', async () => {
@@ -74,7 +74,7 @@ describe('PlayerService', () => {
   });
 
   it('should return my player', async () => {
-    const player = await service.getMyPlayer({
+    const player = await service.login({
       name: 'Arty',
       passcode: '1234',
       roomCode: 'CODE1',
@@ -87,7 +87,7 @@ describe('PlayerService', () => {
 
   it('should not return unexisting player', async () => {
     await expect(
-      service.getMyPlayer({
+      service.login({
         name: 'Arty',
         passcode: '1235',
         roomCode: 'CODE1',
@@ -104,11 +104,13 @@ describe('PlayerService', () => {
   });
 
   it('should update a player', async () => {
-    const player = await service.updatePlayer({
-      id: 1,
-      name: 'Arthur',
-      passcode: '4567',
-    });
+    const player = await service.updatePlayer(
+      {
+        name: 'Arthur',
+        passcode: '4567',
+      },
+      1,
+    );
 
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arthur');
@@ -117,11 +119,13 @@ describe('PlayerService', () => {
 
   it('should not update unexisting player', async () => {
     await expect(
-      service.updatePlayer({
-        id: -1,
-        name: 'Arthur',
-        passcode: '4567',
-      }),
+      service.updatePlayer(
+        {
+          name: 'Arthur',
+          passcode: '4567',
+        },
+        -1,
+      ),
     ).rejects.toThrowError(NotFoundException);
   });
 });
