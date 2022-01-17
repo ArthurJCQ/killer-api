@@ -50,7 +50,6 @@ export class RoomRepository {
     { name, status, dateEnd }: UpdateRoomDto,
     code: string,
   ): Promise<RoomModel> {
-    console.log(code);
     const [room] = await this.db
       .client<RoomModel>(ROOM)
       .where({ code })
