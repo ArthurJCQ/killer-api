@@ -3,9 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 
+import { MissionService } from '../mission/mission.service';
 import { RoomStatus } from '../room/constants';
-import { RoomService } from '../room/room.service';
+import { GameStartingEvent } from '../room/events/game-starting.event';
 
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
@@ -17,7 +19,7 @@ import { PlayerRepository } from './player.repository';
 export class PlayerService {
   constructor(
     private playerRepo: PlayerRepository,
-    private roomService: RoomService,
+    private missionService: MissionService,
   ) {}
 
   async createPlayer({
@@ -25,9 +27,9 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      const room = await this.roomService.getRoomByCode(roomCode);
+      const roomStatus = await this.playerRepo.getPlayerRoomStatus(roomCode);
 
-      if (room.status !== RoomStatus.PENDING) {
+      if (roomStatus !== RoomStatus.PENDING) {
         throw new BadRequestException(
           'You can only create player in Pending Status Room',
         );
@@ -73,5 +75,48 @@ export class PlayerService {
     }
 
     return this.playerRepo.updatePlayer(player, id);
+  }
+
+  async checkAllPlayerInRoomHavePasscode(roomCode: string): Promise<boolean> {
+    const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
+
+    return !!players.find((player) => player.passcode.length === 4);
+  }
+
+  async checkAllPlayerInRoomHaveMission(roomCode: string): Promise<boolean> {
+    const [playersOwnerofMission, players] = await Promise.all([
+      this.playerRepo.getPlayersOwnerOfMissionByRoom(roomCode),
+      this.playerRepo.getAllPlayersInRoom(roomCode),
+    ]);
+
+    return playersOwnerofMission.length === players.length;
+  }
+
+  @OnEvent('game.starting')
+  handleGameStarting(gameStarting: GameStartingEvent): void {
+    this.dispatchMissions(gameStarting.roomCode);
+  }
+
+  private async dispatchMissions(roomCode: string): Promise<void> {
+    const [players, missions] = await Promise.all([
+      this.playerRepo.getAllPlayersInRoom(roomCode),
+      this.missionService.getAllMissionsInRoom(roomCode),
+    ]);
+
+    const updatedPlayers = players.reduce(
+      (players: Pick<PlayerModel, 'id' | 'missionId'>[], player) => {
+        const randomMissionIndex = Math.floor(Math.random() * missions.length);
+        const mission = missions[randomMissionIndex];
+
+        players.push({ id: player.id, missionId: mission.id });
+
+        missions.splice(0, randomMissionIndex);
+
+        return players;
+      },
+      [],
+    );
+
+    return this.playerRepo.setMissionIdToPlayers(updatedPlayers);
   }
 }

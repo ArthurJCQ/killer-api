@@ -7,10 +7,15 @@ import { MissionRepository } from './mission.repository';
 export class MissionService {
   constructor(private missionRepo: MissionRepository) {}
 
-  async createMission(
-    content: string,
-    playerId: number,
-  ): Promise<MissionModel> {
+  createMission(content: string, playerId: number): Promise<MissionModel> {
     return this.missionRepo.create(content, playerId);
+  }
+
+  getMissions(playerId: number): Promise<MissionModel[]> {
+    return this.missionRepo.getMissionsByPlayer(playerId);
+  }
+
+  getAllMissionsInRoom(roomCode: string): Promise<MissionModel[]> {
+    return this.missionRepo.getAllMissionsInRoom(roomCode);
   }
 }

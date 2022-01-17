@@ -5,3 +5,6 @@ Content-Type: application/json
 {
   "content": "Push your friend in the stairs 2"
 }
+
+### GET player's mission
+GET http://localhost:3000/mission

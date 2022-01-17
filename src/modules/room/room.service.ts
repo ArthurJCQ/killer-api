@@ -3,18 +3,25 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import randomstring from 'randomstring';
 
 import { PlayerModel } from '../player/player.model';
+import { PlayerService } from '../player/player.service';
 
 import { RoomStatus } from './constants';
 import { UpdateRoomDto } from './dtos/update-room.dto';
+import { GameStartingEvent } from './events/game-starting.event';
 import { RoomModel } from './room.model';
 import { RoomRepository } from './room.repository';
 
 @Injectable()
 export class RoomService {
-  constructor(private roomRepo: RoomRepository) {}
+  constructor(
+    private roomRepo: RoomRepository,
+    private playerService: PlayerService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async createRoom({
     id,
@@ -55,7 +62,10 @@ export class RoomService {
     return roomCode;
   }
 
-  async updateRoom(room: UpdateRoomDto, code: string): Promise<RoomModel> {
+  async updateRoom(
+    roomUpdateData: UpdateRoomDto,
+    code: string,
+  ): Promise<RoomModel> {
     const existingRoom = await this.roomRepo.getRoomByCode(code);
 
     if (!existingRoom) {
@@ -66,6 +76,30 @@ export class RoomService {
       throw new BadRequestException('Can not update ended room');
     }
 
-    return this.roomRepo.updateRoom(room, code);
+    if (
+      existingRoom.status === RoomStatus.PENDING &&
+      roomUpdateData.status === RoomStatus.IN_GAME
+    ) {
+      const canStartGame = await this.canStartGame(code);
+
+      if (!canStartGame) {
+        throw new BadRequestException(
+          'All players must have set a mission and a passcode before starting game',
+        );
+      }
+
+      this.eventEmitter.emit('game.starting', new GameStartingEvent(code));
+    }
+
+    return this.roomRepo.updateRoom(roomUpdateData, code);
+  }
+
+  async canStartGame(code: string): Promise<boolean> {
+    const [allPlayersHaveMission, allPlayersHavePasscode] = await Promise.all([
+      this.playerService.checkAllPlayerInRoomHavePasscode(code),
+      this.playerService.checkAllPlayerInRoomHaveMission(code),
+    ]);
+
+    return !allPlayersHaveMission && !allPlayersHavePasscode;
   }
 }

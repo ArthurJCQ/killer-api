@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Session } from '@nestjs/common';
+import { Body, Controller, Get, Post, Session } from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
@@ -16,10 +16,16 @@ export class MissionController {
 
   @Post()
   @Role(PlayerRole.PLAYER)
-  async createMission(
+  createMission(
     @Body() mission: CreateMissionDto,
     @Session() session,
   ): Promise<MissionDto> {
     return this.missionService.createMission(mission.content, session.playerId);
+  }
+
+  @Get()
+  @Role(PlayerRole.PLAYER)
+  getPlayerMissions(@Session() session): Promise<MissionDto[]> {
+    return this.missionService.getMissions(session.playerId);
   }
 }
