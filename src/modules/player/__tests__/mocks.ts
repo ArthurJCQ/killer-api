@@ -17,16 +17,12 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
   ];
 
   return {
-    createPlayer: (
-      name: string,
-      role: PlayerRole = PlayerRole.PLAYER,
-      roomCode?: string,
-    ): Promise<PlayerModel> => {
+    createPlayer: (name: string, roomCode?: string): Promise<PlayerModel> => {
       const player = {
         id: Math.floor(Math.random() * 999999),
         name,
         status: PlayerStatus.ALIVE,
-        role,
+        role: PlayerRole.PLAYER,
         roomCode,
       };
 
@@ -60,11 +56,10 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(playersRoom.length);
     },
 
-    async updatePlayer({
-      id,
-      name,
-      passcode,
-    }: UpdatePlayerDto): Promise<PlayerModel> {
+    async updatePlayer(
+      { name, passcode, status }: UpdatePlayerDto,
+      id: number,
+    ): Promise<PlayerModel> {
       const player = dummyPlayers.find((player) => player.id === id);
 
       if (name) {
@@ -75,10 +70,14 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
         player.passcode = passcode;
       }
 
+      if (status) {
+        player.status = status;
+      }
+
       return Promise.resolve(player);
     },
 
-    async getMyPlayer({
+    async getPlayer({
       name,
       passcode,
       roomCode,

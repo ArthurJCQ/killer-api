@@ -20,17 +20,24 @@ PUT http://localhost:3000/player
 Content-Type: application/json
 
 {
-  "id": 16,
   "name": "Arty",
   "passcode": "1234"
 }
 
-### POST getMyPlayer
-POST http://localhost:3000/player/my-player
+### PUT kill my player
+PUT http://localhost:3000/player
 Content-Type: application/json
 
 {
-  "name": "Arty",
+  "status": "KILLED"
+}
+
+### POST login my player
+POST http://localhost:3000/player/login
+Content-Type: application/json
+
+{
+  "name": "Roco",
   "passcode": "1234",
   "roomCode": "XNXX1"
 }

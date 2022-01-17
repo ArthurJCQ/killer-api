@@ -7,7 +7,6 @@ import {
 import { RoomStatus } from '../room/constants';
 import { RoomService } from '../room/room.service';
 
-import { PlayerRole } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
@@ -46,21 +45,11 @@ export class PlayerService {
       }
     }
 
-    const playerRole = roomCode ? PlayerRole.PLAYER : PlayerRole.ADMIN;
-
-    return this.playerRepo.createPlayer(name, playerRole, roomCode);
+    return this.playerRepo.createPlayer(name, roomCode);
   }
 
-  async getMyPlayer({
-    name,
-    passcode,
-    roomCode,
-  }: GetMyPlayerDto): Promise<PlayerModel> {
-    const player = await this.playerRepo.getMyPlayer({
-      name,
-      passcode,
-      roomCode,
-    });
+  async login(playerDto: GetMyPlayerDto): Promise<PlayerModel> {
+    const player = await this.playerRepo.getPlayer(playerDto);
 
     if (!player) {
       throw new NotFoundException('Player not found');
@@ -73,17 +62,16 @@ export class PlayerService {
     return this.playerRepo.getPlayerById(id);
   }
 
-  async updatePlayer({
-    id,
-    passcode,
-    name,
-  }: UpdatePlayerDto): Promise<PlayerModel> {
-    const player = await this.playerRepo.getPlayerById(id);
+  async updatePlayer(
+    player: UpdatePlayerDto,
+    id: number,
+  ): Promise<PlayerModel> {
+    const existingPlayer = await this.playerRepo.getPlayerById(id);
 
-    if (!player) {
+    if (!existingPlayer) {
       throw new NotFoundException('No player found to update');
     }
 
-    return this.playerRepo.updatePlayer({ id, name, passcode });
+    return this.playerRepo.updatePlayer(player, id);
   }
 }

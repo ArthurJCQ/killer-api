@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
 
-import { PLAYER, PlayerRole } from './constants';
+import { PLAYER } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
 import { PlayerModel } from './player.model';
@@ -11,28 +11,22 @@ import { PlayerModel } from './player.model';
 export class PlayerRepository {
   constructor(readonly db: DatabaseService) {}
 
-  async createPlayer(
-    name: string,
-    role: PlayerRole = PlayerRole.PLAYER,
-    roomCode?: string,
-  ): Promise<PlayerModel> {
+  async createPlayer(name: string, roomCode?: string): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
       .returning('*')
       .insert<PlayerModel[]>({
         name,
-        role,
         roomCode,
       });
 
     return player;
   }
 
-  async updatePlayer({
-    id,
-    name,
-    passcode,
-  }: UpdatePlayerDto): Promise<PlayerModel> {
+  async updatePlayer(
+    { name, passcode, status }: UpdatePlayerDto,
+    id: number,
+  ): Promise<PlayerModel> {
     const [player] = await this.db
       .client<PlayerModel>(PLAYER)
       .where({
@@ -41,13 +35,14 @@ export class PlayerRepository {
       .update({
         name,
         passcode,
+        status,
       })
       .returning('*');
 
     return player;
   }
 
-  async getMyPlayer({
+  async getPlayer({
     name,
     passcode,
     roomCode,

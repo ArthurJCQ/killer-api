@@ -1,6 +1,22 @@
 ### POST a new room
 POST http://localhost:3000/room
 
-
 ### GET a room
 GET http://localhost:3000/room/XNXX1
+
+### PUT update room
+PUT http://localhost:3000/room/XNXX1
+Content-Type: application/json
+
+{
+  "name": "Decent room name",
+  "endDate": "01/01/2023"
+}
+
+### PUT start game
+PUT http://localhost:3000/room/XNXX1
+Content-Type: application/json
+
+{
+  "status": "IN_GAME"
+}

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
-import { PLAYER } from '../player/constants';
+import { PLAYER, PlayerRole } from '../player/constants';
 import { PlayerModel } from '../player/player.model';
 
 import { ROOM } from './constants';
+import { UpdateRoomDto } from './dtos/update-room.dto';
 import { RoomModel } from './room.model';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class RoomRepository {
 
         await trx<PlayerModel>(PLAYER)
           .where('id', playerId)
-          .update('roomCodee', roomCode);
+          .update({ roomCode, role: PlayerRole.ADMIN });
 
         return room;
       });
@@ -41,6 +42,23 @@ export class RoomRepository {
       .client<RoomModel>(ROOM)
       .returning('*')
       .where({ code: roomCode });
+
+    return room;
+  }
+
+  async updateRoom(
+    { name, status, dateEnd }: UpdateRoomDto,
+    code: string,
+  ): Promise<RoomModel> {
+    const [room] = await this.db
+      .client<RoomModel>(ROOM)
+      .where({ code })
+      .update({
+        name,
+        status,
+        dateEnd,
+      })
+      .returning('*');
 
     return room;
   }

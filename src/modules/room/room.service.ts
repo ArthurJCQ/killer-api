@@ -7,6 +7,8 @@ import randomstring from 'randomstring';
 
 import { PlayerModel } from '../player/player.model';
 
+import { RoomStatus } from './constants';
+import { UpdateRoomDto } from './dtos/update-room.dto';
 import { RoomModel } from './room.model';
 import { RoomRepository } from './room.repository';
 
@@ -51,5 +53,19 @@ export class RoomService {
     }
 
     return roomCode;
+  }
+
+  async updateRoom(room: UpdateRoomDto, code: string): Promise<RoomModel> {
+    const existingRoom = await this.roomRepo.getRoomByCode(code);
+
+    if (!existingRoom) {
+      throw new NotFoundException('No room found with this code');
+    }
+
+    if (existingRoom.status === RoomStatus.ENDED) {
+      throw new BadRequestException('Can not update ended room');
+    }
+
+    return this.roomRepo.updateRoom(room, code);
   }
 }

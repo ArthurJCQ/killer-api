@@ -30,6 +30,11 @@ export class PlayerRoleGuard implements CanActivate {
   }
 
   matchRole(playerRole?: PlayerRole, routeRole?: PlayerRole): boolean {
-    return playerRole === PlayerRole.ADMIN || playerRole === routeRole;
+    switch (playerRole) {
+      case PlayerRole.ADMIN:
+        return true;
+      default:
+        return playerRole === routeRole;
+    }
   }
 }
