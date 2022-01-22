@@ -1,8 +1,8 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { roomServiceMock } from '../../room/__tests__/mocks';
-import { RoomService } from '../../room/room.service';
+import { missionServiceMock } from '../../mission/__tests__/mocks';
+import { MissionService } from '../../mission/mission.service';
 import { PlayerRole, PlayerStatus } from '../constants';
 import { PlayerRepository } from '../player.repository';
 import { PlayerService } from '../player.service';
@@ -21,8 +21,8 @@ describe('PlayerService', () => {
           useValue: playerRepositoryMock(),
         },
         {
-          provide: RoomService,
-          useValue: roomServiceMock(),
+          provide: MissionService,
+          useValue: missionServiceMock(),
         },
       ],
     }).compile();
@@ -70,7 +70,7 @@ describe('PlayerService', () => {
         name: 'John',
         roomCode: 'CODE3',
       }),
-    ).rejects.toThrowError(NotFoundException);
+    ).rejects.toThrowError(BadRequestException);
   });
 
   it('should return my player', async () => {
@@ -129,5 +129,29 @@ describe('PlayerService', () => {
         -1,
       ),
     ).rejects.toThrowError(NotFoundException);
+  });
+
+  it('should return true if all player have passcode', async () => {
+    const res = await service.checkAllPlayerInRoomHavePasscode('CODE1');
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return false if 1 player does not have passcode', async () => {
+    const res = await service.checkAllPlayerInRoomHavePasscode('CODE2');
+
+    expect(res).toBeFalsy();
+  });
+
+  it('should return true if all player have mission', async () => {
+    const res = await service.checkAllPlayerInRoomHaveMission('CODE1');
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return false if 1 player does not have mission', async () => {
+    const res = await service.checkAllPlayerInRoomHaveMission('CODE2');
+
+    expect(res).toBeFalsy();
   });
 });

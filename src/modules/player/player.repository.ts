@@ -105,6 +105,7 @@ export class PlayerRepository {
       .returning('*');
   }
 
+  // TODO to delete, en plus la fonction check pas la bonne propriété
   async getPlayersOwnerOfMissionByRoom(
     roomCode: string,
   ): Promise<PlayerModel[]> {

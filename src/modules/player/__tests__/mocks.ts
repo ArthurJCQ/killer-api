@@ -1,8 +1,14 @@
+import { RoomStatus } from '../../room/constants';
+import { RoomModel } from '../../room/room.model';
 import { PlayerRole, PlayerStatus } from '../constants';
 import { GetMyPlayerDto } from '../dtos/get-my-player.dto';
 import { UpdatePlayerDto } from '../dtos/update-player.dto';
 import { PlayerModel } from '../player.model';
 import { PlayerRepository } from '../player.repository';
+
+export const playerServiceMock = (): Partial<PlayerRepository> => {
+  return {};
+};
 
 export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
   const dummyPlayers: PlayerModel[] = [
@@ -13,6 +19,33 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       roomCode: 'CODE1',
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,
+      missionId: 1,
+    },
+    {
+      id: 1,
+      name: 'Arty',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+  ];
+
+  const date = new Date();
+  const roomDummies: RoomModel[] = [
+    {
+      code: 'CODE1',
+      name: 'Room Name',
+      status: RoomStatus.PENDING,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE2',
+      name: 'Room Name',
+      status: RoomStatus.ENDED,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
     },
   ];
 
@@ -90,6 +123,44 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       );
 
       return Promise.resolve(player);
+    },
+
+    getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
+      const players = dummyPlayers.filter(
+        (player) => roomCode === player.roomCode,
+      );
+
+      return Promise.resolve(players);
+    },
+
+    async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
+      const room = roomDummies.find((room) => code === room.code);
+
+      return Promise.resolve(room?.status);
+    },
+
+    async getPlayersOwnerOfMissionByRoom(
+      roomCode: string,
+    ): Promise<PlayerModel[]> {
+      const players = dummyPlayers.filter(
+        (player) => roomCode === player.roomCode && player.missionId,
+      );
+
+      return Promise.resolve(players);
+    },
+
+    setMissionIdToPlayers(
+      players: Pick<PlayerModel, 'id' | 'missionId'>[],
+    ): Promise<void> {
+      dummyPlayers.forEach((dummyPlayer) => {
+        const { missionId } = players.find(
+          (player) => dummyPlayer.id === player.id,
+        );
+
+        dummyPlayer.missionId = missionId;
+      });
+
+      return Promise.resolve();
     },
   };
 };

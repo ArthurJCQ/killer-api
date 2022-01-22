@@ -1,6 +1,9 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { playerServiceMock } from '../../player/__tests__/mocks';
+import { PlayerService } from '../../player/player.service';
 import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
@@ -17,6 +20,14 @@ describe('RoomService', () => {
         {
           provide: RoomRepository,
           useValue: roomRepositoryMock(),
+        },
+        {
+          provide: PlayerService,
+          useValue: playerServiceMock(),
+        },
+        {
+          provide: EventEmitter2,
+          useValue: {},
         },
       ],
     }).compile();

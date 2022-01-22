@@ -43,7 +43,8 @@ export class MissionRepository {
     return this.db
       .client<MissionModel>(MISSION)
       .join(PLAYER_MISSION, `${MISSION}.id`, `${PLAYER_MISSION}.missionId`)
-      .where(`${PLAYER_MISSION}.roomCode`, roomCode)
+      .join(PLAYER, `${PLAYER_MISSION}.playerId`, `${PLAYER}.id`)
+      .where(`${PLAYER}.roomCode`, roomCode)
       .returning(`${MISSION}.*`);
   }
 }

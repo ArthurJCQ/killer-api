@@ -115,6 +115,12 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(room);
     },
+
+    async canStartGame(code: string): Promise<boolean> {
+      // Test the calls in player.service
+
+      return Promise.resolve(true);
+    },
   };
 };
 

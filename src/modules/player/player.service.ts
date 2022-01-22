@@ -77,14 +77,20 @@ export class PlayerService {
     return this.playerRepo.updatePlayer(player, id);
   }
 
+  getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
+    return this.playerRepo.getAllPlayersInRoom(roomCode);
+  }
+
   async checkAllPlayerInRoomHavePasscode(roomCode: string): Promise<boolean> {
     const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
-    return !!players.find((player) => player.passcode.length === 4);
+    return !!players.find((player) => player.passcode?.length === 4);
   }
 
+  // TODO remplacer par checkIfEnoughMissionInRoom
   async checkAllPlayerInRoomHaveMission(roomCode: string): Promise<boolean> {
     const [playersOwnerofMission, players] = await Promise.all([
+      // TODO dégager cette méthode, plus de notion d'ownership sur les mission
       this.playerRepo.getPlayersOwnerOfMissionByRoom(roomCode),
       this.playerRepo.getAllPlayersInRoom(roomCode),
     ]);
