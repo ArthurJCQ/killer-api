@@ -21,6 +21,7 @@ import { PlayerService } from './player.service';
     },
   ],
   controllers: [PlayerController],
+  exports: [PlayerService],
 })
 export class PlayerModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
