@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Post,
+  Query,
+} from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
+import { Player } from '../player/decorators/player.decorator';
 import { Role } from '../player/decorators/role.decorator';
+import { PlayerModel } from '../player/player.model';
 
 import { MISSION } from './constants';
 import { CreateMissionDto } from './dtos/create-mission.dto';
@@ -18,14 +27,26 @@ export class MissionController {
   @Role(PlayerRole.PLAYER)
   createMission(
     @Body() mission: CreateMissionDto,
-    @Session() session,
+    @Player() currentPlayer: PlayerModel,
   ): Promise<MissionDto> {
-    return this.missionService.createMission(mission.content, session.playerId);
+    return this.missionService.createMission(
+      mission.content,
+      currentPlayer.roomCode,
+    );
   }
 
   @Get()
   @Role(PlayerRole.PLAYER)
-  getPlayerMissions(@Session() session): Promise<MissionDto[]> {
-    return this.missionService.getMissions(session.playerId);
+  getMissions(
+    @Player() currentPlayer: PlayerModel,
+    @Query('room') roomCode?: string,
+  ): Promise<MissionDto[]> {
+    if (roomCode && currentPlayer.roomCode !== roomCode) {
+      throw new ForbiddenException(
+        'You are not allowed to perform this operation',
+      );
+    }
+
+    return this.missionService.getMissions(roomCode);
   }
 }

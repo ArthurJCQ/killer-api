@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { MISSION, PLAYER_MISSION } from '../../src/modules/mission/constants';
+import { MISSION, MISSION_ROOM } from '../../src/modules/mission/constants';
 import {
   PLAYER,
   PlayerRole,
@@ -10,7 +10,7 @@ import { ROOM, RoomStatus } from '../../src/modules/room/constants';
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
-  await knex(PLAYER_MISSION).del();
+  await knex(MISSION_ROOM).del();
   await knex(MISSION).del();
   await knex(PLAYER).del();
   await knex(ROOM).del();
@@ -78,13 +78,13 @@ export async function seed(knex: Knex): Promise<void> {
     ])
     .returning('id');
 
-  await knex(PLAYER_MISSION).insert([
+  await knex(MISSION_ROOM).insert([
     {
-      playerId: playerIds[0],
+      roomCode: roomCodes[0],
       missionId: missionIds[0],
     },
     {
-      playerId: playerIds[1],
+      roomCode: roomCodes[1],
       missionId: missionIds[1],
     },
   ]);

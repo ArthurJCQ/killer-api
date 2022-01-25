@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
-import { PLAYER } from '../player/constants';
 
-import { MISSION, PLAYER_MISSION } from './constants';
+import { MISSION, MISSION_ROOM } from './constants';
 import { MissionModel } from './mission.model';
 
 @Injectable()
 export class MissionRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(content: string, playerId: number): Promise<MissionModel> {
+  async create(content: string, roomCode: string): Promise<MissionModel> {
     try {
       return this.db.client.transaction(async (trx) => {
         const [mission] = await trx(MISSION)
@@ -19,9 +18,9 @@ export class MissionRepository {
           })
           .returning('*');
 
-        await trx(PLAYER_MISSION).insert({
+        await trx(MISSION_ROOM).insert({
           missionId: mission.id,
-          playerId,
+          roomCode,
         });
 
         return mission;
@@ -31,20 +30,15 @@ export class MissionRepository {
     }
   }
 
-  async getMissionsByPlayer(playerId: number): Promise<MissionModel[]> {
-    return this.db
-      .client<MissionModel>(MISSION)
-      .join(PLAYER, `${MISSION}.id`, `${PLAYER}.missionId`)
-      .where(`${PLAYER}.id`, playerId)
-      .returning(`${MISSION}.*`);
-  }
+  async getMissions(roomCode?: string): Promise<MissionModel[]> {
+    const query = this.db.client<MissionModel>(MISSION);
 
-  async getAllMissionsInRoom(roomCode: string): Promise<MissionModel[]> {
-    return this.db
-      .client<MissionModel>(MISSION)
-      .join(PLAYER_MISSION, `${MISSION}.id`, `${PLAYER_MISSION}.missionId`)
-      .join(PLAYER, `${PLAYER_MISSION}.playerId`, `${PLAYER}.id`)
-      .where(`${PLAYER}.roomCode`, roomCode)
-      .returning(`${MISSION}.*`);
+    if (roomCode) {
+      query
+        .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
+        .where(`${MISSION_ROOM}.roomCode`, roomCode);
+    }
+
+    return query.returning(`${MISSION}.*`);
   }
 }

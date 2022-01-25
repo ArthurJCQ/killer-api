@@ -105,25 +105,13 @@ export class PlayerRepository {
       .returning('*');
   }
 
-  // TODO to delete, en plus la fonction check pas la bonne propriété
-  async getPlayersOwnerOfMissionByRoom(
-    roomCode: string,
-  ): Promise<PlayerModel[]> {
-    return this.db
-      .client<PlayerModel>(PLAYER)
-      .where({ roomCode })
-      .whereNotNull('missionId')
-      .groupBy('id')
-      .returning('*');
-  }
-
   setMissionIdToPlayers(
     players: Pick<PlayerModel, 'id' | 'missionId'>[],
   ): Promise<void> {
     try {
       return this.db.client.transaction((trx) => {
-        players.forEach((player) => {
-          trx<PlayerModel>(PLAYER)
+        players.forEach(async (player) => {
+          await trx<PlayerModel>(PLAYER)
             .update({ missionId: player.missionId })
             .where('id', player.id);
         });

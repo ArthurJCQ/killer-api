@@ -143,14 +143,14 @@ describe('PlayerService', () => {
     expect(res).toBeFalsy();
   });
 
-  it('should return true if all player have mission', async () => {
-    const res = await service.checkAllPlayerInRoomHaveMission('CODE1');
+  it('should return true if there is enough mission in room', async () => {
+    const res = await service.checkIfEnoughMissionInRoom('CODE1');
 
     expect(res).toBeTruthy();
   });
 
-  it('should return false if 1 player does not have mission', async () => {
-    const res = await service.checkAllPlayerInRoomHaveMission('CODE2');
+  it('should return false if there is not enough mission in room', async () => {
+    const res = await service.checkIfEnoughMissionInRoom('CODE2');
 
     expect(res).toBeFalsy();
   });

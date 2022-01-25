@@ -87,26 +87,23 @@ export class PlayerService {
     return !!players.find((player) => player.passcode?.length === 4);
   }
 
-  // TODO remplacer par checkIfEnoughMissionInRoom
-  async checkAllPlayerInRoomHaveMission(roomCode: string): Promise<boolean> {
-    const [playersOwnerofMission, players] = await Promise.all([
-      // TODO dégager cette méthode, plus de notion d'ownership sur les mission
-      this.playerRepo.getPlayersOwnerOfMissionByRoom(roomCode),
+  async checkIfEnoughMissionInRoom(roomCode: string): Promise<boolean> {
+    const [missions, players] = await Promise.all([
+      this.missionService.getMissions(roomCode),
       this.playerRepo.getAllPlayersInRoom(roomCode),
     ]);
-
-    return playersOwnerofMission.length === players.length;
+    return missions.length >= players.length;
   }
 
   @OnEvent('game.starting')
   handleGameStarting(gameStarting: GameStartingEvent): void {
-    this.dispatchMissions(gameStarting.roomCode);
+    this.dispatchMissionsAndTarget(gameStarting.roomCode);
   }
 
-  private async dispatchMissions(roomCode: string): Promise<void> {
+  private async dispatchMissionsAndTarget(roomCode: string): Promise<void> {
     const [players, missions] = await Promise.all([
       this.playerRepo.getAllPlayersInRoom(roomCode),
-      this.missionService.getAllMissionsInRoom(roomCode),
+      this.missionService.getMissions(roomCode), //TODO: need to return mission and not mission_room
     ]);
 
     const updatedPlayers = players.reduce(

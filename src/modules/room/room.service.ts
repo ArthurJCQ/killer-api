@@ -84,7 +84,7 @@ export class RoomService {
 
       if (!canStartGame) {
         throw new BadRequestException(
-          'All players must have set a mission and a passcode before starting game',
+          'All players must have set a passcode before starting game',
         );
       }
 
@@ -95,11 +95,11 @@ export class RoomService {
   }
 
   async canStartGame(code: string): Promise<boolean> {
-    const [allPlayersHaveMission, allPlayersHavePasscode] = await Promise.all([
+    const [enoughMissionsInRoom, allPlayersHavePasscode] = await Promise.all([
+      this.playerService.checkIfEnoughMissionInRoom(code),
       this.playerService.checkAllPlayerInRoomHavePasscode(code),
-      this.playerService.checkAllPlayerInRoomHaveMission(code),
     ]);
 
-    return !allPlayersHaveMission && !allPlayersHavePasscode;
+    return enoughMissionsInRoom && allPlayersHavePasscode;
   }
 }

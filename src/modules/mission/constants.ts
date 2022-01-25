@@ -1,2 +1,2 @@
 export const MISSION = 'mission';
-export const PLAYER_MISSION = 'player_mission';
+export const MISSION_ROOM = 'mission_room';

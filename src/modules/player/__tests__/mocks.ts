@@ -139,16 +139,6 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(room?.status);
     },
 
-    async getPlayersOwnerOfMissionByRoom(
-      roomCode: string,
-    ): Promise<PlayerModel[]> {
-      const players = dummyPlayers.filter(
-        (player) => roomCode === player.roomCode && player.missionId,
-      );
-
-      return Promise.resolve(players);
-    },
-
     setMissionIdToPlayers(
       players: Pick<PlayerModel, 'id' | 'missionId'>[],
     ): Promise<void> {
