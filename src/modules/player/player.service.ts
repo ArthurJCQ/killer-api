@@ -27,7 +27,9 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      const roomStatus = await this.playerRepo.getPlayerRoomStatus(roomCode);
+      const { status: roomStatus } = await this.playerRepo.getPlayerRoomStatus(
+        roomCode,
+      );
 
       if (roomStatus !== RoomStatus.PENDING) {
         throw new BadRequestException(
@@ -97,13 +99,14 @@ export class PlayerService {
 
   @OnEvent('game.starting')
   handleGameStarting(gameStarting: GameStartingEvent): void {
-    this.dispatchMissionsAndTarget(gameStarting.roomCode);
+    this.dispatchMissions(gameStarting.roomCode);
+    this.dispatchTargets(gameStarting.roomCode);
   }
 
-  private async dispatchMissionsAndTarget(roomCode: string): Promise<void> {
+  private async dispatchMissions(roomCode: string): Promise<void> {
     const [players, missions] = await Promise.all([
       this.playerRepo.getAllPlayersInRoom(roomCode),
-      this.missionService.getMissions(roomCode), //TODO: need to return mission and not mission_room
+      this.missionService.getMissions(roomCode),
     ]);
 
     const updatedPlayers = players.reduce(
@@ -113,7 +116,7 @@ export class PlayerService {
 
         players.push({ id: player.id, missionId: mission.id });
 
-        missions.splice(0, randomMissionIndex);
+        missions.splice(randomMissionIndex, 1);
 
         return players;
       },
@@ -121,5 +124,11 @@ export class PlayerService {
     );
 
     return this.playerRepo.setMissionIdToPlayers(updatedPlayers);
+  }
+
+  private async dispatchTargets(roomCode: string): Promise<void> {
+    const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
+
+    // TODO dispatch targets
   }
 }

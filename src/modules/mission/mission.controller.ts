@@ -34,19 +34,4 @@ export class MissionController {
       currentPlayer.roomCode,
     );
   }
-
-  @Get()
-  @Role(PlayerRole.PLAYER)
-  getMissions(
-    @Player() currentPlayer: PlayerModel,
-    @Query('room') roomCode?: string,
-  ): Promise<MissionDto[]> {
-    if (roomCode && currentPlayer.roomCode !== roomCode) {
-      throw new ForbiddenException(
-        'You are not allowed to perform this operation',
-      );
-    }
-
-    return this.missionService.getMissions(roomCode);
-  }
 }

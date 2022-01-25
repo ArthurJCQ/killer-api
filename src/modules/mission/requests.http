@@ -5,9 +5,3 @@ Content-Type: application/json
 {
   "content": "Push your friend in the stairs 2"
 }
-
-### GET room's missions
-GET http://localhost:3000/mission?room=V9ZNQ
-
-### GET all missions
-GET http://localhost:3000/mission

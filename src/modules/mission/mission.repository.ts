@@ -35,10 +35,12 @@ export class MissionRepository {
 
     if (roomCode) {
       query
+        .select(`${MISSION}.id`)
         .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
-        .where(`${MISSION_ROOM}.roomCode`, roomCode);
+        .where(`${MISSION_ROOM}.roomCode`, roomCode)
+        .groupBy(`${MISSION}.id`);
     }
 
-    return query.returning(`${MISSION}.*`);
+    return query;
   }
 }

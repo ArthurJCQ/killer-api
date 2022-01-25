@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
 import { ROOM, RoomStatus } from '../room/constants';
+import { RoomModel } from '../room/room.model';
 
 import { PLAYER } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
@@ -88,12 +89,12 @@ export class PlayerRepository {
     return nbPlayers.count;
   }
 
-  async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
+  async getPlayerRoomStatus(code: string): Promise<Pick<RoomModel, 'status'>> {
     const [roomStatus] = await this.db
       .client<PlayerModel>(PLAYER)
+      .select(`${ROOM}.status`)
       .join(ROOM, `${PLAYER}.roomCode`, `${ROOM}.code`)
-      .where(`${ROOM}.code`, code)
-      .returning(`${ROOM}.status`);
+      .where(`${ROOM}.code`, code);
 
     return roomStatus;
   }
@@ -109,12 +110,12 @@ export class PlayerRepository {
     players: Pick<PlayerModel, 'id' | 'missionId'>[],
   ): Promise<void> {
     try {
-      return this.db.client.transaction((trx) => {
-        players.forEach(async (player) => {
+      return this.db.client.transaction(async (trx) => {
+        for (const key of Object.keys(players)) {
           await trx<PlayerModel>(PLAYER)
-            .update({ missionId: player.missionId })
-            .where('id', player.id);
-        });
+            .update({ missionId: players[key].missionId })
+            .where('id', players[key].id);
+        }
       });
     } catch (error) {
       throw new Error(`Error while dispatching missions : ${error}`);

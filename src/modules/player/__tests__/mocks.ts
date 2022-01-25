@@ -133,10 +133,12 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(players);
     },
 
-    async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
+    async getPlayerRoomStatus(
+      code: string,
+    ): Promise<Pick<RoomModel, 'status'>> {
       const room = roomDummies.find((room) => code === room.code);
 
-      return Promise.resolve(room?.status);
+      return Promise.resolve(room);
     },
 
     setMissionIdToPlayers(

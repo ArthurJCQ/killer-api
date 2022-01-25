@@ -76,15 +76,16 @@ export class RoomService {
       throw new BadRequestException('Can not update ended room');
     }
 
-    if (
-      existingRoom.status === RoomStatus.PENDING &&
-      roomUpdateData.status === RoomStatus.IN_GAME
-    ) {
+    if (roomUpdateData.status === RoomStatus.IN_GAME) {
+      if (existingRoom.status === RoomStatus.IN_GAME) {
+        throw new BadRequestException('Game already started');
+      }
+
       const canStartGame = await this.canStartGame(code);
 
       if (!canStartGame) {
         throw new BadRequestException(
-          'All players must have set a passcode before starting game',
+          'Game can not start. Either there is no enough mission, or some players did not set a passcode',
         );
       }
 
