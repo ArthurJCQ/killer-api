@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Put, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Session,
+} from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 
@@ -7,6 +15,7 @@ import { Player } from './decorators/player.decorator';
 import { Role } from './decorators/role.decorator';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
+import { PlayerListDto } from './dtos/player-list.dto';
 import { PlayerDto } from './dtos/player.dto';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
 import { PlayerModel } from './player.model';
@@ -48,6 +57,13 @@ export class PlayerController {
     session.playerId = player.id;
 
     return player;
+  }
+
+  @Get('all-in-room/:roomCode')
+  getAllPlayersInRoom(
+    @Param('roomCode') roomCode: string,
+  ): Promise<PlayerListDto[]> {
+    return this.playerService.getAllPlayersInRoom(roomCode);
   }
 
   @Get('/me')

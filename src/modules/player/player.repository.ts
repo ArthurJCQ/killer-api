@@ -86,4 +86,11 @@ export class PlayerRepository {
 
     return nbPlayers.count;
   }
+
+  getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
+    return this.db
+      .client<PlayerModel>(PLAYER)
+      .where({ roomCode })
+      .returning('*');
+  }
 }

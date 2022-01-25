@@ -74,4 +74,8 @@ export class PlayerService {
 
     return this.playerRepo.updatePlayer(player, id);
   }
+
+  getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
+    return this.playerRepo.getAllPlayersInRoom(roomCode);
+  }
 }

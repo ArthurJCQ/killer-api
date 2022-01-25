@@ -13,6 +13,23 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       roomCode: 'CODE1',
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,
+      missionId: 1,
+    },
+    {
+      id: 2,
+      name: 'John',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 3,
+      name: 'Doe',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
     },
   ];
 
@@ -90,6 +107,14 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       );
 
       return Promise.resolve(player);
+    },
+
+    getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
+      const players = dummyPlayers.filter(
+        (player) => player.roomCode === roomCode,
+      );
+
+      return Promise.resolve(players);
     },
   };
 };

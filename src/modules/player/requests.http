@@ -44,3 +44,6 @@ Content-Type: application/json
 
 ### GET current player in session
 GET http://localhost:3000/player/me
+
+### GET all players in room
+GET http://localhost:3000/player/all-in-room/XNXX1

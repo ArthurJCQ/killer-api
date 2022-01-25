@@ -130,4 +130,12 @@ describe('PlayerService', () => {
       ),
     ).rejects.toThrowError(NotFoundException);
   });
+
+  it('should return all players in room', async () => {
+    const players = await service.getAllPlayersInRoom('CODE2');
+
+    expect(players).toHaveLength(2);
+    expect(players[0].name).toEqual('John');
+    expect(players[1].name).toEqual('Doe');
+  });
 });
