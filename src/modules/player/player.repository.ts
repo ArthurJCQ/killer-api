@@ -121,4 +121,20 @@ export class PlayerRepository {
       throw new Error(`Error while dispatching missions : ${error}`);
     }
   }
+
+  setTargetIdToPlayers(
+    players: Pick<PlayerModel, 'id' | 'targetId'>[],
+  ): Promise<void> {
+    try {
+      return this.db.client.transaction(async (trx) => {
+        for (const key of Object.keys(players)) {
+          await trx<PlayerModel>(PLAYER)
+            .update({ targetId: players[key].targetId })
+            .where('id', players[key].id);
+        }
+      });
+    } catch (error) {
+      throw new Error(`Error while dispatching targets : ${error}`);
+    }
+  }
 }

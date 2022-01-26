@@ -154,5 +154,19 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
 
       return Promise.resolve();
     },
+
+    setTargetIdToPlayers(
+      players: Pick<PlayerModel, 'id' | 'targetId'>[],
+    ): Promise<void> {
+      dummyPlayers.forEach((dummyPlayer) => {
+        const { targetId } = players.find(
+          (player) => dummyPlayer.id === player.id,
+        );
+
+        dummyPlayer.targetId = targetId;
+      });
+
+      return Promise.resolve();
+    },
   };
 };

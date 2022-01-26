@@ -98,9 +98,9 @@ export class PlayerService {
   }
 
   @OnEvent('game.starting')
-  handleGameStarting(gameStarting: GameStartingEvent): void {
-    this.dispatchMissions(gameStarting.roomCode);
-    this.dispatchTargets(gameStarting.roomCode);
+  async handleGameStarting(gameStarting: GameStartingEvent): Promise<void> {
+    await this.dispatchMissions(gameStarting.roomCode);
+    await this.dispatchTargets(gameStarting.roomCode);
   }
 
   private async dispatchMissions(roomCode: string): Promise<void> {
@@ -127,8 +127,44 @@ export class PlayerService {
   }
 
   private async dispatchTargets(roomCode: string): Promise<void> {
-    const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
+    const allPlayers = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
-    // TODO dispatch targets
+    const targets = allPlayers.slice();
+
+    const updatedPlayers = allPlayers.reduce(
+      (players: Pick<PlayerModel, 'id' | 'targetId'>[], currentPlayer) => {
+        const playerTargets = targets.filter(
+          (target) =>
+            target.id !== currentPlayer.id &&
+            target.targetId !== currentPlayer.id,
+        );
+
+        const randomTargetIndex = Math.floor(
+          Math.random() * playerTargets.length,
+        );
+        const target = playerTargets[randomTargetIndex];
+
+        players.push({ id: currentPlayer.id, targetId: target.id });
+
+        for (const key of Object.keys(targets)) {
+          if (targets[key] === target) {
+            targets.splice(parseInt(key), 1);
+            break;
+          }
+        }
+
+        allPlayers.forEach((player) => {
+          if (player.id === currentPlayer.id) {
+            player.targetId = target.id;
+            return;
+          }
+        });
+
+        return players;
+      },
+      [],
+    );
+
+    return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
   }
 }
