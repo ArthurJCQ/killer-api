@@ -125,6 +125,16 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(enoughMissions && playersHavePasscode);
     },
+
+    async getAllPlayersInRoom(code: string): Promise<PlayerModel[]> {
+      const room = roomDummies.find((room) => room.code === code);
+
+      if (!room) {
+        throw new NotFoundException();
+      }
+
+      return playerServiceMock().getAllPlayersInRoom(code);
+    },
   };
 };
 

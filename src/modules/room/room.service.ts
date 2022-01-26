@@ -95,6 +95,16 @@ export class RoomService {
     return this.roomRepo.updateRoom(roomUpdateData, code);
   }
 
+  async getAllPlayersInRoom(code: string): Promise<PlayerModel[]> {
+    const room = await this.roomRepo.getRoomByCode(code);
+
+    if (!room) {
+      throw new NotFoundException('Room does not exist');
+    }
+
+    return this.playerService.getAllPlayersInRoom(code);
+  }
+
   async canStartGame(code: string): Promise<boolean> {
     const [enoughMissionsInRoom, allPlayersHavePasscode] = await Promise.all([
       this.playerService.checkIfEnoughMissionInRoom(code),
