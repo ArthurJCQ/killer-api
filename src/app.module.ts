@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import cookieSession from 'cookie-session';
 
 import { appConfig, databaseConfig } from './app.config';
@@ -24,6 +25,10 @@ import { RoomModule } from './modules/room/room.module';
     PlayerModule,
     MissionModule,
     DatabaseModule,
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+    }),
   ],
   providers: [
     {

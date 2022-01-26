@@ -3,18 +3,25 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import randomstring from 'randomstring';
 
 import { PlayerModel } from '../player/player.model';
+import { PlayerService } from '../player/player.service';
 
 import { RoomStatus } from './constants';
 import { UpdateRoomDto } from './dtos/update-room.dto';
+import { GameStartingEvent } from './events/game-starting.event';
 import { RoomModel } from './room.model';
 import { RoomRepository } from './room.repository';
 
 @Injectable()
 export class RoomService {
-  constructor(private roomRepo: RoomRepository) {}
+  constructor(
+    private roomRepo: RoomRepository,
+    private playerService: PlayerService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async createRoom({
     id,
@@ -55,7 +62,10 @@ export class RoomService {
     return roomCode;
   }
 
-  async updateRoom(room: UpdateRoomDto, code: string): Promise<RoomModel> {
+  async updateRoom(
+    roomUpdateData: UpdateRoomDto,
+    code: string,
+  ): Promise<RoomModel> {
     const existingRoom = await this.roomRepo.getRoomByCode(code);
 
     if (!existingRoom) {
@@ -66,6 +76,31 @@ export class RoomService {
       throw new BadRequestException('Can not update ended room');
     }
 
-    return this.roomRepo.updateRoom(room, code);
+    if (roomUpdateData.status === RoomStatus.IN_GAME) {
+      if (existingRoom.status === RoomStatus.IN_GAME) {
+        throw new BadRequestException('Game already started');
+      }
+
+      const canStartGame = await this.canStartGame(code);
+
+      if (!canStartGame) {
+        throw new BadRequestException(
+          'Game can not start. Either there is no enough mission, or some players did not set a passcode',
+        );
+      }
+
+      this.eventEmitter.emit('game.starting', new GameStartingEvent(code));
+    }
+
+    return this.roomRepo.updateRoom(roomUpdateData, code);
+  }
+
+  async canStartGame(code: string): Promise<boolean> {
+    const [enoughMissionsInRoom, allPlayersHavePasscode] = await Promise.all([
+      this.playerService.checkIfEnoughMissionInRoom(code),
+      this.playerService.checkAllPlayerInRoomHavePasscode(code),
+    ]);
+
+    return enoughMissionsInRoom && allPlayersHavePasscode;
   }
 }

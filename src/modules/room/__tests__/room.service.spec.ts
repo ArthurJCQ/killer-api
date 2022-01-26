@@ -1,6 +1,10 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { eventEmitterMock } from '../../../__tests__/mocks';
+import { playerServiceMock } from '../../player/__tests__/mocks';
+import { PlayerService } from '../../player/player.service';
 import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
@@ -17,6 +21,14 @@ describe('RoomService', () => {
         {
           provide: RoomRepository,
           useValue: roomRepositoryMock(),
+        },
+        {
+          provide: PlayerService,
+          useValue: playerServiceMock(),
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitterMock(),
         },
       ],
     }).compile();
@@ -52,10 +64,11 @@ describe('RoomService', () => {
     const room = await service.getRoomByCode('CODE1');
     expect(room).toBeDefined();
     expect(room.code).toHaveLength(5);
+    expect(room.status).toEqual(RoomStatus.PENDING);
   });
 
   it('should not get unexisting room', async () => {
-    await expect(service.getRoomByCode('CODE3')).rejects.toThrowError(
+    await expect(service.getRoomByCode('CODE99')).rejects.toThrowError(
       NotFoundException,
     );
   });
@@ -68,6 +81,18 @@ describe('RoomService', () => {
 
     expect(room).toBeDefined();
     expect(room.status).toEqual(RoomStatus.IN_GAME);
+  });
+
+  it('should not start a game if player have no passcode', async () => {
+    await expect(
+      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE11'),
+    ).rejects.toThrowError(BadRequestException);
+  });
+
+  it('should not start a game if no enough mission', async () => {
+    await expect(
+      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE12'),
+    ).rejects.toThrowError(BadRequestException);
   });
 
   it('should prevent from update an ended game', async () => {

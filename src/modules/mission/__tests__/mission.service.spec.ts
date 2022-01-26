@@ -27,7 +27,7 @@ describe('MissionService', () => {
   });
 
   it('should create a mission', async () => {
-    const mission = await service.createMission('Mission', 1);
+    const mission = await service.createMission('Mission', 'CODE1');
 
     expect(mission).toBeDefined();
     expect(mission.content).toEqual('Mission');

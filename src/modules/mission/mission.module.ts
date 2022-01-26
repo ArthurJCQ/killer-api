@@ -10,5 +10,6 @@ import { MissionService } from './mission.service';
   imports: [DatabaseModule],
   providers: [MissionService, MissionRepository],
   controllers: [MissionController],
+  exports: [MissionService],
 })
 export class MissionModule {}

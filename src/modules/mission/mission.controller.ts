@@ -1,8 +1,10 @@
-import { Body, Controller, Post, Session } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
+import { Player } from '../player/decorators/player.decorator';
 import { Role } from '../player/decorators/role.decorator';
+import { PlayerModel } from '../player/player.model';
 
 import { MISSION } from './constants';
 import { CreateMissionDto } from './dtos/create-mission.dto';
@@ -16,10 +18,13 @@ export class MissionController {
 
   @Post()
   @Role(PlayerRole.PLAYER)
-  async createMission(
+  createMission(
     @Body() mission: CreateMissionDto,
-    @Session() session,
+    @Player() currentPlayer: PlayerModel,
   ): Promise<MissionDto> {
-    return this.missionService.createMission(mission.content, session.playerId);
+    return this.missionService.createMission(
+      mission.content,
+      currentPlayer.roomCode,
+    );
   }
 }

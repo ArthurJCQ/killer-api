@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import randomstring from 'randomstring';
 
+import { playerServiceMock } from '../../player/__tests__/mocks';
 import { PlayerRole, PlayerStatus } from '../../player/constants';
 import { PlayerModel } from '../../player/player.model';
 import { RoomStatus } from '../constants';
@@ -115,6 +116,15 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
 
       return Promise.resolve(room);
     },
+
+    async canStartGame(code: string): Promise<boolean> {
+      const enoughMissions =
+        await playerServiceMock().checkIfEnoughMissionInRoom(code);
+      const playersHavePasscode =
+        await playerServiceMock().checkAllPlayerInRoomHavePasscode(code);
+
+      return Promise.resolve(enoughMissions && playersHavePasscode);
+    },
   };
 };
 
@@ -123,6 +133,27 @@ export const roomRepositoryMock = (): Omit<RoomRepository, 'db'> => {
   const roomDummies: RoomModel[] = [
     {
       code: 'CODE1',
+      name: 'Room Name',
+      status: RoomStatus.PENDING,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE11',
+      name: 'Room Name',
+      status: RoomStatus.PENDING,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE12',
+      name: 'Room Name',
+      status: RoomStatus.PENDING,
+      createdAt: date,
+      dateEnd: new Date(date.getDate() + 7),
+    },
+    {
+      code: 'CODE3',
       name: 'Room Name',
       status: RoomStatus.IN_GAME,
       createdAt: date,

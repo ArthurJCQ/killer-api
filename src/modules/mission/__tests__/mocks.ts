@@ -1,26 +1,87 @@
+import { MissionRoomModel } from '../mission-room.model';
 import { MissionModel } from '../mission.model';
 import { MissionRepository } from '../mission.repository';
+import { MissionService } from '../mission.service';
 
 export const missionRepositoryMock = (): Omit<MissionRepository, 'db'> => {
-  const dummyMissions: MissionModel[] = [];
-  const dummyPlayerMissions = [];
+  const dummyMissions: MissionModel[] = [
+    {
+      id: 1,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 2,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 3,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 4,
+      content: 'Push your friends in the stairs',
+    },
+  ];
+  const dummyMissionsRoom: MissionRoomModel[] = [
+    {
+      id: 1,
+      missionId: 1,
+      roomCode: 'CODE1',
+    },
+    {
+      id: 2,
+      missionId: 2,
+      roomCode: 'CODE2',
+    },
+    {
+      id: 3,
+      missionId: 3,
+      roomCode: 'CODE11',
+    },
+    {
+      id: 4,
+      missionId: 3,
+      roomCode: 'CODE12',
+    },
+  ];
 
   return {
-    async create(content: string, playerId: number): Promise<MissionModel> {
+    async create(content: string, roomCode: string): Promise<MissionModel> {
       const mission = {
         id: Math.floor(Math.random() * 99999),
         content,
       };
 
       const playerMission = {
-        playerId,
+        id: Math.floor(Math.random() * 99999),
+        roomCode,
         missionId: mission.id,
       };
 
       dummyMissions.push(mission);
-      dummyPlayerMissions.push(playerMission);
+      dummyMissionsRoom.push(playerMission);
 
       return Promise.resolve(mission);
+    },
+
+    async getMissions(roomCode: string): Promise<MissionModel[]> {
+      const { missionId } = dummyMissionsRoom.find(
+        (missionRoom) => missionRoom.roomCode === roomCode,
+      );
+
+      const mission = dummyMissions.filter(
+        (mission) => mission.id === missionId,
+      );
+
+      return Promise.resolve(mission);
+    },
+  };
+};
+
+export const missionServiceMock = (): Partial<MissionService> => {
+  return {
+    async getMissions(roomCode: string): Promise<MissionModel[]> {
+      return missionRepositoryMock().getMissions(roomCode);
     },
   };
 };
