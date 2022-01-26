@@ -89,9 +89,10 @@ export class PlayerRepository {
     return nbPlayers.count;
   }
 
-  async getPlayerRoomStatus(code: string): Promise<Pick<RoomModel, 'status'>> {
+  async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
     const [roomStatus] = await this.db
       .client<PlayerModel>(PLAYER)
+      .select(`${ROOM}.status`)
       .select(`${ROOM}.status`)
       .join(ROOM, `${PLAYER}.roomCode`, `${ROOM}.code`)
       .where(`${ROOM}.code`, code);

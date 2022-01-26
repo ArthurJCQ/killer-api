@@ -27,9 +27,7 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      const { status: roomStatus } = await this.playerRepo.getPlayerRoomStatus(
-        roomCode,
-      );
+      const roomStatus = await this.playerRepo.getPlayerRoomStatus(roomCode);
 
       if (roomStatus !== RoomStatus.PENDING) {
         throw new BadRequestException(

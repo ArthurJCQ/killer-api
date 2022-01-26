@@ -68,7 +68,7 @@ describe('PlayerService', () => {
     await expect(
       service.createPlayer({
         name: 'John',
-        roomCode: 'CODE3',
+        roomCode: 'CODE99',
       }),
     ).rejects.toThrowError(BadRequestException);
   });

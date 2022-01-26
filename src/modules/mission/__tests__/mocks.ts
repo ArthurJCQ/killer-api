@@ -11,12 +11,39 @@ export const missionRepositoryMock = (): Omit<MissionRepository, 'db'> => {
       id: 1,
       content: 'Push your friends in the stairs',
     },
+    {
+      id: 2,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 3,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 4,
+      content: 'Push your friends in the stairs',
+    },
   ];
   const dummyMissionsRoom: MissionRoomModel[] = [
     {
       id: 1,
       missionId: 1,
       roomCode: 'CODE1',
+    },
+    {
+      id: 2,
+      missionId: 2,
+      roomCode: 'CODE2',
+    },
+    {
+      id: 3,
+      missionId: 3,
+      roomCode: 'CODE11',
+    },
+    {
+      id: 4,
+      missionId: 3,
+      roomCode: 'CODE12',
     },
   ];
   const dummyPlayers: PlayerModel[] = [

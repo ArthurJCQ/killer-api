@@ -1,3 +1,5 @@
+import { missionServiceMock } from '../../mission/__tests__/mocks';
+import { MissionModel } from '../../mission/mission.model';
 import { RoomStatus } from '../../room/constants';
 import { RoomModel } from '../../room/room.model';
 import { PlayerRole, PlayerStatus } from '../constants';
@@ -5,9 +7,93 @@ import { GetMyPlayerDto } from '../dtos/get-my-player.dto';
 import { UpdatePlayerDto } from '../dtos/update-player.dto';
 import { PlayerModel } from '../player.model';
 import { PlayerRepository } from '../player.repository';
+import { PlayerService } from '../player.service';
 
-export const playerServiceMock = (): Partial<PlayerRepository> => {
-  return {};
+export const playerServiceMock = (): Partial<PlayerService> => {
+  const dummyPlayers: PlayerModel[] = [
+    {
+      id: 1,
+      name: 'Arty',
+      passcode: '1234',
+      roomCode: 'CODE1',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+      missionId: 1,
+    },
+    {
+      id: 2,
+      name: 'Arty',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 3,
+      name: 'John',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 4,
+      name: 'John',
+      passcode: null,
+      roomCode: 'CODE11',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 5,
+      name: 'John',
+      passcode: null,
+      roomCode: 'CODE12',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 6,
+      name: 'John',
+      passcode: null,
+      roomCode: 'CODE12',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+  ];
+
+  const dummyMissions: MissionModel[] = [
+    {
+      id: 1,
+      content: 'Push your friends in the stairs',
+    },
+    {
+      id: 2,
+      content: 'Push your friends in the stairs',
+    },
+  ];
+
+  return {
+    async checkAllPlayerInRoomHavePasscode(roomCode: string): Promise<boolean> {
+      const players = dummyPlayers.filter(
+        (player) => player.roomCode === roomCode,
+      );
+
+      const playersWithPasscode = players.filter((player) => player.passcode);
+
+      return Promise.resolve(players.length === playersWithPasscode.length);
+    },
+
+    async checkIfEnoughMissionInRoom(roomCode: string): Promise<boolean> {
+      const players = dummyPlayers.filter(
+        (player) => player.roomCode === roomCode,
+      );
+
+      const missionsInRoom = await missionServiceMock().getMissions(roomCode);
+
+      return Promise.resolve(players.length === missionsInRoom.length);
+    },
+  };
 };
 
 export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
@@ -24,6 +110,14 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
     {
       id: 1,
       name: 'Arty',
+      passcode: null,
+      roomCode: 'CODE2',
+      role: PlayerRole.PLAYER,
+      status: PlayerStatus.ALIVE,
+    },
+    {
+      id: 1,
+      name: 'John',
       passcode: null,
       roomCode: 'CODE2',
       role: PlayerRole.PLAYER,
@@ -133,12 +227,10 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(players);
     },
 
-    async getPlayerRoomStatus(
-      code: string,
-    ): Promise<Pick<RoomModel, 'status'>> {
+    async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
       const room = roomDummies.find((room) => code === room.code);
 
-      return Promise.resolve(room);
+      return Promise.resolve(room?.status);
     },
 
     setMissionIdToPlayers(
