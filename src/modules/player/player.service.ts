@@ -84,7 +84,11 @@ export class PlayerService {
   async checkAllPlayerInRoomHavePasscode(roomCode: string): Promise<boolean> {
     const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
-    return !!players.find((player) => player.passcode?.length === 4);
+    const isSomePlayerHaveNoPasscode = players.some(
+      ({ passcode }) => passcode?.length < 4,
+    );
+
+    return !isSomePlayerHaveNoPasscode;
   }
 
   async checkIfEnoughMissionInRoom(roomCode: string): Promise<boolean> {
@@ -92,6 +96,7 @@ export class PlayerService {
       this.missionService.getMissions(roomCode),
       this.playerRepo.getAllPlayersInRoom(roomCode),
     ]);
+
     return missions.length >= players.length;
   }
 
