@@ -1,5 +1,4 @@
 import { missionServiceMock } from '../../mission/__tests__/mocks';
-import { MissionModel } from '../../mission/mission.model';
 import { RoomStatus } from '../../room/constants';
 import { RoomModel } from '../../room/room.model';
 import { PlayerRole, PlayerStatus } from '../constants';
@@ -59,17 +58,6 @@ export const playerServiceMock = (): Partial<PlayerService> => {
       roomCode: 'CODE12',
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,
-    },
-  ];
-
-  const dummyMissions: MissionModel[] = [
-    {
-      id: 1,
-      content: 'Push your friends in the stairs',
-    },
-    {
-      id: 2,
-      content: 'Push your friends in the stairs',
     },
   ];
 

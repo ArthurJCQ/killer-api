@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import randomstring from 'randomstring';
 
+import { playerServiceMock } from '../../player/__tests__/mocks';
 import { PlayerRole, PlayerStatus } from '../../player/constants';
 import { PlayerModel } from '../../player/player.model';
 import { RoomStatus } from '../constants';
@@ -117,9 +118,12 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
     },
 
     async canStartGame(code: string): Promise<boolean> {
-      // Test the calls in player.service
+      const enoughMissions =
+        await playerServiceMock().checkIfEnoughMissionInRoom(code);
+      const playersHavePasscode =
+        await playerServiceMock().checkAllPlayerInRoomHavePasscode(code);
 
-      return Promise.resolve(true);
+      return Promise.resolve(enoughMissions && playersHavePasscode);
     },
   };
 };

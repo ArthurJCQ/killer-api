@@ -1,5 +1,3 @@
-import { PlayerRole, PlayerStatus } from '../../player/constants';
-import { PlayerModel } from '../../player/player.model';
 import { MissionRoomModel } from '../mission-room.model';
 import { MissionModel } from '../mission.model';
 import { MissionRepository } from '../mission.repository';
@@ -44,16 +42,6 @@ export const missionRepositoryMock = (): Omit<MissionRepository, 'db'> => {
       id: 4,
       missionId: 3,
       roomCode: 'CODE12',
-    },
-  ];
-  const dummyPlayers: PlayerModel[] = [
-    {
-      id: 1,
-      missionId: 1,
-      roomCode: 'CODE1',
-      name: 'John',
-      role: PlayerRole.PLAYER,
-      status: PlayerStatus.ALIVE,
     },
   ];
 

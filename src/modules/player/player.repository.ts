@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
 import { ROOM, RoomStatus } from '../room/constants';
-import { RoomModel } from '../room/room.model';
 
 import { PLAYER } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
