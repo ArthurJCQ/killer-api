@@ -85,7 +85,7 @@ export class PlayerService {
     const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
     const isSomePlayerHaveNoPasscode = players.some(
-      ({ passcode }) => passcode?.length < 4,
+      ({ passcode }) => !passcode,
     );
 
     return !isSomePlayerHaveNoPasscode;
