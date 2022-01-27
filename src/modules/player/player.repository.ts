@@ -92,7 +92,6 @@ export class PlayerRepository {
     const [roomStatus] = await this.db
       .client<PlayerModel>(PLAYER)
       .select(`${ROOM}.status`)
-      .select(`${ROOM}.status`)
       .join(ROOM, `${PLAYER}.roomCode`, `${ROOM}.code`)
       .where(`${ROOM}.code`, code);
 

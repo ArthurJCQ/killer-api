@@ -14,7 +14,7 @@ export class UpdatePlayerDto {
   name?: string;
 
   @IsNumberString()
-  @Length(4)
+  @Length(4, 4)
   @IsOptional()
   passcode?: string;
 

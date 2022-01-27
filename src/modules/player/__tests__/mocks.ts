@@ -96,6 +96,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       missionId: 1,
     },
     {
+
       id: 2,
       name: 'John',
       passcode: null,
