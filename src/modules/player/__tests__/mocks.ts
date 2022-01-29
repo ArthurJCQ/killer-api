@@ -94,6 +94,7 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       role: PlayerRole.PLAYER,
       status: PlayerStatus.ALIVE,
       missionId: 1,
+      targetId: 2,
     },
     {
       id: 2,
@@ -159,6 +160,12 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
 
     getPlayerById: (id: number): Promise<PlayerModel> => {
       const player = dummyPlayers.find(({ id: playerId }) => playerId === id);
+
+      return Promise.resolve(player);
+    },
+
+    async getPlayerByTargetId(targetId: number): Promise<PlayerModel> {
+      const player = dummyPlayers.find(({ targetId: id }) => id === targetId);
 
       return Promise.resolve(player);
     },

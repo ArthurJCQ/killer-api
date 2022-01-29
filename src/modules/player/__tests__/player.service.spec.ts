@@ -1,6 +1,8 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { eventEmitterMock } from '../../../__tests__/mocks';
 import { missionServiceMock } from '../../mission/__tests__/mocks';
 import { MissionService } from '../../mission/mission.service';
 import { PlayerRole, PlayerStatus } from '../constants';
@@ -23,6 +25,10 @@ describe('PlayerService', () => {
         {
           provide: MissionService,
           useValue: missionServiceMock(),
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitterMock(),
         },
       ],
     }).compile();
@@ -97,6 +103,14 @@ describe('PlayerService', () => {
 
   it('should return player by id', async () => {
     const player = await service.getPlayerById(1);
+
+    expect(player).toBeDefined();
+    expect(player.name).toEqual('Arty');
+    expect(player.passcode).toEqual('1234');
+  });
+
+  it('should return player by targetId', async () => {
+    const player = await service.getPlayerByTargetId(2);
 
     expect(player).toBeDefined();
     expect(player.name).toEqual('Arty');
