@@ -61,7 +61,13 @@ export class PlayerService {
   }
 
   async getPlayerById(id: number): Promise<PlayerModel> {
-    return this.playerRepo.getPlayerById(id);
+    const player = await this.playerRepo.getPlayerById(id);
+
+    if (!player) {
+      throw new NotFoundException('Player not found');
+    }
+
+    return player;
   }
 
   async updatePlayer(
@@ -98,6 +104,18 @@ export class PlayerService {
     ]);
 
     return missions.length >= players.length;
+  }
+
+  async deletePlayer(playerId: number): Promise<boolean> {
+    const player = await this.playerRepo.getPlayerById(playerId);
+
+    if (!player) {
+      throw new NotFoundException('Player not found');
+    }
+
+    await this.playerRepo.deletePlayer(playerId);
+
+    return true;
   }
 
   @OnEvent('game.starting')

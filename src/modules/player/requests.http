@@ -44,3 +44,6 @@ Content-Type: application/json
 
 ### GET current player in session
 GET http://localhost:3000/player/me
+
+### DELETE current user
+DELETE http://localhost:3000/player

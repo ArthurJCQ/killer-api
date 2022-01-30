@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Put, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Session,
+} from '@nestjs/common';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 
@@ -54,5 +62,15 @@ export class PlayerController {
   @Role(PlayerRole.PLAYER)
   me(@Player() player: PlayerModel): PlayerDto {
     return player;
+  }
+
+  @Delete()
+  @Role(PlayerRole.PLAYER)
+  async quitRoom(@Session() session): Promise<boolean> {
+    const res = await this.playerService.deletePlayer(session.playerId);
+
+    session.playerId = null;
+
+    return res;
   }
 }
