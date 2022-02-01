@@ -82,7 +82,7 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
       const room = roomDummies.find((room) => room.code === code);
 
       if (!room) {
-        throw new NotFoundException();
+        throw new NotFoundException({ key: 'room.NOT_FOUND' });
       }
 
       return Promise.resolve(room);
@@ -95,11 +95,13 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
       const room = roomDummies.find((room) => room.code === code);
 
       if (!room) {
-        throw new NotFoundException();
+        throw new NotFoundException({ key: 'room.NOT_FOUND' });
       }
 
       if (room.status === RoomStatus.ENDED) {
-        throw new BadRequestException();
+        throw new BadRequestException({
+          key: 'room.WRONG_STATUS.ALREADY_ENDED',
+        });
       }
 
       if (name) {
@@ -130,7 +132,7 @@ export const roomServiceMock = (): Omit<RoomService, 'roomRepo'> => {
       const room = roomDummies.find((room) => room.code === code);
 
       if (!room) {
-        throw new NotFoundException();
+        throw new NotFoundException({ key: 'room.NOT_FOUND' });
       }
 
       return playerServiceMock().getAllPlayersInRoom(code);
