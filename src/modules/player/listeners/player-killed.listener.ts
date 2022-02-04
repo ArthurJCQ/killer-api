@@ -26,15 +26,10 @@ export class PlayerKilledListener {
 
   private giveKillerVictimTargetAndMission(
     killerId: number,
-    newTargetId: number,
-    newMissionId: number,
+    targetId: number,
+    missionId: number,
   ): void {
-    if (newTargetId && newMissionId) {
-      this.playerService.updatePlayer(
-        { targetId: newTargetId, missionId: newMissionId },
-        killerId,
-      );
-    }
+    this.playerService.updatePlayer({ targetId, missionId }, killerId);
   }
 
   private cleanTargetAndMissionFromVictim(playerId: number): void {
