@@ -82,10 +82,12 @@ export async function seed(knex: Knex): Promise<void> {
     {
       roomCode: roomCodes[0],
       missionId: missionIds[0],
+      authorId: playerIds[0],
     },
     {
       roomCode: roomCodes[1],
       missionId: missionIds[1],
+      authorId: playerIds[1],
     },
   ]);
 }
