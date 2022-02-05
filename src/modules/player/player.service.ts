@@ -106,7 +106,7 @@ export class PlayerService {
     return missions.length >= players.length;
   }
 
-  async deletePlayer(playerId: number): Promise<boolean> {
+  async deletePlayer(playerId: number): Promise<void> {
     const player = await this.playerRepo.getPlayerById(playerId);
 
     if (!player) {
@@ -114,8 +114,6 @@ export class PlayerService {
     }
 
     await this.playerRepo.deletePlayer(playerId);
-
-    return true;
   }
 
   @OnEvent('game.starting')

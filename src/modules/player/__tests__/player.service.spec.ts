@@ -164,9 +164,7 @@ describe('PlayerService', () => {
   });
 
   it('should delete user', async () => {
-    const res = await service.deletePlayer(1);
-
-    expect(res).toBeTruthy();
+    await service.deletePlayer(1);
 
     await expect(service.getPlayerById(1)).rejects.toThrowError(
       NotFoundException,

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Post,
   Put,
   Session,
@@ -65,12 +66,11 @@ export class PlayerController {
   }
 
   @Delete()
+  @HttpCode(204)
   @Role(PlayerRole.PLAYER)
-  async quitRoom(@Session() session): Promise<boolean> {
-    const res = await this.playerService.deletePlayer(session.playerId);
+  async quitRoom(@Session() session): Promise<void> {
+    await this.playerService.deletePlayer(session.playerId);
 
     session.playerId = null;
-
-    return res;
   }
 }
