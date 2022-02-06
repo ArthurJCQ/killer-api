@@ -14,6 +14,8 @@ import { PlayerRole } from '../player/constants';
 import { Player } from '../player/decorators/player.decorator';
 import { Role } from '../player/decorators/role.decorator';
 import { PlayerModel } from '../player/player.model';
+import { RoomStatus } from '../room/constants';
+import { Status } from '../room/decorators/status.decorator';
 
 import { MISSION } from './constants';
 import { CreateMissionDto } from './dtos/create-mission.dto';
@@ -29,6 +31,7 @@ export class MissionController {
 
   @Post()
   @Role(PlayerRole.PLAYER)
+  @Status(RoomStatus.PENDING)
   createMission(
     @Body() mission: CreateMissionDto,
     @Player() currentPlayer: PlayerModel,
