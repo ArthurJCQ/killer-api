@@ -105,6 +105,10 @@ export class PlayerRepository {
       .returning('*');
   }
 
+  deletePlayer(playerId: number): Promise<boolean> {
+    return this.db.client<PlayerModel>(PLAYER).where('id', playerId).del();
+  }
+
   setMissionIdToPlayers(
     players: Pick<PlayerModel, 'id' | 'missionId'>[],
   ): Promise<void> {

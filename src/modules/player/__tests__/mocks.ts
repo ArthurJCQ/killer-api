@@ -221,6 +221,17 @@ export const playerRepositoryMock = (): Omit<PlayerRepository, 'db'> => {
       return Promise.resolve(room?.status);
     },
 
+    deletePlayer(playerId: number): Promise<boolean> {
+      dummyPlayers.forEach((player, index) => {
+        if (player.id === playerId) {
+          dummyPlayers.splice(index, 1);
+          return;
+        }
+      });
+
+      return Promise.resolve(true);
+    },
+
     setMissionIdToPlayers(
       players: Pick<PlayerModel, 'id' | 'missionId'>[],
     ): Promise<void> {
