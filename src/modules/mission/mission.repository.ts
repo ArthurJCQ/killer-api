@@ -1,25 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
+import { PLAYER } from '../player/constants';
 
 import { MISSION, MISSION_ROOM } from './constants';
+import { MissionRoomModel } from './mission-room.model';
 import { MissionModel } from './mission.model';
 
 @Injectable()
 export class MissionRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(content: string, roomCode: string): Promise<MissionModel> {
+  async create(
+    content: string,
+    roomCode: string,
+    playerId: number,
+  ): Promise<MissionModel> {
     try {
       return this.db.client.transaction(async (trx) => {
-        const [mission] = await trx(MISSION)
+        const [mission] = await trx<MissionModel>(MISSION)
           .insert<MissionModel[]>({
             content,
           })
           .returning('*');
 
-        await trx(MISSION_ROOM).insert({
+        await trx<MissionRoomModel>(MISSION_ROOM).insert({
           missionId: mission.id,
+          authorId: playerId,
           roomCode,
         });
 
@@ -42,5 +49,39 @@ export class MissionRepository {
     }
 
     return query;
+  }
+
+  getMissionsByPlayerId(playerId: number): Promise<MissionModel[]> {
+    return this.db
+      .client<MissionModel>(MISSION)
+      .select(`${MISSION}.id`, `${MISSION}.content`)
+      .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
+      .join(PLAYER, `${MISSION_ROOM}.authorId`, `${PLAYER}.id`)
+      .where(`${PLAYER}.id`, playerId);
+  }
+
+  async updateMission(
+    missionId: number,
+    content: string,
+  ): Promise<MissionModel> {
+    const [mission] = await this.db
+      .client<MissionModel>(MISSION)
+      .where('id', missionId)
+      .update({ content })
+      .returning('*');
+
+    return mission;
+  }
+
+  deleteMission(id): Promise<void> {
+    return this.db.client.transaction(async (trx) => {
+      await trx<MissionRoomModel>(MISSION_ROOM)
+        .where({
+          missionId: id,
+        })
+        .del();
+
+      await trx<MissionModel>(MISSION).where({ id }).del();
+    });
   }
 }

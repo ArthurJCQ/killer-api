@@ -5,3 +5,17 @@ Content-Type: application/json
 {
   "content": "Push your friend in the stairs 2"
 }
+
+### GET missions of player
+GET http://localhost:3000/mission/player
+
+### PATCH mission
+PATCH http://localhost:3000/mission/1
+Content-Type: application/json
+
+{
+  "content": "New Mission"
+}
+
+### DELETE mission
+DELETE http://localhost:3000/mission/1
