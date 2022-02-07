@@ -4,7 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { DatabaseModule } from '../database/database.module';
 import { MissionModule } from '../mission/mission.module';
 
-import { PlayerRoleGuard } from './guards/player-role-guard.service';
+import { PlayerRoleGuard } from './guards/player-role.guard';
 import { GameStartingListener } from './listeners/game-starting.listener';
 import { PlayerKilledListener } from './listeners/player-killed.listener';
 import { CurrentPlayerMiddleware } from './middlewares/current-player.middleware';
