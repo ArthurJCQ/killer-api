@@ -3,15 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { MissionService } from '../mission/mission.service';
 import { RoomStatus } from '../room/constants';
-import { GameStartingEvent } from '../room/events/game-starting.event';
 
+import { PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
-import { UpdatePlayerDto } from './dtos/update-player.dto';
+import { PlayerKilledEvent } from './events/player-killed-event';
 import { PlayerModel } from './player.model';
 import { PlayerRepository } from './player.repository';
 
@@ -20,6 +20,7 @@ export class PlayerService {
   constructor(
     private playerRepo: PlayerRepository,
     private missionService: MissionService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async createPlayer({
@@ -70,8 +71,12 @@ export class PlayerService {
     return player;
   }
 
+  async getPlayerByTargetId(targetId: number): Promise<PlayerModel> {
+    return this.playerRepo.getPlayerByTargetId(targetId);
+  }
+
   async updatePlayer(
-    player: UpdatePlayerDto,
+    player: Partial<PlayerModel>,
     id: number,
   ): Promise<PlayerModel> {
     const existingPlayer = await this.playerRepo.getPlayerById(id);
@@ -80,7 +85,20 @@ export class PlayerService {
       throw new NotFoundException('No player found to update');
     }
 
-    return this.playerRepo.updatePlayer(player, id);
+    const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
+
+    if (player.status === PlayerStatus.KILLED) {
+      this.eventEmitter.emit(
+        'player.killed',
+        new PlayerKilledEvent(
+          id,
+          updatedPlayer.targetId,
+          updatedPlayer.missionId,
+        ),
+      );
+    }
+
+    return updatedPlayer;
   }
 
   getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
@@ -114,76 +132,5 @@ export class PlayerService {
     }
 
     await this.playerRepo.deletePlayer(playerId);
-  }
-
-  @OnEvent('game.starting')
-  async handleGameStarting(gameStarting: GameStartingEvent): Promise<void> {
-    await this.dispatchMissions(gameStarting.roomCode);
-    await this.dispatchTargets(gameStarting.roomCode);
-  }
-
-  private async dispatchMissions(roomCode: string): Promise<void> {
-    const [players, missions] = await Promise.all([
-      this.playerRepo.getAllPlayersInRoom(roomCode),
-      this.missionService.getMissions(roomCode),
-    ]);
-
-    const updatedPlayers = players.reduce(
-      (players: Pick<PlayerModel, 'id' | 'missionId'>[], player) => {
-        const randomMissionIndex = Math.floor(Math.random() * missions.length);
-        const mission = missions[randomMissionIndex];
-
-        players.push({ id: player.id, missionId: mission.id });
-
-        missions.splice(randomMissionIndex, 1);
-
-        return players;
-      },
-      [],
-    );
-
-    return this.playerRepo.setMissionIdToPlayers(updatedPlayers);
-  }
-
-  private async dispatchTargets(roomCode: string): Promise<void> {
-    const allPlayers = await this.playerRepo.getAllPlayersInRoom(roomCode);
-
-    const targets = allPlayers.slice();
-
-    const updatedPlayers = allPlayers.reduce(
-      (players: Pick<PlayerModel, 'id' | 'targetId'>[], currentPlayer) => {
-        const playerTargets = targets.filter(
-          (target) =>
-            target.id !== currentPlayer.id &&
-            target.targetId !== currentPlayer.id,
-        );
-
-        const randomTargetIndex = Math.floor(
-          Math.random() * playerTargets.length,
-        );
-        const target = playerTargets[randomTargetIndex];
-
-        players.push({ id: currentPlayer.id, targetId: target.id });
-
-        for (const key of Object.keys(targets)) {
-          if (targets[key] === target) {
-            targets.splice(parseInt(key), 1);
-            break;
-          }
-        }
-
-        allPlayers.forEach((player) => {
-          if (player.id === currentPlayer.id) {
-            player.targetId = target.id;
-            return;
-          }
-        });
-
-        return players;
-      },
-      [],
-    );
-
-    return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
   }
 }

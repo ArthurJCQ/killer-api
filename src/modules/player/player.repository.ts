@@ -24,7 +24,7 @@ export class PlayerRepository {
   }
 
   async updatePlayer(
-    { name, passcode, status, missionId }: Partial<PlayerModel>,
+    { name, passcode, status, missionId, targetId }: Partial<PlayerModel>,
     id: number,
   ): Promise<PlayerModel> {
     const [player] = await this.db
@@ -37,6 +37,7 @@ export class PlayerRepository {
         passcode,
         status,
         missionId,
+        targetId,
       })
       .returning('*');
 
@@ -74,6 +75,14 @@ export class PlayerRepository {
 
   async getPlayerById(id: number): Promise<PlayerModel> {
     const [player] = await this.db.client<PlayerModel>(PLAYER).where('id', id);
+
+    return player;
+  }
+
+  async getPlayerByTargetId(targetId: number): Promise<PlayerModel> {
+    const [player] = await this.db
+      .client<PlayerModel>(PLAYER)
+      .where('targetId', targetId);
 
     return player;
   }
