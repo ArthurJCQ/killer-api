@@ -1,30 +1,23 @@
-import {
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import {Body, Controller, ForbiddenException, Get, Param, Post, Put,} from '@nestjs/common';
 
-import { Serialize } from '../../interceptors/serializer.interceptor';
-import { PlayerRole } from '../player/constants';
-import { Player } from '../player/decorators/player.decorator';
-import { Role } from '../player/decorators/role.decorator';
-import { PlayerListDto } from '../player/dtos/player-list.dto';
-import { PlayerModel } from '../player/player.model';
+import {Serialize} from '../../interceptors/serializer.interceptor';
+import {PlayerRole} from '../player/constants';
+import {Player} from '../player/decorators/player.decorator';
+import {Role} from '../player/decorators/role.decorator';
+import {PlayerListDto} from '../player/dtos/player-list.dto';
+import {PlayerModel} from '../player/player.model';
 
-import { ROOM } from './constants';
-import { RoomDto } from './dtos/room.dto';
-import { UpdateRoomDto } from './dtos/update-room.dto';
-import { RoomService } from './room.service';
+import {ROOM} from './constants';
+import {RoomDto} from './dtos/room.dto';
+import {UpdateRoomDto} from './dtos/update-room.dto';
+import {RoomService} from './room.service';
 
 @Controller(ROOM)
 export class RoomController {
   constructor(private roomService: RoomService) {}
 
   @Post()
+  @Role(PlayerRole.PLAYER)
   @Serialize(RoomDto)
   async createRoom(@Player() currentPlayer: PlayerModel): Promise<RoomDto> {
     return this.roomService.createRoom(currentPlayer);
