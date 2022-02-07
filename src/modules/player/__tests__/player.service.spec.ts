@@ -176,4 +176,12 @@ describe('PlayerService', () => {
 
     expect(res).toBeFalsy();
   });
+
+  it('should delete user', async () => {
+    await service.deletePlayer(1);
+
+    await expect(service.getPlayerById(1)).rejects.toThrowError(
+      NotFoundException,
+    );
+  });
 });

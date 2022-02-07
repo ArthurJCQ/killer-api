@@ -37,10 +37,13 @@ POST http://localhost:3000/player/login
 Content-Type: application/json
 
 {
-  "name": "Roco",
+  "name": "Artyy",
   "passcode": "1234",
   "roomCode": "XNXX1"
 }
 
 ### GET current player in session
 GET http://localhost:3000/player/me
+
+### DELETE current player
+DELETE http://localhost:3000/player
