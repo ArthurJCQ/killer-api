@@ -15,7 +15,6 @@ async function bootstrap(): Promise<void> {
     .setTitle('Killer API')
     .setDescription('The Killer API description')
     .setVersion('0.5')
-    .addTag('killer')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
