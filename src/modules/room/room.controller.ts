@@ -25,6 +25,7 @@ export class RoomController {
   constructor(private roomService: RoomService) {}
 
   @Post()
+  @Role(PlayerRole.PLAYER)
   @Serialize(RoomDto)
   async createRoom(@Player() currentPlayer: PlayerModel): Promise<RoomDto> {
     return this.roomService.createRoom(currentPlayer);
