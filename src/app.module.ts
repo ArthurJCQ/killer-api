@@ -37,7 +37,7 @@ import { RoomModule } from './modules/room/room.module';
       fallbackLanguage: 'en',
       parser: I18nJsonParser,
       parserOptions: {
-        path: path.join(__dirname, '..', '/i18n/'), // TODO: Find a way to copy /i18n to /dist/src/i18n (currently on /dist/i18n)
+        path: path.join(__dirname, '..', '/i18n/'),
       },
     }),
   ],
