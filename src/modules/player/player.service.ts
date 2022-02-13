@@ -63,7 +63,7 @@ export class PlayerService {
     const player = await this.playerRepo.getPlayerById(id);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     return player;
@@ -126,7 +126,7 @@ export class PlayerService {
     const player = await this.playerRepo.getPlayerById(playerId);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     await this.playerRepo.deletePlayer(playerId);

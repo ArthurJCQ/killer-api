@@ -4,6 +4,8 @@
   "BAD_REQUEST": "",
   "WRONG_STATUS": {
     "ALREADY_ENDED": "This room is actually closed",
-    "CREATE_PLAYER": "You can only create player in Pending Status Room"
+    "ALREADY_STARTED": "Game already started",
+    "CREATE_PLAYER": "You can only create player in Pending Status Room",
+    "MISMATCH": "Room status is {current}. It has to be {expected}"
   }
 }

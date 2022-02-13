@@ -24,7 +24,7 @@ export class RoomStatusGuard implements CanActivate {
     if (!routeRoomStatus) return true;
 
     if (!request.currentPlayer) {
-      throw new ForbiddenException('Forbidden: There is no player in session');
+      throw new ForbiddenException({ key: 'player.FORBIDDEN.NO_USER_SESSION' });
     }
 
     const playerRoom = await this.roomService.getRoomByCode(
@@ -32,9 +32,10 @@ export class RoomStatusGuard implements CanActivate {
     );
 
     if (playerRoom.status !== routeRoomStatus) {
-      throw new ForbiddenException(
-        `Room status is ${playerRoom.status}. It has to be ${routeRoomStatus}`,
-      );
+      throw new ForbiddenException({
+        key: 'room.WRONG_STATUS.MISMATCH',
+        args: { current: playerRoom.status, expected: routeRoomStatus },
+      });
     }
 
     return true;
