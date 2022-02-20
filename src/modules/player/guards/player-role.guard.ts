@@ -23,7 +23,7 @@ export class PlayerRoleGuard implements CanActivate {
     if (!routeRole) return true;
 
     if (!request.currentPlayer) {
-      throw new ForbiddenException('Forbidden: There is no player in session');
+      throw new ForbiddenException({ key: 'player.FORBIDDEN.NO_USER_SESSION' });
     }
 
     return this.matchRole(request.currentPlayer.role, routeRole);

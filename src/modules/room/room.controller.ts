@@ -46,7 +46,7 @@ export class RoomController {
     @Body() room: UpdateRoomDto,
   ): Promise<RoomDto> {
     if (currentPlayer.roomCode !== code) {
-      throw new ForbiddenException('This room is not yours');
+      throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
 
     return this.roomService.updateRoom(room, code);
