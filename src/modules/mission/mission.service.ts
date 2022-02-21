@@ -40,7 +40,7 @@ export class MissionService {
     return this.missionRepo.deleteMission(missionId);
   }
 
-  private async checkMissionBelongToPlayer(
+  async checkMissionBelongToPlayer(
     missionId: number,
     playerId: number,
   ): Promise<void> {

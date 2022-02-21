@@ -2,38 +2,35 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { eventEmitterMock } from '../../../__tests__/mocks';
-import { playerServiceMock } from '../../player/__tests__/mocks';
+import { DatabaseService } from '../../database/database.service';
+import { PlayerRole, PlayerStatus } from '../../player/constants';
+import { PlayerRepository } from '../../player/player.repository';
 import { PlayerService } from '../../player/player.service';
 import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
 import { RoomService } from '../room.service';
 
-import { roomRepositoryMock } from './mocks';
-
 describe('RoomService', () => {
   let service: RoomService;
+  let roomRepo: RoomRepository;
+  let playerService: PlayerService;
+  let eventEmmiter: EventEmitter2;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RoomService,
-        {
-          provide: RoomRepository,
-          useValue: roomRepositoryMock(),
-        },
-        {
-          provide: PlayerService,
-          useValue: playerServiceMock(),
-        },
-        {
-          provide: EventEmitter2,
-          useValue: eventEmitterMock(),
-        },
-      ],
-    }).compile();
+      providers: [RoomService, RoomRepository, PlayerService, EventEmitter2],
+    })
+      .useMocker((token) => {
+        if (token === DatabaseService || PlayerRepository) {
+          return {};
+        }
+      })
+      .compile();
 
     service = module.get<RoomService>(RoomService);
+    roomRepo = module.get<RoomRepository>(RoomRepository);
+    playerService = module.get<PlayerService>(PlayerService);
+    eventEmmiter = module.get<EventEmitter2>(EventEmitter2);
   });
 
   it('should be defined', () => {
@@ -41,16 +38,50 @@ describe('RoomService', () => {
   });
 
   it('should create a room', async () => {
+    const roomCode = 'CODE1';
+    const expectedRoom = {
+      id: 1,
+      code: roomCode,
+      status: RoomStatus.PENDING,
+      createdAt: new Date(),
+      name: 'room',
+      dateEnd: new Date(),
+    };
+
+    const generateRoomCodeSpy = jest
+      .spyOn(service, 'generateRoomCode')
+      .mockImplementation(() => Promise.resolve(roomCode));
+    const createRoomSpy = jest
+      .spyOn(roomRepo, 'createRoom')
+      .mockImplementation(() => Promise.resolve(expectedRoom));
+
     const room = await service.createRoom({
       id: 1,
       name: 'Arty',
       roomCode: '',
     });
+
+    expect(generateRoomCodeSpy).toHaveBeenCalled();
+    expect(createRoomSpy).toHaveBeenCalledWith(roomCode, 'Arty', 1);
     expect(room).toBeDefined();
-    expect(room.code).toHaveLength(5);
+    expect(room.code).toEqual(roomCode);
+  });
+
+  it('should generate a roomCode', async () => {
+    const getRoomSpy = jest
+      .spyOn(roomRepo, 'getRoomByCode')
+      .mockImplementation(() => Promise.resolve(null));
+
+    const roomCode = await service.generateRoomCode();
+
+    expect(getRoomSpy).toHaveBeenCalled();
+    expect(roomCode).toHaveLength(5);
   });
 
   it('should not create room for player already in a room', async () => {
+    const generateRoomCodeSpy = jest.spyOn(service, 'generateRoomCode');
+    const createRoomSpy = jest.spyOn(roomRepo, 'createRoom');
+
     await expect(
       service.createRoom({
         id: 1,
@@ -58,46 +89,143 @@ describe('RoomService', () => {
         roomCode: 'CODE1',
       }),
     ).rejects.toThrowError(BadRequestException);
+    expect(generateRoomCodeSpy).not.toHaveBeenCalled();
+    expect(createRoomSpy).not.toHaveBeenCalled();
   });
 
   it('should get a room', async () => {
+    const expectedRoom = {
+      id: 1,
+      code: 'CODE1',
+      status: RoomStatus.PENDING,
+      createdAt: new Date(),
+      name: 'room',
+      dateEnd: new Date(),
+    };
+
+    const getRoomSpy = jest
+      .spyOn(roomRepo, 'getRoomByCode')
+      .mockImplementation(() => Promise.resolve(expectedRoom));
+
     const room = await service.getRoomByCode('CODE1');
+
+    expect(getRoomSpy).toHaveBeenCalledWith('CODE1');
     expect(room).toBeDefined();
-    expect(room.code).toHaveLength(5);
-    expect(room.status).toEqual(RoomStatus.PENDING);
+    expect(room).toEqual(expectedRoom);
   });
 
   it('should not get unexisting room', async () => {
+    const getRoomSpy = jest
+      .spyOn(roomRepo, 'getRoomByCode')
+      .mockImplementation(() => null);
+
     await expect(service.getRoomByCode('CODE99')).rejects.toThrowError(
       NotFoundException,
     );
+    expect(getRoomSpy).toHaveBeenCalledWith('CODE99');
   });
 
   it('should start a game', async () => {
+    const expectedRoom = {
+      id: 1,
+      code: 'CODE1',
+      status: RoomStatus.PENDING,
+      createdAt: new Date(),
+      name: 'room',
+      dateEnd: new Date(),
+    };
+
+    const getRoomSpy = jest
+      .spyOn(roomRepo, 'getRoomByCode')
+      .mockImplementation(() => Promise.resolve(expectedRoom));
+    const canStartGameSpy = jest
+      .spyOn(service, 'canStartGame')
+      .mockImplementation(() => Promise.resolve(true));
+    const updateRoomSpy = jest
+      .spyOn(roomRepo, 'updateRoom')
+      .mockImplementation(() =>
+        Promise.resolve({ ...expectedRoom, status: RoomStatus.IN_GAME }),
+      );
+    const eventEmmitterSpy = jest
+      .spyOn(eventEmmiter, 'emit')
+      .mockImplementation(() => true);
+
     const room = await service.updateRoom(
       { status: RoomStatus.IN_GAME },
       'CODE1',
     );
 
+    expect(getRoomSpy).toHaveBeenCalledWith('CODE1');
+    expect(canStartGameSpy).toHaveBeenCalledWith('CODE1');
+    expect(updateRoomSpy).toHaveBeenCalledWith(
+      { status: RoomStatus.IN_GAME },
+      'CODE1',
+    );
+    expect(eventEmmitterSpy).toHaveBeenCalledWith('game.starting', {
+      roomCode: 'CODE1',
+    });
     expect(room).toBeDefined();
-    expect(room.status).toEqual(RoomStatus.IN_GAME);
+    expect(room).toEqual({ ...expectedRoom, status: RoomStatus.IN_GAME });
   });
 
   it('should not start a game if player have no passcode', async () => {
-    await expect(
-      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE11'),
-    ).rejects.toThrowError(BadRequestException);
+    const checkPasscodeSpy = jest
+      .spyOn(playerService, 'checkAllPlayerInRoomHavePasscode')
+      .mockImplementation(() => Promise.reject(new BadRequestException()));
+    const checkEnoughMissionSpy = jest
+      .spyOn(playerService, 'checkIfEnoughMissionInRoom')
+      .mockImplementation(() => Promise.resolve(true));
+    const enoughPlayersSpy = jest
+      .spyOn(service, 'enoughPlayersInRoom')
+      .mockImplementation();
+
+    await expect(service.canStartGame('CODE11')).rejects.toThrowError(
+      BadRequestException,
+    );
+
+    expect(checkEnoughMissionSpy).toHaveBeenCalledWith('CODE11');
+    expect(checkPasscodeSpy).toHaveBeenCalledWith('CODE11');
+    expect(enoughPlayersSpy).toHaveBeenCalledWith('CODE11');
   });
 
-  it('should not start a game if no enough mission', async () => {
-    await expect(
-      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE12'),
-    ).rejects.toThrowError(BadRequestException);
-  });
+  it('should get all players in room', async () => {
+    const getRoomSpy = jest
+      .spyOn(roomRepo, 'getRoomByCode')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: 1,
+          code: 'CODE1',
+          status: RoomStatus.PENDING,
+          createdAt: new Date(),
+          name: 'room',
+          dateEnd: new Date(),
+        }),
+      );
+    const getAllPlayersSpy = jest
+      .spyOn(playerService, 'getAllPlayersInRoom')
+      .mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: 1,
+            name: 'Arty',
+            roomCode: 'CODE1',
+            status: PlayerStatus.ALIVE,
+            role: PlayerRole.PLAYER,
+          },
+          {
+            id: 2,
+            name: 'John',
+            roomCode: 'CODE1',
+            status: PlayerStatus.ALIVE,
+            role: PlayerRole.PLAYER,
+          },
+        ]),
+      );
 
-  it('should prevent from update an ended game', async () => {
-    await expect(
-      service.updateRoom({ status: RoomStatus.IN_GAME }, 'CODE2'),
-    ).rejects.toThrowError(BadRequestException);
+    const players = await service.getAllPlayersInRoom('CODE3');
+
+    expect(getRoomSpy).toHaveBeenCalledWith('CODE3');
+    expect(getAllPlayersSpy).toHaveBeenCalledWith('CODE3');
+    expect(players.length).toEqual(2);
   });
 });

@@ -105,12 +105,26 @@ export class RoomService {
     return this.playerService.getAllPlayersInRoom(code);
   }
 
-  async canStartGame(code: string): Promise<boolean> {
-    const [enoughMissionsInRoom, allPlayersHavePasscode] = await Promise.all([
-      this.playerService.checkIfEnoughMissionInRoom(code),
-      this.playerService.checkAllPlayerInRoomHavePasscode(code),
-    ]);
+  async enoughPlayersInRoom(code: string): Promise<boolean> {
+    const playersInRoom = await this.getAllPlayersInRoom(code);
 
-    return enoughMissionsInRoom && allPlayersHavePasscode;
+    if (playersInRoom.length <= 1) {
+      throw new BadRequestException('There is not enough players in room.');
+    }
+
+    return true;
+  }
+
+  async canStartGame(code: string): Promise<boolean> {
+    const [enoughMissionsInRoom, allPlayersHavePasscode, enoughPlayersInRoom] =
+      await Promise.all([
+        this.playerService.checkIfEnoughMissionInRoom(code),
+        this.playerService.checkAllPlayerInRoomHavePasscode(code),
+        this.enoughPlayersInRoom(code),
+      ]);
+
+    return (
+      enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom
+    );
   }
 }
