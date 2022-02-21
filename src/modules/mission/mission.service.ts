@@ -51,9 +51,7 @@ export class MissionService {
     );
 
     if (!mission) {
-      throw new NotFoundException(
-        'No mission with this id has been found for this player',
-      );
+      throw new NotFoundException({ key: 'player.MISSION.NOT_FOUND' });
     }
   }
 }

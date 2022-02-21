@@ -1,0 +1,14 @@
+{
+  "NOT_FOUND": "Room not found",
+  "FORBIDDEN": "You are not allowed to perform action on this room",
+  "BAD_REQUEST": "",
+  "WRONG_STATUS": {
+    "ALREADY_ENDED": "This room is actually closed",
+    "ALREADY_STARTED": "Game already started",
+    "CREATE_PLAYER": "You can only create player in Pending Status Room",
+    "MISMATCH": "Room status is {current}. It has to be {expected}"
+  },
+  "START_GAME": {
+    "NOT_ENOUGH_PLAYERS": "There is not enough players in room."
+  }
+}

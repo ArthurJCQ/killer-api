@@ -31,9 +31,9 @@ export class PlayerService {
       const roomStatus = await this.playerRepo.getPlayerRoomStatus(roomCode);
 
       if (roomStatus !== RoomStatus.PENDING) {
-        throw new BadRequestException(
-          'You can only create player in Pending Status Room',
-        );
+        throw new BadRequestException({
+          key: 'room.WRONG_STATUS.CREATE_PLAYER',
+        });
       }
 
       const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
@@ -42,9 +42,7 @@ export class PlayerService {
       );
 
       if (existingPlayer) {
-        throw new BadRequestException(
-          'Player with this pseudo already exists in this room',
-        );
+        throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
       }
     }
 
@@ -55,7 +53,7 @@ export class PlayerService {
     const player = await this.playerRepo.getPlayer(playerDto);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     return player;
@@ -65,7 +63,7 @@ export class PlayerService {
     const player = await this.playerRepo.getPlayerById(id);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     return player;
@@ -82,7 +80,7 @@ export class PlayerService {
     const existingPlayer = await this.playerRepo.getPlayerById(id);
 
     if (!existingPlayer) {
-      throw new NotFoundException('No player found to update');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -113,7 +111,7 @@ export class PlayerService {
     );
 
     if (isSomePlayerHaveNoPasscode) {
-      throw new BadRequestException('Some player have no passcode yet.');
+      throw new BadRequestException({ key: 'player>BAD_REQUEST.NO_PASSCODE' });
     }
 
     return true;
@@ -126,9 +124,9 @@ export class PlayerService {
     ]);
 
     if (missions?.length < players?.length) {
-      throw new BadRequestException(
-        'There is not enough mission in this room.',
-      );
+      throw new BadRequestException({
+        key: 'player.BAD_REQUEST.NOT_ENOUGH_MISSION',
+      });
     }
 
     return true;
@@ -138,7 +136,7 @@ export class PlayerService {
     const player = await this.playerRepo.getPlayerById(playerId);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     await this.playerRepo.deletePlayer(playerId);

@@ -29,7 +29,9 @@ export class RoomService {
     roomCode,
   }: Pick<PlayerModel, 'id' | 'name' | 'roomCode'>): Promise<RoomModel> {
     if (roomCode) {
-      throw new BadRequestException('Player is already in a room');
+      throw new BadRequestException({
+        key: 'player.BAD_REQUEST.ALREADY_IN_ROOM',
+      });
     }
 
     const newRoomCode = await this.generateRoomCode();
@@ -41,7 +43,7 @@ export class RoomService {
     const room = await this.roomRepo.getRoomByCode(code);
 
     if (!room) {
-      throw new NotFoundException('Room not found');
+      throw new NotFoundException({ key: 'room.NOT_FOUND' });
     }
 
     return room;
@@ -69,25 +71,21 @@ export class RoomService {
     const existingRoom = await this.roomRepo.getRoomByCode(code);
 
     if (!existingRoom) {
-      throw new NotFoundException('No room found with this code');
+      throw new NotFoundException({ key: 'room.NOT_FOUND' });
     }
 
     if (existingRoom.status === RoomStatus.ENDED) {
-      throw new BadRequestException('Can not update ended room');
+      throw new BadRequestException({ key: 'room.WRONG_STATUS.ALREADY_ENDED' });
     }
 
     if (roomUpdateData.status === RoomStatus.IN_GAME) {
       if (existingRoom.status === RoomStatus.IN_GAME) {
-        throw new BadRequestException('Game already started');
+        throw new BadRequestException({
+          key: 'room.WRONG_STATUS.ALREADY_STARTED',
+        });
       }
 
-      const canStartGame = await this.canStartGame(code);
-
-      if (!canStartGame) {
-        throw new BadRequestException(
-          'Game can not start. Either there is no enough mission, or some players did not set a passcode',
-        );
-      }
+      await this.canStartGame(code);
 
       this.eventEmitter.emit('game.starting', new GameStartingEvent(code));
     }
@@ -99,7 +97,7 @@ export class RoomService {
     const room = await this.roomRepo.getRoomByCode(code);
 
     if (!room) {
-      throw new NotFoundException('Room does not exist');
+      throw new NotFoundException({ key: 'room.NOT_FOUND' });
     }
 
     return this.playerService.getAllPlayersInRoom(code);
@@ -109,7 +107,7 @@ export class RoomService {
     const playersInRoom = await this.getAllPlayersInRoom(code);
 
     if (playersInRoom.length <= 1) {
-      throw new BadRequestException('There is not enough players in room.');
+      throw new BadRequestException({ key: 'room.NOT_ENOUGH_PLAYERS' });
     }
 
     return true;

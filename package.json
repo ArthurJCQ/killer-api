@@ -38,6 +38,7 @@
     "class-validator": "^0.13.2",
     "cookie-session": "^2.0.0",
     "knex": "^0.95.14",
+    "nestjs-i18n": "^8.2.2",
     "pg": "^8.7.1",
     "randomstring": "^1.2.1",
     "reflect-metadata": "^0.1.13",
