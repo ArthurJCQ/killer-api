@@ -9,7 +9,7 @@ import randomstring from 'randomstring';
 import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
 
-import { RoomStatus } from './constants';
+import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { GameStartingEvent } from './events/game-starting.event';
 import { RoomModel } from './room.model';
@@ -106,7 +106,7 @@ export class RoomService {
   async enoughPlayersInRoom(code: string): Promise<boolean> {
     const playersInRoom = await this.getAllPlayersInRoom(code);
 
-    if (playersInRoom.length <= 1) {
+    if (playersInRoom.length <= MAX_PLAYER_IN_ROOM) {
       throw new BadRequestException({ key: 'room.NOT_ENOUGH_PLAYERS' });
     }
 

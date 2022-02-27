@@ -36,7 +36,7 @@ describe('MissionService', () => {
 
     const createMissionSpy = jest
       .spyOn(missionRepo, 'create')
-      .mockImplementation(() => Promise.resolve(expectedMission));
+      .mockReturnValue(Promise.resolve(expectedMission));
 
     const mission = await service.createMission('Mission', {
       id: 1,
@@ -62,7 +62,7 @@ describe('MissionService', () => {
 
     const missionByPlayerSpy = jest
       .spyOn(missionRepo, 'getMissionsByPlayerId')
-      .mockImplementation(() => Promise.resolve(expectedMissions));
+      .mockReturnValue(Promise.resolve(expectedMissions));
 
     const missions = await service.getMissionsByPlayerId(1);
 
@@ -82,7 +82,7 @@ describe('MissionService', () => {
       .mockImplementation();
     const updateMissionSpy = jest
       .spyOn(missionRepo, 'updateMission')
-      .mockImplementation(() => Promise.resolve(updatedMission));
+      .mockReturnValue(Promise.resolve(updatedMission));
 
     const mission = await service.updateMission(1, 1, 'Updated content');
 
@@ -94,10 +94,8 @@ describe('MissionService', () => {
   it('should not update a mission if not belong to player', async () => {
     const checkMissionSpy = jest
       .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockImplementation(() => Promise.reject(new NotFoundException()));
-    const updateMissionSpy = jest
-      .spyOn(missionRepo, 'updateMission')
-      .mockImplementation();
+      .mockRejectedValue(new NotFoundException());
+    const updateMissionSpy = jest.spyOn(missionRepo, 'updateMission');
 
     await expect(
       service.updateMission(1, 2, 'Updated content'),
@@ -123,10 +121,8 @@ describe('MissionService', () => {
   it('should not delete a mission if not belong to player', async () => {
     const checkMissionSpy = jest
       .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockImplementation(() => Promise.reject(new NotFoundException()));
-    const deleteMissionSpy = jest
-      .spyOn(missionRepo, 'deleteMission')
-      .mockImplementation();
+      .mockRejectedValue(new NotFoundException());
+    const deleteMissionSpy = jest.spyOn(missionRepo, 'deleteMission');
 
     await expect(service.deleteMission(2, 1)).rejects.toThrowError(
       NotFoundException,

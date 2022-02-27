@@ -111,7 +111,7 @@ export class PlayerService {
     );
 
     if (isSomePlayerHaveNoPasscode) {
-      throw new BadRequestException({ key: 'player>BAD_REQUEST.NO_PASSCODE' });
+      throw new BadRequestException({ key: 'player.BAD_REQUEST.NO_PASSCODE' });
     }
 
     return true;

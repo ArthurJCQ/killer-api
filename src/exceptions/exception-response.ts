@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface ExceptionResponse {
+export interface ExceptionResponse {
   statusCode?: number;
   message?: string;
   key?: string;

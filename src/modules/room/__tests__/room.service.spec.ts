@@ -50,10 +50,10 @@ describe('RoomService', () => {
 
     const generateRoomCodeSpy = jest
       .spyOn(service, 'generateRoomCode')
-      .mockImplementation(() => Promise.resolve(roomCode));
+      .mockReturnValue(Promise.resolve(roomCode));
     const createRoomSpy = jest
       .spyOn(roomRepo, 'createRoom')
-      .mockImplementation(() => Promise.resolve(expectedRoom));
+      .mockReturnValue(Promise.resolve(expectedRoom));
 
     const room = await service.createRoom({
       id: 1,
@@ -70,7 +70,7 @@ describe('RoomService', () => {
   it('should generate a roomCode', async () => {
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockImplementation(() => Promise.resolve(null));
+      .mockReturnValue(Promise.resolve(null));
 
     const roomCode = await service.generateRoomCode();
 
@@ -105,7 +105,7 @@ describe('RoomService', () => {
 
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockImplementation(() => Promise.resolve(expectedRoom));
+      .mockReturnValue(Promise.resolve(expectedRoom));
 
     const room = await service.getRoomByCode('CODE1');
 
@@ -117,7 +117,7 @@ describe('RoomService', () => {
   it('should not get unexisting room', async () => {
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockImplementation(() => null);
+      .mockReturnValue(null);
 
     await expect(service.getRoomByCode('CODE99')).rejects.toThrowError(
       NotFoundException,
@@ -137,18 +137,18 @@ describe('RoomService', () => {
 
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockImplementation(() => Promise.resolve(expectedRoom));
+      .mockReturnValue(Promise.resolve(expectedRoom));
     const canStartGameSpy = jest
       .spyOn(service, 'canStartGame')
-      .mockImplementation(() => Promise.resolve(true));
+      .mockReturnValue(Promise.resolve(true));
     const updateRoomSpy = jest
       .spyOn(roomRepo, 'updateRoom')
-      .mockImplementation(() =>
+      .mockReturnValue(
         Promise.resolve({ ...expectedRoom, status: RoomStatus.IN_GAME }),
       );
     const eventEmmitterSpy = jest
       .spyOn(eventEmmiter, 'emit')
-      .mockImplementation(() => true);
+      .mockReturnValue(true);
 
     const room = await service.updateRoom(
       { status: RoomStatus.IN_GAME },
@@ -171,10 +171,10 @@ describe('RoomService', () => {
   it('should not start a game if player have no passcode', async () => {
     const checkPasscodeSpy = jest
       .spyOn(playerService, 'checkAllPlayerInRoomHavePasscode')
-      .mockImplementation(() => Promise.reject(new BadRequestException()));
+      .mockRejectedValue(new BadRequestException());
     const checkEnoughMissionSpy = jest
       .spyOn(playerService, 'checkIfEnoughMissionInRoom')
-      .mockImplementation(() => Promise.resolve(true));
+      .mockReturnValue(Promise.resolve(true));
     const enoughPlayersSpy = jest
       .spyOn(service, 'enoughPlayersInRoom')
       .mockImplementation();
@@ -189,21 +189,19 @@ describe('RoomService', () => {
   });
 
   it('should get all players in room', async () => {
-    const getRoomSpy = jest
-      .spyOn(roomRepo, 'getRoomByCode')
-      .mockImplementation(() =>
-        Promise.resolve({
-          id: 1,
-          code: 'CODE1',
-          status: RoomStatus.PENDING,
-          createdAt: new Date(),
-          name: 'room',
-          dateEnd: new Date(),
-        }),
-      );
+    const getRoomSpy = jest.spyOn(roomRepo, 'getRoomByCode').mockReturnValue(
+      Promise.resolve({
+        id: 1,
+        code: 'CODE1',
+        status: RoomStatus.PENDING,
+        createdAt: new Date(),
+        name: 'room',
+        dateEnd: new Date(),
+      }),
+    );
     const getAllPlayersSpy = jest
       .spyOn(playerService, 'getAllPlayersInRoom')
-      .mockImplementation(() =>
+      .mockReturnValue(
         Promise.resolve([
           {
             id: 1,
