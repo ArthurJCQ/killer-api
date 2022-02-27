@@ -12,17 +12,18 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import cookieSession from 'cookie-session';
 import { I18nJsonParser, I18nModule } from 'nestjs-i18n';
 
-import { appConfig, databaseConfig } from './app.config';
+import { appConfig, databaseConfig, mercureConfig } from './app.config';
 import { HttpExceptionFilter } from './exceptions/http-exception.filter';
 import { DatabaseModule } from './modules/database/database.module';
 import { MissionModule } from './modules/mission/mission.module';
 import { PlayerModule } from './modules/player/player.module';
 import { RoomModule } from './modules/room/room.module';
+import { SseModule } from './modules/sse/sse.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [appConfig, databaseConfig],
+      load: [appConfig, databaseConfig, mercureConfig],
       isGlobal: true,
     }),
     RoomModule,
@@ -40,6 +41,7 @@ import { RoomModule } from './modules/room/room.module';
         path: path.join(__dirname, '..', '/i18n/'),
       },
     }),
+    SseModule,
   ],
   providers: [
     {

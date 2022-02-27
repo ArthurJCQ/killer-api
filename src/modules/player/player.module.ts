@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -13,7 +14,7 @@ import { PlayerRepository } from './player.repository';
 import { PlayerService } from './player.service';
 
 @Module({
-  imports: [DatabaseModule, MissionModule],
+  imports: [DatabaseModule, MissionModule, HttpModule],
   providers: [
     PlayerService,
     PlayerRepository,

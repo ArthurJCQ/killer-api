@@ -1,3 +1,6 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 
 import { PlayerController } from '../player.controller';
@@ -9,11 +12,13 @@ describe('PlayerController', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       controllers: [PlayerController],
+      imports: [ConfigModule, HttpModule],
       providers: [
         {
           provide: PlayerService,
           useValue: {},
         },
+        EventEmitter2,
       ],
     }).compile();
 

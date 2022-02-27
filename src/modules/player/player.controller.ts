@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
@@ -8,8 +9,11 @@ import {
   Put,
   Session,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
+import { MercureEvent } from '../sse/models/mercure-event';
 
 import { PLAYER, PlayerRole } from './constants';
 import { Player } from './decorators/player.decorator';
@@ -24,7 +28,12 @@ import { PlayerService } from './player.service';
 @Controller(PLAYER)
 @Serialize(PlayerDto)
 export class PlayerController {
-  constructor(private playerService: PlayerService) {}
+  constructor(
+    private playerService: PlayerService,
+    private configService: ConfigService,
+    private httpService: HttpService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @Post()
   async createPlayer(
@@ -32,6 +41,16 @@ export class PlayerController {
     @Session() session,
   ): Promise<PlayerDto> {
     const newPlayer = await this.playerService.createPlayer(player);
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `${this.configService.get<string>('app.host')}/room/${
+          newPlayer.roomCode
+        }`,
+        JSON.stringify(newPlayer),
+      ),
+    );
 
     session.playerId = newPlayer.id;
 

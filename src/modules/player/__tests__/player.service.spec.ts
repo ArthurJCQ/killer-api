@@ -49,7 +49,7 @@ describe('PlayerService', () => {
       role: PlayerRole.PLAYER,
     };
 
-    const getRoomStatusSpy = jest.spyOn(playerRepo, 'getPlayerRoomStatus');
+    const getRoomStatusSpy = jest.spyOn(playerRepo, 'getPlayerRoom');
     const getPlayerByNameInRoomSpy = jest.spyOn(
       playerRepo,
       'getPlayerByNameInRoom',
@@ -79,8 +79,16 @@ describe('PlayerService', () => {
     };
 
     const getRoomStatusSpy = jest
-      .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockResolvedValue(RoomStatus.PENDING);
+      .spyOn(playerRepo, 'getPlayerRoom')
+      .mockReturnValue(
+        Promise.resolve({
+          status: RoomStatus.PENDING,
+          name: 'room',
+          code: 'CODE1',
+          createdAt: new Date(),
+          dateEnd: new Date(),
+        }),
+      );
     const getPlayerByNameInRoomSpy = jest
       .spyOn(playerRepo, 'getPlayerByNameInRoom')
       .mockResolvedValue(null);
@@ -102,8 +110,16 @@ describe('PlayerService', () => {
 
   it('should prevent from creating a player in a not pending room', async () => {
     const getRoomStatusSpy = jest
-      .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockResolvedValue(RoomStatus.IN_GAME);
+      .spyOn(playerRepo, 'getPlayerRoom')
+      .mockReturnValue(
+        Promise.resolve({
+          status: RoomStatus.IN_GAME,
+          name: 'room',
+          code: 'CODE1',
+          createdAt: new Date(),
+          dateEnd: new Date(),
+        }),
+      );
     const getPlayerByNameInRoomSpy = jest.spyOn(
       playerRepo,
       'getPlayerByNameInRoom',
@@ -124,8 +140,16 @@ describe('PlayerService', () => {
 
   it('should prevent from creating a player in a not existing room', async () => {
     const getRoomStatusSpy = jest
-      .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockResolvedValue(RoomStatus.PENDING);
+      .spyOn(playerRepo, 'getPlayerRoom')
+      .mockReturnValue(
+        Promise.resolve({
+          status: RoomStatus.PENDING,
+          name: 'room',
+          code: 'CODE1',
+          createdAt: new Date(),
+          dateEnd: new Date(),
+        }),
+      );
     const getPlayerByNameInRoomSpy = jest
       .spyOn(playerRepo, 'getPlayerByNameInRoom')
       .mockResolvedValue({

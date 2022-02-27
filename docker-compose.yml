@@ -11,5 +11,23 @@ services:
       - ${DATABASE_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  caddy:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: 'killer-mercure-publisher'
+      MERCURE_SUBSCRIBER_JWT_KEY: 'killer-mercure-subsriber'
+    command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
 volumes:
   postgres_data: {}
+  caddy_data:
+  caddy_config:
+
