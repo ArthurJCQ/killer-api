@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
@@ -9,7 +8,6 @@ import {
   Put,
   Session,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
@@ -30,8 +28,6 @@ import { PlayerService } from './player.service';
 export class PlayerController {
   constructor(
     private playerService: PlayerService,
-    private configService: ConfigService,
-    private httpService: HttpService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -44,12 +40,7 @@ export class PlayerController {
 
     this.eventEmitter.emit(
       'push.mercure',
-      new MercureEvent(
-        `${this.configService.get<string>('app.host')}/room/${
-          newPlayer.roomCode
-        }`,
-        JSON.stringify(newPlayer),
-      ),
+      new MercureEvent(`room/${newPlayer.roomCode}`, JSON.stringify(newPlayer)),
     );
 
     session.playerId = newPlayer.id;

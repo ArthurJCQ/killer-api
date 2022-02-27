@@ -14,7 +14,7 @@ import { PlayerRepository } from './player.repository';
 import { PlayerService } from './player.service';
 
 @Module({
-  imports: [DatabaseModule, MissionModule, HttpModule],
+  imports: [DatabaseModule, MissionModule],
   providers: [
     PlayerService,
     PlayerRepository,

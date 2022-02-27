@@ -99,13 +99,13 @@ export class PlayerRepository {
   }
 
   async getPlayerRoom(code: string): Promise<RoomModel> {
-    const [roomStatus] = await this.db
+    const [room] = await this.db
       .client<PlayerModel>(PLAYER)
       .select(`${ROOM}.status`)
       .join(ROOM, `${PLAYER}.roomCode`, `${ROOM}.code`)
       .where(`${ROOM}.code`, code);
 
-    return roomStatus;
+    return room;
   }
 
   getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {
