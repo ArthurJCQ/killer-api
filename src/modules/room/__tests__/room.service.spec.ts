@@ -50,10 +50,10 @@ describe('RoomService', () => {
 
     const generateRoomCodeSpy = jest
       .spyOn(service, 'generateRoomCode')
-      .mockReturnValue(Promise.resolve(roomCode));
+      .mockResolvedValue(roomCode);
     const createRoomSpy = jest
       .spyOn(roomRepo, 'createRoom')
-      .mockReturnValue(Promise.resolve(expectedRoom));
+      .mockResolvedValue(expectedRoom);
 
     const room = await service.createRoom({
       id: 1,
@@ -70,7 +70,7 @@ describe('RoomService', () => {
   it('should generate a roomCode', async () => {
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockReturnValue(Promise.resolve(null));
+      .mockResolvedValue(null);
 
     const roomCode = await service.generateRoomCode();
 
@@ -105,7 +105,7 @@ describe('RoomService', () => {
 
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockReturnValue(Promise.resolve(expectedRoom));
+      .mockResolvedValue(expectedRoom);
 
     const room = await service.getRoomByCode('CODE1');
 
@@ -117,7 +117,7 @@ describe('RoomService', () => {
   it('should not get unexisting room', async () => {
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockReturnValue(null);
+      .mockResolvedValue(null);
 
     await expect(service.getRoomByCode('CODE99')).rejects.toThrowError(
       NotFoundException,
@@ -137,18 +137,16 @@ describe('RoomService', () => {
 
     const getRoomSpy = jest
       .spyOn(roomRepo, 'getRoomByCode')
-      .mockReturnValue(Promise.resolve(expectedRoom));
+      .mockResolvedValue(expectedRoom);
     const canStartGameSpy = jest
       .spyOn(service, 'canStartGame')
-      .mockReturnValue(Promise.resolve(true));
+      .mockResolvedValue(true);
     const updateRoomSpy = jest
       .spyOn(roomRepo, 'updateRoom')
-      .mockReturnValue(
-        Promise.resolve({ ...expectedRoom, status: RoomStatus.IN_GAME }),
-      );
+      .mockResolvedValue({ ...expectedRoom, status: RoomStatus.IN_GAME });
     const eventEmmitterSpy = jest
       .spyOn(eventEmmiter, 'emit')
-      .mockReturnValue(true);
+      .mockImplementation();
 
     const room = await service.updateRoom(
       { status: RoomStatus.IN_GAME },
@@ -174,7 +172,7 @@ describe('RoomService', () => {
       .mockRejectedValue(new BadRequestException());
     const checkEnoughMissionSpy = jest
       .spyOn(playerService, 'checkIfEnoughMissionInRoom')
-      .mockReturnValue(Promise.resolve(true));
+      .mockResolvedValue(true);
     const enoughPlayersSpy = jest
       .spyOn(service, 'enoughPlayersInRoom')
       .mockImplementation();
@@ -189,36 +187,31 @@ describe('RoomService', () => {
   });
 
   it('should get all players in room', async () => {
-    const getRoomSpy = jest.spyOn(roomRepo, 'getRoomByCode').mockReturnValue(
-      Promise.resolve({
-        id: 1,
-        code: 'CODE1',
-        status: RoomStatus.PENDING,
-        createdAt: new Date(),
-        name: 'room',
-        dateEnd: new Date(),
-      }),
-    );
+    const getRoomSpy = jest.spyOn(roomRepo, 'getRoomByCode').mockResolvedValue({
+      code: 'CODE1',
+      status: RoomStatus.PENDING,
+      createdAt: new Date(),
+      name: 'room',
+      dateEnd: new Date(),
+    });
     const getAllPlayersSpy = jest
       .spyOn(playerService, 'getAllPlayersInRoom')
-      .mockReturnValue(
-        Promise.resolve([
-          {
-            id: 1,
-            name: 'Arty',
-            roomCode: 'CODE1',
-            status: PlayerStatus.ALIVE,
-            role: PlayerRole.PLAYER,
-          },
-          {
-            id: 2,
-            name: 'John',
-            roomCode: 'CODE1',
-            status: PlayerStatus.ALIVE,
-            role: PlayerRole.PLAYER,
-          },
-        ]),
-      );
+      .mockResolvedValue([
+        {
+          id: 1,
+          name: 'Arty',
+          roomCode: 'CODE1',
+          status: PlayerStatus.ALIVE,
+          role: PlayerRole.PLAYER,
+        },
+        {
+          id: 2,
+          name: 'John',
+          roomCode: 'CODE1',
+          status: PlayerStatus.ALIVE,
+          role: PlayerRole.PLAYER,
+        },
+      ]);
 
     const players = await service.getAllPlayersInRoom('CODE3');
 

@@ -36,7 +36,7 @@ describe('MissionService', () => {
 
     const createMissionSpy = jest
       .spyOn(missionRepo, 'create')
-      .mockReturnValue(Promise.resolve(expectedMission));
+      .mockResolvedValue(expectedMission);
 
     const mission = await service.createMission('Mission', {
       id: 1,
@@ -62,7 +62,7 @@ describe('MissionService', () => {
 
     const missionByPlayerSpy = jest
       .spyOn(missionRepo, 'getMissionsByPlayerId')
-      .mockReturnValue(Promise.resolve(expectedMissions));
+      .mockResolvedValue(expectedMissions);
 
     const missions = await service.getMissionsByPlayerId(1);
 
@@ -82,7 +82,7 @@ describe('MissionService', () => {
       .mockImplementation();
     const updateMissionSpy = jest
       .spyOn(missionRepo, 'updateMission')
-      .mockReturnValue(Promise.resolve(updatedMission));
+      .mockResolvedValue(updatedMission);
 
     const mission = await service.updateMission(1, 1, 'Updated content');
 

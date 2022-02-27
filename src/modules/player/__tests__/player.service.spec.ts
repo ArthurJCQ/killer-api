@@ -56,7 +56,7 @@ describe('PlayerService', () => {
     );
     const createPlayerSpy = jest
       .spyOn(playerRepo, 'createPlayer')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const player = await service.createPlayer({
       name: 'John',
@@ -80,13 +80,13 @@ describe('PlayerService', () => {
 
     const getRoomStatusSpy = jest
       .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockReturnValue(Promise.resolve(RoomStatus.PENDING));
+      .mockResolvedValue(RoomStatus.PENDING);
     const getPlayerByNameInRoomSpy = jest
       .spyOn(playerRepo, 'getPlayerByNameInRoom')
-      .mockReturnValue(Promise.resolve(null));
+      .mockResolvedValue(null);
     const createPlayerSpy = jest
       .spyOn(playerRepo, 'createPlayer')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const player = await service.createPlayer({
       name: 'John',
@@ -103,7 +103,7 @@ describe('PlayerService', () => {
   it('should prevent from creating a player in a not pending room', async () => {
     const getRoomStatusSpy = jest
       .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockReturnValue(Promise.resolve(RoomStatus.IN_GAME));
+      .mockResolvedValue(RoomStatus.IN_GAME);
     const getPlayerByNameInRoomSpy = jest.spyOn(
       playerRepo,
       'getPlayerByNameInRoom',
@@ -125,18 +125,16 @@ describe('PlayerService', () => {
   it('should prevent from creating a player in a not existing room', async () => {
     const getRoomStatusSpy = jest
       .spyOn(playerRepo, 'getPlayerRoomStatus')
-      .mockReturnValue(Promise.resolve(RoomStatus.PENDING));
+      .mockResolvedValue(RoomStatus.PENDING);
     const getPlayerByNameInRoomSpy = jest
       .spyOn(playerRepo, 'getPlayerByNameInRoom')
-      .mockReturnValue(
-        Promise.resolve({
-          id: 1,
-          name: 'Arty',
-          roomCode: 'CODE1',
-          status: PlayerStatus.ALIVE,
-          role: PlayerRole.PLAYER,
-        }),
-      );
+      .mockResolvedValue({
+        id: 1,
+        name: 'Arty',
+        roomCode: 'CODE1',
+        status: PlayerStatus.ALIVE,
+        role: PlayerRole.PLAYER,
+      });
     const createPlayerSpy = jest.spyOn(playerRepo, 'createPlayer');
 
     await expect(
@@ -168,7 +166,7 @@ describe('PlayerService', () => {
 
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayer')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const player = await service.login(playerDto);
 
@@ -186,7 +184,7 @@ describe('PlayerService', () => {
 
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayer')
-      .mockReturnValue(Promise.resolve(null));
+      .mockResolvedValue(null);
 
     await expect(service.login(playerDto)).rejects.toThrowError(
       NotFoundException,
@@ -205,7 +203,7 @@ describe('PlayerService', () => {
     };
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const player = await service.getPlayerById(1);
 
@@ -225,7 +223,7 @@ describe('PlayerService', () => {
     };
     const getPlayerByTargetSpy = jest
       .spyOn(playerRepo, 'getPlayerByTargetId')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const player = await service.getPlayerByTargetId(2);
 
@@ -245,18 +243,16 @@ describe('PlayerService', () => {
 
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
-      .mockReturnValue(Promise.resolve(expectedPlayer));
+      .mockResolvedValue(expectedPlayer);
 
     const updatePlayerSpy = jest
       .spyOn(playerRepo, 'updatePlayer')
-      .mockReturnValue(
-        Promise.resolve({
-          ...expectedPlayer,
-          status: PlayerStatus.KILLED,
-          passcode: '4567',
-          name: 'Arthur',
-        }),
-      );
+      .mockResolvedValue({
+        ...expectedPlayer,
+        status: PlayerStatus.KILLED,
+        passcode: '4567',
+        name: 'Arthur',
+      });
 
     const player = await service.updatePlayer(
       {
@@ -288,7 +284,7 @@ describe('PlayerService', () => {
   it('should not update not existing player', async () => {
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
-      .mockReturnValue(Promise.resolve(null));
+      .mockResolvedValue(null);
 
     const updatePlayerSpy = jest.spyOn(playerRepo, 'updatePlayer');
 
@@ -326,7 +322,7 @@ describe('PlayerService', () => {
 
     const getAllPlayerSpy = jest
       .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
 
     const players = await service.getAllPlayersInRoom('CODE1');
 
@@ -349,7 +345,7 @@ describe('PlayerService', () => {
 
     const getAllPlayerSpy = jest
       .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
 
     const res = await service.checkAllPlayerInRoomHavePasscode('CODE1');
 
@@ -370,7 +366,7 @@ describe('PlayerService', () => {
 
     const getAllPlayerSpy = jest
       .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
 
     await expect(
       service.checkAllPlayerInRoomHavePasscode('CODE1'),
@@ -398,10 +394,10 @@ describe('PlayerService', () => {
 
     const getAllPlayerSpy = jest
       .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
     const getMissionsSpy = jest
       .spyOn(missionService, 'getMissions')
-      .mockReturnValue(Promise.resolve(expectedMissions));
+      .mockResolvedValue(expectedMissions);
 
     const res = await service.checkIfEnoughMissionInRoom('CODE1');
 
@@ -423,10 +419,10 @@ describe('PlayerService', () => {
 
     const getAllPlayerSpy = jest
       .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
     const getMissionsSpy = jest
       .spyOn(missionService, 'getMissions')
-      .mockReturnValue(Promise.resolve([]));
+      .mockResolvedValue([]);
 
     await expect(
       service.checkIfEnoughMissionInRoom('CODE1'),
@@ -446,10 +442,10 @@ describe('PlayerService', () => {
 
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
-      .mockReturnValue(Promise.resolve(expectedPlayers));
+      .mockResolvedValue(expectedPlayers);
     const deletePlayerSpy = jest
       .spyOn(playerRepo, 'deletePlayer')
-      .mockReturnValue(Promise.resolve(true));
+      .mockResolvedValue(true);
 
     await service.deletePlayer(1);
 
@@ -460,7 +456,7 @@ describe('PlayerService', () => {
   it('should not delete not existing user', async () => {
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
-      .mockReturnValue(Promise.resolve(null));
+      .mockResolvedValue(null);
     const deletePlayerSpy = jest.spyOn(playerRepo, 'deletePlayer');
 
     await expect(service.getPlayerById(1)).rejects.toThrowError(
