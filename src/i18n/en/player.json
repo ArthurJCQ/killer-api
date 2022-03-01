@@ -4,7 +4,9 @@
     "NO_USER_SESSION": "There is no player in session"
   },
   "BAD_REQUEST": {
-    "ALREADY_IN_ROOM": "Player is already in a room"
+    "ALREADY_IN_ROOM": "Player is already in a room",
+    "NOT_ENOUGH_MISSION": "There is not enough mission in this room.",
+    "NO_PASSCODE": "Some player have no passcode yet."
   },
   "ALREADY_EXIST": "Player with this pseudo already exists in this room",
   "MISSION": {

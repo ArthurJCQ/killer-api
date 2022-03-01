@@ -1,6 +1,5 @@
 export enum PlayerStatus {
   ALIVE = 'ALIVE',
-  PENDING_KILLED = 'PENDING_KILLED',
   KILLED = 'KILLED',
 }
 

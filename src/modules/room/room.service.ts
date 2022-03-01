@@ -9,7 +9,7 @@ import randomstring from 'randomstring';
 import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
 
-import { RoomStatus } from './constants';
+import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { GameStartingEvent } from './events/game-starting.event';
 import { RoomModel } from './room.model';
@@ -85,13 +85,7 @@ export class RoomService {
         });
       }
 
-      const canStartGame = await this.canStartGame(code);
-
-      if (!canStartGame) {
-        throw new BadRequestException(
-          'Game can not start. Either there is no enough mission, or some players did not set a passcode',
-        );
-      }
+      await this.canStartGame(code);
 
       this.eventEmitter.emit('game.starting', new GameStartingEvent(code));
     }
@@ -109,12 +103,26 @@ export class RoomService {
     return this.playerService.getAllPlayersInRoom(code);
   }
 
-  async canStartGame(code: string): Promise<boolean> {
-    const [enoughMissionsInRoom, allPlayersHavePasscode] = await Promise.all([
-      this.playerService.checkIfEnoughMissionInRoom(code),
-      this.playerService.checkAllPlayerInRoomHavePasscode(code),
-    ]);
+  async enoughPlayersInRoom(code: string): Promise<boolean> {
+    const playersInRoom = await this.getAllPlayersInRoom(code);
 
-    return enoughMissionsInRoom && allPlayersHavePasscode;
+    if (playersInRoom.length <= MAX_PLAYER_IN_ROOM) {
+      throw new BadRequestException({ key: 'room.NOT_ENOUGH_PLAYERS' });
+    }
+
+    return true;
+  }
+
+  async canStartGame(code: string): Promise<boolean> {
+    const [enoughMissionsInRoom, allPlayersHavePasscode, enoughPlayersInRoom] =
+      await Promise.all([
+        this.playerService.checkIfEnoughMissionInRoom(code),
+        this.playerService.checkAllPlayerInRoomHavePasscode(code),
+        this.enoughPlayersInRoom(code),
+      ]);
+
+    return (
+      enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom
+    );
   }
 }

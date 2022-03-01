@@ -1,4 +1,4 @@
-interface ExceptionResponse {
+export interface ExceptionResponse {
   statusCode?: number;
   message?: string;
   key?: string;

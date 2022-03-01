@@ -7,6 +7,8 @@ import {
 import { Response } from 'express';
 import { I18nService } from 'nestjs-i18n';
 
+import { ExceptionResponse } from './types';
+
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly i18n: I18nService) {}

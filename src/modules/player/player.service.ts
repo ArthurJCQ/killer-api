@@ -110,7 +110,11 @@ export class PlayerService {
       ({ passcode }) => !passcode,
     );
 
-    return !isSomePlayerHaveNoPasscode;
+    if (isSomePlayerHaveNoPasscode) {
+      throw new BadRequestException({ key: 'player.BAD_REQUEST.NO_PASSCODE' });
+    }
+
+    return true;
   }
 
   async checkIfEnoughMissionInRoom(roomCode: string): Promise<boolean> {
@@ -119,7 +123,13 @@ export class PlayerService {
       this.playerRepo.getAllPlayersInRoom(roomCode),
     ]);
 
-    return missions.length >= players.length;
+    if (missions?.length < players?.length) {
+      throw new BadRequestException({
+        key: 'player.BAD_REQUEST.NOT_ENOUGH_MISSION',
+      });
+    }
+
+    return true;
   }
 
   async deletePlayer(playerId: number): Promise<void> {
