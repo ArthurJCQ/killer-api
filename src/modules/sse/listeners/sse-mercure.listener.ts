@@ -19,7 +19,7 @@ export class SseMercureListener {
   async publishEventToMercure(event: MercureEvent): Promise<void> {
     this.logger.log('Sending event to Mercure...');
 
-    const topic = `${this.configService.get<string>('mercure.host')}/${
+    const topic = `${this.configService.get<string>('app.host')}/${
       event.topic
     }`;
 

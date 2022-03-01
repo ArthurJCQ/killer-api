@@ -18,7 +18,7 @@ services:
     environment:
       SERVER_NAME: ':80'
       MERCURE_PUBLISHER_JWT_KEY: 'killer-mercure-publisher'
-      MERCURE_SUBSCRIBER_JWT_KEY: 'killer-mercure-subsriber'
+      MERCURE_SUBSCRIBER_JWT_KEY: 'killer-mercure-subscriber'
     command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev
     ports:
       - "80:80"
