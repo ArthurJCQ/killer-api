@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
-import { ROOM, RoomStatus } from '../room/constants';
+import { ROOM } from '../room/constants';
+import { RoomModel } from '../room/room.model';
 
 import { PLAYER } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
@@ -97,14 +98,14 @@ export class PlayerRepository {
     return nbPlayers.count;
   }
 
-  async getPlayerRoomStatus(code: string): Promise<RoomStatus> {
-    const [roomStatus] = await this.db
+  async getPlayerRoom(code: string): Promise<RoomModel> {
+    const [room] = await this.db
       .client<PlayerModel>(PLAYER)
       .select(`${ROOM}.status`)
       .join(ROOM, `${PLAYER}.roomCode`, `${ROOM}.code`)
       .where(`${ROOM}.code`, code);
 
-    return roomStatus;
+    return room;
   }
 
   getAllPlayersInRoom(roomCode: string): Promise<PlayerModel[]> {

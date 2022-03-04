@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 
 import { PlayerController } from '../player.controller';
@@ -14,6 +15,7 @@ describe('PlayerController', () => {
           provide: PlayerService,
           useValue: {},
         },
+        EventEmitter2,
       ],
     }).compile();
 
