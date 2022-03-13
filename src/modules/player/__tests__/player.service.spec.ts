@@ -272,6 +272,10 @@ describe('PlayerService', () => {
         name: 'Arthur',
       });
 
+    const getPlayerNameByRoomSpy = jest
+      .spyOn(playerRepo, 'getPlayerByNameInRoom')
+      .mockResolvedValue(null);
+
     const player = await service.updatePlayer(
       {
         name: 'Arthur',
@@ -282,6 +286,7 @@ describe('PlayerService', () => {
     );
 
     expect(getPlayerSpy).toHaveBeenCalledWith(1);
+    expect(getPlayerNameByRoomSpy).toHaveBeenCalledWith('CODE1', 'Arty');
     expect(updatePlayerSpy).toHaveBeenCalledWith(
       {
         name: 'Arthur',

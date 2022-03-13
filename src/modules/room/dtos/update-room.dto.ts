@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsIn, IsOptional, IsString, MinLength } from 'class-validator';
 
+import { Trim } from '../../../decorators/trim.decorator';
 import { RoomStatus } from '../constants';
 
 export class UpdateRoomDto {
@@ -8,6 +9,7 @@ export class UpdateRoomDto {
   @IsOptional()
   @IsString()
   @MinLength(1)
+  @Trim()
   name?: string;
 
   @ApiProperty({ enum: RoomStatus })

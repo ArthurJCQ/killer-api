@@ -54,7 +54,22 @@ export class PlayerController {
     @Body() player: UpdatePlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
-    return this.playerService.updatePlayer(player, session.playerId);
+    const updatedPlayer = await this.playerService.updatePlayer(
+      player,
+      session.playerId,
+    );
+
+    if (player.roomCode) {
+      this.eventEmitter.emit(
+        'push.mercure',
+        new MercureEvent(
+          `room/${player.roomCode}`,
+          JSON.stringify(updatedPlayer),
+        ),
+      );
+    }
+
+    return updatedPlayer;
   }
 
   @Post('/login')
@@ -79,8 +94,8 @@ export class PlayerController {
   @HttpCode(204)
   @Role(PlayerRole.PLAYER)
   async quitRoom(@Session() session): Promise<void> {
-    await this.playerService.deletePlayer(session.playerId);
-
     session.playerId = null;
+
+    await this.playerService.deletePlayer(session.playerId);
   }
 }

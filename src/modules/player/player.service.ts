@@ -28,22 +28,7 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      const { status } = await this.playerRepo.getPlayerRoom(roomCode);
-
-      if (status !== RoomStatus.PENDING) {
-        throw new BadRequestException({
-          key: 'room.WRONG_STATUS.CREATE_PLAYER',
-        });
-      }
-
-      const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
-        roomCode,
-        name,
-      );
-
-      if (existingPlayer) {
-        throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
-      }
+      await this.checkRoomBeforeJoining(roomCode, name);
     }
 
     return this.playerRepo.createPlayer(name, roomCode);
@@ -81,6 +66,22 @@ export class PlayerService {
 
     if (!existingPlayer) {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
+    }
+
+    if (player.name && !player.roomCode) {
+      const existingPlayerWithSameNameInRoom =
+        await this.playerRepo.getPlayerByNameInRoom(
+          existingPlayer.roomCode,
+          existingPlayer.name,
+        );
+
+      if (existingPlayerWithSameNameInRoom) {
+        throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
+      }
+    }
+
+    if (player.roomCode) {
+      await this.checkRoomBeforeJoining(player.roomCode, existingPlayer.name);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -140,5 +141,35 @@ export class PlayerService {
     }
 
     await this.playerRepo.deletePlayer(playerId);
+  }
+
+  private async checkRoomBeforeJoining(
+    roomCode: string,
+    playerName: string,
+  ): Promise<boolean> {
+    const room = await this.playerRepo.getPlayerRoom(roomCode);
+
+    if (!room) {
+      throw new NotFoundException({
+        key: 'room.NOT_FOUND',
+      });
+    }
+
+    if (room.status !== RoomStatus.PENDING) {
+      throw new BadRequestException({
+        key: 'room.WRONG_STATUS.CREATE_PLAYER',
+      });
+    }
+
+    const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
+      roomCode,
+      playerName,
+    );
+
+    if (existingPlayer) {
+      throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
+    }
+
+    return true;
   }
 }
