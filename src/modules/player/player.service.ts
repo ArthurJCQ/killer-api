@@ -72,7 +72,7 @@ export class PlayerService {
       const existingPlayerWithSameNameInRoom =
         await this.playerRepo.getPlayerByNameInRoom(
           existingPlayer.roomCode,
-          existingPlayer.name,
+          player.name,
         );
 
       if (existingPlayerWithSameNameInRoom) {

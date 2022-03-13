@@ -286,7 +286,7 @@ describe('PlayerService', () => {
     );
 
     expect(getPlayerSpy).toHaveBeenCalledWith(1);
-    expect(getPlayerNameByRoomSpy).toHaveBeenCalledWith('CODE1', 'Arty');
+    expect(getPlayerNameByRoomSpy).toHaveBeenCalledWith('CODE1', 'Arthur');
     expect(updatePlayerSpy).toHaveBeenCalledWith(
       {
         name: 'Arthur',
