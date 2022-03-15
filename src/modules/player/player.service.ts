@@ -28,7 +28,7 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      await this.checkRoomBeforeJoining(roomCode, name);
+      await this.checkRoomBeforeJoining({ roomCode, name });
     }
 
     return this.playerRepo.createPlayer(name, roomCode);
@@ -75,13 +75,16 @@ export class PlayerService {
           player.name,
         );
 
-      if (existingPlayerWithSameNameInRoom) {
+      if (
+        existingPlayerWithSameNameInRoom &&
+        existingPlayerWithSameNameInRoom.id !== id
+      ) {
         throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
       }
     }
 
     if (player.roomCode) {
-      await this.checkRoomBeforeJoining(player.roomCode, existingPlayer.name);
+      await this.checkRoomBeforeJoining(player);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -144,10 +147,9 @@ export class PlayerService {
   }
 
   private async checkRoomBeforeJoining(
-    roomCode: string,
-    playerName: string,
+    player: Partial<PlayerModel>,
   ): Promise<boolean> {
-    const room = await this.playerRepo.getPlayerRoom(roomCode);
+    const room = await this.playerRepo.getPlayerRoom(player.roomCode);
 
     if (!room) {
       throw new NotFoundException({
@@ -162,11 +164,11 @@ export class PlayerService {
     }
 
     const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
-      roomCode,
-      playerName,
+      player.roomCode,
+      player.name,
     );
 
-    if (existingPlayer) {
+    if (existingPlayer && existingPlayer.id !== player.id) {
       throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
     }
 
