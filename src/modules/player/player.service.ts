@@ -68,7 +68,7 @@ export class PlayerService {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
-    if (player.name && !player.roomCode) {
+    if (player.name && existingPlayer.roomCode && !player.roomCode) {
       const existingPlayerWithSameNameInRoom =
         await this.playerRepo.getPlayerByNameInRoom(
           existingPlayer.roomCode,
