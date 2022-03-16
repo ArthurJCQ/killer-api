@@ -304,6 +304,103 @@ describe('PlayerService', () => {
     });
   });
 
+  it('should not update pseudo if already exists in room', async () => {
+    const expectedPlayer = {
+      id: 1,
+      name: 'Arty',
+      roomCode: 'CODE1',
+      status: PlayerStatus.ALIVE,
+      role: PlayerRole.PLAYER,
+    };
+
+    const alreadyExistsPlayer = {
+      id: 2,
+      name: 'Arty',
+      roomCode: 'CODE1',
+      status: PlayerStatus.ALIVE,
+      role: PlayerRole.PLAYER,
+    };
+
+    const getPlayerSpy = jest
+      .spyOn(playerRepo, 'getPlayerById')
+      .mockResolvedValue(expectedPlayer);
+
+    const updatePlayerSpy = jest.spyOn(playerRepo, 'updatePlayer');
+
+    const getPlayerNameByRoomSpy = jest
+      .spyOn(playerRepo, 'getPlayerByNameInRoom')
+      .mockResolvedValue(alreadyExistsPlayer);
+
+    await expect(
+      service.updatePlayer(
+        {
+          name: 'Arthur',
+          passcode: '4567',
+          status: PlayerStatus.KILLED,
+        },
+        1,
+      ),
+    ).rejects.toThrowError(BadRequestException);
+
+    expect(getPlayerSpy).toHaveBeenCalledWith(1);
+    expect(getPlayerNameByRoomSpy).toHaveBeenCalledWith('CODE1', 'Arthur');
+    expect(updatePlayerSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not update pseudo if player is not in any room', async () => {
+    const expectedPlayer = {
+      id: 1,
+      name: 'Arty',
+      roomCode: null,
+      status: PlayerStatus.ALIVE,
+      role: PlayerRole.PLAYER,
+    };
+
+    const getPlayerSpy = jest
+      .spyOn(playerRepo, 'getPlayerById')
+      .mockResolvedValue(expectedPlayer);
+
+    const updatePlayerSpy = jest
+      .spyOn(playerRepo, 'updatePlayer')
+      .mockResolvedValue({
+        ...expectedPlayer,
+        status: PlayerStatus.KILLED,
+        passcode: '4567',
+        name: 'Arthur',
+      });
+
+    const getPlayerNameByRoomSpy = jest.spyOn(
+      playerRepo,
+      'getPlayerByNameInRoom',
+    );
+
+    const player = await service.updatePlayer(
+      {
+        name: 'Arthur',
+        passcode: '4567',
+        status: PlayerStatus.KILLED,
+      },
+      1,
+    );
+
+    expect(getPlayerSpy).toHaveBeenCalledWith(1);
+    expect(getPlayerNameByRoomSpy).not.toHaveBeenCalled();
+    expect(updatePlayerSpy).toHaveBeenCalledWith(
+      {
+        name: 'Arthur',
+        passcode: '4567',
+        status: PlayerStatus.KILLED,
+      },
+      1,
+    );
+    expect(player).toEqual({
+      ...expectedPlayer,
+      status: PlayerStatus.KILLED,
+      passcode: '4567',
+      name: 'Arthur',
+    });
+  });
+
   it('should not update not existing player', async () => {
     const getPlayerSpy = jest
       .spyOn(playerRepo, 'getPlayerById')
