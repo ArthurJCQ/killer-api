@@ -25,7 +25,14 @@ export class PlayerRepository {
   }
 
   async updatePlayer(
-    { name, passcode, status, missionId, targetId }: Partial<PlayerModel>,
+    {
+      name,
+      passcode,
+      status,
+      missionId,
+      targetId,
+      roomCode,
+    }: Partial<PlayerModel>,
     id: number,
   ): Promise<PlayerModel> {
     const [player] = await this.db
@@ -39,6 +46,7 @@ export class PlayerRepository {
         status,
         missionId,
         targetId,
+        roomCode,
       })
       .returning('*');
 

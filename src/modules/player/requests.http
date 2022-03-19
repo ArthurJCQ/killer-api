@@ -24,6 +24,22 @@ Content-Type: application/json
   "passcode": "1234"
 }
 
+### PUT player quit room
+PUT http://localhost:3000/player
+Content-Type: application/json
+
+{
+  "roomCode": null
+}
+
+### PUT player join another room
+PUT http://localhost:3000/player
+Content-Type: application/json
+
+{
+  "roomCode": "XNXX1"
+}
+
 ### PUT kill my player
 PUT http://localhost:3000/player
 Content-Type: application/json

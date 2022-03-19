@@ -7,19 +7,30 @@ import {
   Length,
 } from 'class-validator';
 
+import { Trim } from '../../../decorators/trim.decorator';
 import { PlayerStatus } from '../constants';
 
 export class UpdatePlayerDto {
   @ApiProperty()
   @IsString()
+  @Length(1)
   @IsOptional()
+  @Trim()
   name?: string;
 
   @ApiProperty()
   @IsNumberString()
   @Length(4, 4)
   @IsOptional()
+  @Trim()
   passcode?: string;
+
+  @ApiProperty()
+  @IsString()
+  @Length(5, 5)
+  @IsOptional()
+  @Trim()
+  roomCode?: string;
 
   @ApiProperty({ enum: PlayerStatus })
   @IsOptional()
