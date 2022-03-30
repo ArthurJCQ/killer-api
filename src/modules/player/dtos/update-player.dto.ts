@@ -7,6 +7,7 @@ import {
   Length,
 } from 'class-validator';
 
+import { Capitalize } from '../../../decorators/capitalize.decorator';
 import { Trim } from '../../../decorators/trim.decorator';
 import { PlayerStatus } from '../constants';
 
@@ -30,6 +31,7 @@ export class UpdatePlayerDto {
   @Length(5, 5)
   @IsOptional()
   @Trim()
+  @Capitalize()
   roomCode?: string;
 
   @ApiProperty({ enum: PlayerStatus })

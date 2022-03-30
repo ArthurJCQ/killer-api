@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumberString, IsString, Length, MinLength } from 'class-validator';
 
+import { Capitalize } from '../../../decorators/capitalize.decorator';
 import { Trim } from '../../../decorators/trim.decorator';
 
 export class GetMyPlayerDto {
@@ -20,5 +21,6 @@ export class GetMyPlayerDto {
   @IsString()
   @Length(5)
   @Trim()
+  @Capitalize()
   roomCode: string;
 }
