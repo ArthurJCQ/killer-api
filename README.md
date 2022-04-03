@@ -6,19 +6,19 @@ Killer Api.
 
 ## Installation
 
-Install global Nest CLI if not already done :
+Install global Nest CLI if not already done:
 
 ```bash
 $ npm install -g @nestjs/cli
 ```
 
-Then install dependencies :
+Then install dependencies:
 
 ```bash
 $ yarn
 ```
 
-Then create a local .env file : 
+Then create a local .env file:
 
 ```bash
 $ cp .env.dist .env
@@ -74,24 +74,25 @@ $ npm run test:cov
 
 Knex is a SQL query builder.
 
-You can download is CLI to perform some actions :
+You can download is CLI to perform some actions:
 
 ```bash
 $ npm install knex -g
 ```
 
-You can create migrations files that you have to fill :
+You can create migrations files that you have to fill:
+
 ```bash
 $ knex migrate:make migration_name
 ```
 
-Run migrations in database :
+Run migrations in database:
 
 ```bash
 $ knex migrate:latest
 ```
 
-Create seed file :
+Create seed file:
 
 ```bash
 $ knex seed:make seed_name
@@ -110,17 +111,11 @@ Then you can launch a mercure instance (running in a caddy server) with the foll
 ```bash
 $ MERCURE_PUBLISHER_JWT_KEY='killer-mercure-publisher' \
   MERCURE_SUBSCRIBER_JWT_KEY='killer-mercure-subscriber' \
+  SERVER_NAME=:5000 \
   ./mercure run -config Caddyfile.dev
 ```
- It automatically runs mercure on port 80. If you get an error such as `forbidden` on this port, just add `SERVER_NAME` as environment variable in your command, and set it to a free port that you are allowed to use :
 
-
-```bash
-$ MERCURE_PUBLISHER_JWT_KEY='killer-mercure-publisher' \
-  MERCURE_SUBSCRIBER_JWT_KEY='killer-mercure-subscriber' \
-  SERVER_NAME=:2015 \
-  ./mercure run -config Caddyfile.dev
-```
+It automatically runs mercure on port 5000. If you get an error such as `forbidden` on this port, just switch the port used to a free port that you are allowed to use.
 
 Now that Mercure is running, you can subscribe to it.
 

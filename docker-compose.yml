@@ -16,13 +16,13 @@ services:
     image: dunglas/mercure
     restart: unless-stopped
     environment:
-      SERVER_NAME: ':80'
+      SERVER_NAME: ':5000'
       MERCURE_PUBLISHER_JWT_KEY: 'killer-mercure-publisher'
       MERCURE_SUBSCRIBER_JWT_KEY: 'killer-mercure-subscriber'
     command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev
     ports:
-      - "80:80"
-      - "443:443"
+      - '5000:5000'
+      - '443:443'
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -30,4 +30,3 @@ volumes:
   postgres_data: {}
   caddy_data:
   caddy_config:
-
