@@ -160,6 +160,12 @@ export class PlayerService {
     roomCodeBeforeUpdate: string,
     updatedPlayer: Partial<PlayerModel>,
   ): void {
+    /**
+     * Either:
+     *  - Player has a new room code => join_room case
+     *  - Player has still a roomCode after update => simply an update on another field
+     *  - Player had a roomCode before update => left_room case
+     */
     const roomCode = newRoomCode || roomCodeAfterUpdate || roomCodeBeforeUpdate;
 
     if (roomCode) {

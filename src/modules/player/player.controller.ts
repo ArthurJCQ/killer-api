@@ -54,7 +54,7 @@ export class PlayerController {
     @Body() player: UpdatePlayerDto,
     @Session() session,
   ): Promise<PlayerDto> {
-    return await this.playerService.updatePlayer(player, session.playerId);
+    return this.playerService.updatePlayer(player, session.playerId);
   }
 
   @Post('/login')
