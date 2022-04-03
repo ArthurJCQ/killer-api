@@ -53,7 +53,7 @@ POST http://localhost:3000/player/login
 Content-Type: application/json
 
 {
-  "name": "Artyy",
+  "name": "Arty",
   "passcode": "1234",
   "roomCode": "XNXX1"
 }
