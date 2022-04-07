@@ -9,6 +9,7 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 import { I18nJsonParser, I18nModule } from 'nestjs-i18n';
 
@@ -65,6 +66,7 @@ export class AppModule implements NestModule {
         cookieSession({
           keys: [this.configService.get<string>('app.cookieSessionKey')],
         }),
+        cookieParser(),
       )
       .forRoutes('*');
   }

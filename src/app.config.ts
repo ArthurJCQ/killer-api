@@ -21,4 +21,5 @@ export const databaseConfig = registerAs('database', () => ({
 export const mercureConfig = registerAs('mercure', () => ({
   host: process.env.MERCURE_HOST,
   publisherToken: process.env.MERCURE_PUBLISHER_JWT,
+  subscriberToken: process.env.MERCURE_SUBSCRIBER_JWT,
 }));

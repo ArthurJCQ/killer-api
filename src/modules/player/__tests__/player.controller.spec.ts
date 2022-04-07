@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 
@@ -9,6 +10,7 @@ describe('PlayerController', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [ConfigModule],
       controllers: [PlayerController],
       providers: [
         {
