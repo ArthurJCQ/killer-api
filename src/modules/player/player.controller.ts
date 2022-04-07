@@ -6,9 +6,12 @@ import {
   HttpCode,
   Post,
   Put,
+  Res,
   Session,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Response } from 'express';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { MercureEvent } from '../sse/models/mercure-event';
@@ -29,6 +32,7 @@ export class PlayerController {
   constructor(
     private playerService: PlayerService,
     private eventEmitter: EventEmitter2,
+    private configService: ConfigService,
   ) {}
 
   @Post()
@@ -61,10 +65,15 @@ export class PlayerController {
   async login(
     @Body() myPlayer: GetMyPlayerDto,
     @Session() session,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<PlayerDto> {
     const player = await this.playerService.login(myPlayer);
 
     session.playerId = player.id;
+    response.cookie(
+      'mercure',
+      this.configService.get('mercure.subscriberToken'),
+    );
 
     return player;
   }
