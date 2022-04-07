@@ -7,6 +7,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { MissionService } from '../mission/mission.service';
 import { RoomStatus } from '../room/constants';
+import { MercureEvent } from '../sse/models/mercure-event';
 
 import { PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
@@ -28,7 +29,7 @@ export class PlayerService {
     roomCode,
   }: CreatePlayerDto): Promise<PlayerModel> {
     if (roomCode) {
-      await this.checkRoomBeforeJoining({ roomCode, name });
+      await this.checkRoomBeforeJoining(roomCode, { name });
     }
 
     return this.playerRepo.createPlayer(name, roomCode);
@@ -84,7 +85,7 @@ export class PlayerService {
     }
 
     if (player.roomCode) {
-      await this.checkRoomBeforeJoining(player);
+      await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -99,6 +100,13 @@ export class PlayerService {
         ),
       );
     }
+
+    this.pushUpdatePlayerToMercure(
+      player?.roomCode,
+      updatedPlayer?.roomCode,
+      existingPlayer?.roomCode,
+      updatedPlayer,
+    );
 
     return updatedPlayer;
   }
@@ -146,10 +154,33 @@ export class PlayerService {
     await this.playerRepo.deletePlayer(playerId);
   }
 
+  private pushUpdatePlayerToMercure(
+    newRoomCode: string,
+    roomCodeAfterUpdate: string,
+    roomCodeBeforeUpdate: string,
+    updatedPlayer: Partial<PlayerModel>,
+  ): void {
+    /**
+     * Either:
+     *  - Player has a new room code => join_room case
+     *  - Player has still a roomCode after update => simply an update on another field
+     *  - Player had a roomCode before update => left_room case
+     */
+    const roomCode = newRoomCode || roomCodeAfterUpdate || roomCodeBeforeUpdate;
+
+    if (roomCode) {
+      this.eventEmitter.emit(
+        'push.mercure',
+        new MercureEvent(`room/${roomCode}`, JSON.stringify(updatedPlayer)),
+      );
+    }
+  }
+
   private async checkRoomBeforeJoining(
+    roomCode: string,
     player: Partial<PlayerModel>,
   ): Promise<boolean> {
-    const room = await this.playerRepo.getPlayerRoom(player.roomCode);
+    const room = await this.playerRepo.getPlayerRoom(roomCode);
 
     if (!room) {
       throw new NotFoundException({
@@ -164,7 +195,7 @@ export class PlayerService {
     }
 
     const existingPlayer = await this.playerRepo.getPlayerByNameInRoom(
-      player.roomCode,
+      roomCode,
       player.name,
     );
 
