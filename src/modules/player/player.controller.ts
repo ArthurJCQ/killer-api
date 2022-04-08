@@ -80,7 +80,7 @@ export class PlayerController {
     @Res({ passthrough: true }) response: Response,
   ): PlayerDto {
     response.cookie(
-      'mercure',
+      'mercureAuthorization',
       this.configService.get('mercure.subscriberToken'),
       { domain: '.killerparty.app' },
     );
