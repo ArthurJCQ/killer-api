@@ -65,22 +65,25 @@ export class PlayerController {
   async login(
     @Body() myPlayer: GetMyPlayerDto,
     @Session() session,
-    @Res({ passthrough: true }) response: Response,
   ): Promise<PlayerDto> {
     const player = await this.playerService.login(myPlayer);
 
     session.playerId = player.id;
-    response.cookie(
-      'mercure',
-      this.configService.get('mercure.subscriberToken'),
-    );
 
     return player;
   }
 
   @Get('/me')
   @Role(PlayerRole.PLAYER)
-  me(@Player() player: PlayerModel): PlayerDto {
+  me(
+    @Player() player: PlayerModel,
+    @Res({ passthrough: true }) response: Response,
+  ): PlayerDto {
+    response.cookie(
+      'mercure',
+      this.configService.get('mercure.subscriberToken'),
+    );
+
     return player;
   }
 
