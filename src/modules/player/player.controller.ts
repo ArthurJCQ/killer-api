@@ -82,7 +82,7 @@ export class PlayerController {
     response.cookie(
       'mercure',
       this.configService.get('mercure.subscriberToken'),
-      { path: '.killerparty.app' },
+      { domain: '.killerparty.app' },
     );
 
     return player;
