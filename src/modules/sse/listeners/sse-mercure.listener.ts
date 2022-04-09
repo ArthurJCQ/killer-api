@@ -24,6 +24,10 @@ export class SseMercureListener {
     const { host: mercureHost, publisherToken } =
       this.configService.get('mercure');
 
+    this.logger.log(
+      `Trying to send topic ${topic} to mercure host ${mercureHost}`,
+    );
+
     try {
       await lastValueFrom(
         this.httpService
