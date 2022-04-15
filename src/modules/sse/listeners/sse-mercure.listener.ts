@@ -19,19 +19,17 @@ export class SseMercureListener {
   async publishEventToMercure(event: MercureEvent): Promise<void> {
     this.logger.log('Sending event to Mercure...');
 
-    const topic = `${this.configService.get('app.host')}/${event.topic}`;
-
     const { host: mercureHost, publisherToken } =
       this.configService.get('mercure');
 
     this.logger.log(
-      `Trying to send topic ${topic} to mercure host ${mercureHost}`,
+      `Trying to send topic ${event.topic} to mercure host ${mercureHost}`,
     );
 
     try {
       await lastValueFrom(
         this.httpService
-          .post(mercureHost, `topic=${topic}&data=${event.data}`, {
+          .post(mercureHost, `topic=${event.topic}&data=${event.data}`, {
             headers: {
               Authorization: `Bearer ${publisherToken}`,
               'Content-Type': 'application/x-www-form-urlencoded',
