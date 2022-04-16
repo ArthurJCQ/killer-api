@@ -82,7 +82,7 @@ export class PlayerController {
     response.cookie(
       'mercureAuthorization',
       this.configService.get('mercure.subscriberToken'),
-      { domain: this.configService.get('mercure.cookieDomain') },
+      { domain: this.configService.get('app.cookieDomain') },
     );
 
     return player;
