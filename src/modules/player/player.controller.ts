@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Logger,
   Post,
   Put,
   Res,
@@ -29,6 +30,8 @@ import { PlayerService } from './player.service';
 @Controller(PLAYER)
 @Serialize(PlayerDto)
 export class PlayerController {
+  private readonly logger = new Logger();
+
   constructor(
     private playerService: PlayerService,
     private eventEmitter: EventEmitter2,
@@ -79,6 +82,10 @@ export class PlayerController {
     @Player() player: PlayerModel,
     @Res({ passthrough: true }) response: Response,
   ): PlayerDto {
+    this.logger.debug(
+      `cookieDomain : ${this.configService.get('app.cookieDomain')}`,
+    );
+
     response.cookie(
       'mercureAuthorization',
       this.configService.get('mercure.subscriberToken'),
