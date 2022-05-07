@@ -68,11 +68,9 @@ export async function seed(knex: Knex): Promise<void> {
   const missionIds = await knex(MISSION)
     .insert([
       {
-        id: 1,
         content: 'Push your friend in the stairs',
       },
       {
-        id: 2,
         content: 'Marry your best friend',
       },
     ])

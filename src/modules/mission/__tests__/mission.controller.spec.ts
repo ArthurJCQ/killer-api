@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MissionController } from '../mission.controller';
@@ -14,6 +15,7 @@ describe('MissionController', () => {
           provide: MissionService,
           useValue: {},
         },
+        EventEmitter2,
       ],
     }).compile();
 
