@@ -14,9 +14,3 @@ declare global {
     }
   }
 }
-
-declare module 'knex/types/result' {
-  interface Registry {
-    Count: number;
-  }
-}
