@@ -11,10 +11,14 @@ export class CurrentPlayerMiddleware implements NestMiddleware {
     const { playerId } = req.session;
 
     if (playerId) {
-      const player = await this.playerService.getPlayerById(playerId);
+      try {
+        const player = await this.playerService.getPlayerById(playerId);
 
-      if (player) {
-        req.currentPlayer = player;
+        if (player) {
+          req.currentPlayer = player;
+        }
+      } catch (exception: unknown) {
+        req.session.playerId = null;
       }
     }
 

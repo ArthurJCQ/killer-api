@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
@@ -16,6 +17,7 @@ import { Role } from '../player/decorators/role.decorator';
 import { PlayerModel } from '../player/player.model';
 import { RoomStatus } from '../room/constants';
 import { Status } from '../room/decorators/status.decorator';
+import { MercureEvent } from '../sse/models/mercure-event';
 
 import { MISSION } from './constants';
 import { CreateMissionDto } from './dtos/create-mission.dto';
@@ -27,16 +29,32 @@ import { MissionService } from './mission.service';
 @Controller(MISSION)
 @Serialize(MissionDto)
 export class MissionController {
-  constructor(private missionService: MissionService) {}
+  constructor(
+    private missionService: MissionService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @Post()
   @Role(PlayerRole.PLAYER)
   @Status(RoomStatus.PENDING)
-  createMission(
+  async createMission(
     @Body() mission: CreateMissionDto,
     @Player() currentPlayer: PlayerModel,
   ): Promise<MissionDto> {
-    return this.missionService.createMission(mission.content, currentPlayer);
+    const newMission = await this.missionService.createMission(
+      mission.content,
+      currentPlayer,
+    );
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `room/${currentPlayer.roomCode}/mission/${newMission.id}`,
+        JSON.stringify(newMission),
+      ),
+    );
+
+    return newMission;
   }
 
   @Get('/player')
