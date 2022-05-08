@@ -99,7 +99,7 @@ export class MissionController {
     this.eventEmitter.emit(
       'push.mercure',
       new MercureEvent(
-        `room/${currentPlayer.roomCode}/mission/${id}/deleted`,
+        `room/${currentPlayer.roomCode}/mission/${id}`,
         JSON.stringify(id),
       ),
     );
