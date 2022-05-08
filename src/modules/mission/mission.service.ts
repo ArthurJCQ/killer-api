@@ -20,31 +20,35 @@ export class MissionService {
     return this.missionRepo.getMissions(roomCode);
   }
 
-  getMissionsByPlayerId(playerId: number): Promise<MissionModel[]> {
-    return this.missionRepo.getMissionsByPlayerId(playerId);
+  getMissionsByPlayer(player: PlayerModel): Promise<MissionModel[]> {
+    return this.missionRepo.getMissionsByPlayerId(player);
+  }
+
+  countAllMissionsInRoom(player: PlayerModel): Promise<number> {
+    return this.missionRepo.countAllMissionsInRoom(player);
   }
 
   async updateMission(
     missionId: number,
-    playerId: number,
+    player: PlayerModel,
     updateMissionContent: string,
   ): Promise<MissionModel> {
-    await this.checkMissionBelongToPlayer(missionId, playerId);
+    await this.checkMissionBelongToPlayer(missionId, player);
 
     return this.missionRepo.updateMission(missionId, updateMissionContent);
   }
 
-  async deleteMission(playerId: number, missionId): Promise<void> {
-    await this.checkMissionBelongToPlayer(missionId, playerId);
+  async deleteMission(player: PlayerModel, missionId): Promise<void> {
+    await this.checkMissionBelongToPlayer(missionId, player);
 
     return this.missionRepo.deleteMission(missionId);
   }
 
   async checkMissionBelongToPlayer(
     missionId: number,
-    playerId: number,
+    player: PlayerModel,
   ): Promise<void> {
-    const playerMissions = await this.getMissionsByPlayerId(playerId);
+    const playerMissions = await this.getMissionsByPlayer(player);
 
     const mission = playerMissions.find(
       (playerMission) => playerMission?.id === missionId,

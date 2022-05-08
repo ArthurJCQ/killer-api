@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DatabaseService } from '../database/database.service';
 import { PLAYER } from '../player/constants';
+import { PlayerModel } from '../player/player.model';
 
 import { MISSION, MISSION_ROOM } from './constants';
 import { MissionRoomModel } from './mission-room.model';
@@ -51,13 +52,25 @@ export class MissionRepository {
     return query;
   }
 
-  getMissionsByPlayerId(playerId: number): Promise<MissionModel[]> {
+  getMissionsByPlayerId(player: PlayerModel): Promise<MissionModel[]> {
     return this.db
       .client<MissionModel>(MISSION)
       .select(`${MISSION}.id`, `${MISSION}.content`)
       .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
       .join(PLAYER, `${MISSION_ROOM}.authorId`, `${PLAYER}.id`)
-      .where(`${PLAYER}.id`, playerId);
+      .where(`${PLAYER}.id`, player.id)
+      .andWhere(`${PLAYER}.roomCode`, player.roomCode);
+  }
+
+  async countAllMissionsInRoom(player: PlayerModel): Promise<number> {
+    const [nbMissions] = await this.db
+      .client<MissionModel>(MISSION)
+      .count()
+      .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
+      .where(`${MISSION_ROOM}.roomCode`, player.roomCode)
+      .returning('count');
+
+    return nbMissions.count;
   }
 
   async updateMission(

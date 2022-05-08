@@ -9,6 +9,9 @@ Content-Type: application/json
 ### GET missions of player
 GET http://localhost:3000/mission/player
 
+### GET count of missions in Room
+GET http://localhost:3000/mission/room
+
 ### PATCH mission
 PATCH http://localhost:3000/mission/1
 Content-Type: application/json
@@ -18,4 +21,4 @@ Content-Type: application/json
 }
 
 ### DELETE mission
-DELETE http://localhost:3000/mission/1
+DELETE http://localhost:3000/mission/4

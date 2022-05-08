@@ -50,7 +50,7 @@ export class MissionController {
       'push.mercure',
       new MercureEvent(
         `room/${currentPlayer.roomCode}/mission/${newMission.id}`,
-        JSON.stringify(newMission),
+        JSON.stringify(newMission.id),
       ),
     );
 
@@ -62,7 +62,15 @@ export class MissionController {
   getMissionsByPlayerId(
     @Player() currentPlayer: PlayerModel,
   ): Promise<MissionModel[]> {
-    return this.missionService.getMissionsByPlayerId(currentPlayer.id);
+    return this.missionService.getMissionsByPlayer(currentPlayer);
+  }
+
+  @Get('/room')
+  @Role(PlayerRole.PLAYER)
+  countAllMissionsInRoom(
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<number> {
+    return this.missionService.countAllMissionsInRoom(currentPlayer);
   }
 
   @Patch('/:id')
@@ -74,7 +82,7 @@ export class MissionController {
   ): Promise<MissionModel> {
     return this.missionService.updateMission(
       parseInt(id),
-      currentPlayer.id,
+      currentPlayer,
       updateMission.content,
     );
   }
@@ -82,10 +90,18 @@ export class MissionController {
   @Delete('/:id')
   @Role(PlayerRole.PLAYER)
   @HttpCode(204)
-  deleteMission(
+  async deleteMission(
     @Param('id') id: string,
     @Player() currentPlayer: PlayerModel,
   ): Promise<void> {
-    return this.missionService.deleteMission(currentPlayer.id, parseInt(id));
+    await this.missionService.deleteMission(currentPlayer, parseInt(id));
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `room/${currentPlayer.roomCode}/mission/${id}`,
+        JSON.stringify(id),
+      ),
+    );
   }
 }
