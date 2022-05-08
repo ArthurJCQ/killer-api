@@ -90,10 +90,18 @@ export class MissionController {
   @Delete('/:id')
   @Role(PlayerRole.PLAYER)
   @HttpCode(204)
-  deleteMission(
+  async deleteMission(
     @Param('id') id: string,
     @Player() currentPlayer: PlayerModel,
   ): Promise<void> {
-    return this.missionService.deleteMission(currentPlayer, parseInt(id));
+    await this.missionService.deleteMission(currentPlayer, parseInt(id));
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `room/${currentPlayer.roomCode}/mission/${id}/deleted`,
+        JSON.stringify(id),
+      ),
+    );
   }
 }

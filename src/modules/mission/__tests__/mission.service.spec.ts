@@ -96,7 +96,6 @@ describe('MissionService', () => {
     const count = await service.countAllMissionsInRoom(player);
 
     expect(countAllMissionsInRoom).toHaveBeenCalledWith(player);
-    expect(count).toBeDefined();
     expect(count).toEqual(2);
   });
 
