@@ -59,7 +59,7 @@ export class MissionRepository {
       .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
       .join(PLAYER, `${MISSION_ROOM}.authorId`, `${PLAYER}.id`)
       .where(`${PLAYER}.id`, player.id)
-      .andWhere(`${PLAYER}.roomCode`, player.roomCode);
+      .andWhere(`${MISSION_ROOM}.roomCode`, player.roomCode);
   }
 
   async countAllMissionsInRoom(player: PlayerModel): Promise<number> {
