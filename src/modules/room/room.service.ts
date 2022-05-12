@@ -103,6 +103,15 @@ export class RoomService {
     return this.playerService.getAllPlayersInRoom(code);
   }
 
+  async kickPlayerFromRoom(
+    roomCode: string,
+    playerId: number,
+  ): Promise<PlayerModel[]> {
+    await this.playerService.updatePlayer({ roomCode: null }, playerId);
+
+    return this.getAllPlayersInRoom(roomCode);
+  }
+
   async enoughPlayersInRoom(code: string): Promise<boolean> {
     const playersInRoom = await this.getAllPlayersInRoom(code);
 

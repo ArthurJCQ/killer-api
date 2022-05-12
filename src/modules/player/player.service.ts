@@ -174,6 +174,16 @@ export class PlayerService {
         new MercureEvent(`room/${roomCode}`, JSON.stringify(updatedPlayer)),
       );
     }
+
+    if (roomCodeBeforeUpdate && roomCodeBeforeUpdate !== roomCode) {
+      this.eventEmitter.emit(
+        'push.mercure',
+        new MercureEvent(
+          `room/${roomCodeBeforeUpdate}`,
+          JSON.stringify(updatedPlayer),
+        ),
+      );
+    }
   }
 
   private async checkRoomBeforeJoining(
