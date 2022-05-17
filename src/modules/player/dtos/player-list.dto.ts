@@ -19,4 +19,8 @@ export class PlayerListDto {
   @ApiProperty()
   @Expose()
   roomCode?: string;
+
+  @ApiProperty()
+  @Expose()
+  role: string;
 }

@@ -27,4 +27,8 @@ export class PlayerDto {
   @ApiProperty()
   @Expose()
   missionId?: number;
+
+  @ApiProperty()
+  @Expose()
+  role: string;
 }
