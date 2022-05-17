@@ -174,6 +174,17 @@ export class PlayerService {
         new MercureEvent(`room/${roomCode}`, JSON.stringify(updatedPlayer)),
       );
     }
+
+    // If player has a roomCode different than his previous one, send event to the previous room (a player left).
+    if (roomCodeBeforeUpdate && roomCodeBeforeUpdate !== roomCode) {
+      this.eventEmitter.emit(
+        'push.mercure',
+        new MercureEvent(
+          `room/${roomCodeBeforeUpdate}`,
+          JSON.stringify(updatedPlayer),
+        ),
+      );
+    }
   }
 
   private async checkRoomBeforeJoining(

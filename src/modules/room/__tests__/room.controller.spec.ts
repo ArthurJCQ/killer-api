@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { RoomController } from '../room.controller';
@@ -14,6 +15,7 @@ describe('RoomController', () => {
           provide: RoomService,
           useValue: {},
         },
+        EventEmitter2,
       ],
     }).compile();
 
