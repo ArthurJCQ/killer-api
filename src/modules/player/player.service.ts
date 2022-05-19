@@ -9,7 +9,7 @@ import { MissionService } from '../mission/mission.service';
 import { RoomStatus } from '../room/constants';
 import { MercureEvent } from '../sse/models/mercure-event';
 
-import { PlayerStatus } from './constants';
+import { PlayerRole, PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { PlayerKilledEvent } from './events/player-killed-event';
@@ -86,6 +86,10 @@ export class PlayerService {
 
     if (player.roomCode) {
       await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
+
+      if (player.roomCode !== existingPlayer.roomCode) {
+        player.role = PlayerRole.PLAYER;
+      }
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
