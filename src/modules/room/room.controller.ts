@@ -4,8 +4,8 @@ import {
   ForbiddenException,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -18,6 +18,7 @@ import { PlayerModel } from '../player/player.model';
 import { MercureEvent } from '../sse/models/mercure-event';
 
 import { ROOM } from './constants';
+import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
 import { RoomDto } from './dtos/room.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { RoomService } from './room.service';
@@ -42,7 +43,7 @@ export class RoomController {
     return this.roomService.getRoomByCode(code);
   }
 
-  @Put('/:code')
+  @Patch('/:code')
   @Role(PlayerRole.ADMIN)
   @Serialize(RoomDto)
   async updateRoom(
@@ -72,18 +73,30 @@ export class RoomController {
     return this.roomService.getAllPlayersInRoom(roomCode);
   }
 
-  @Post('/:roomCode/kick/player/:playerId')
+  @Patch('/:roomCode/player/:playerId/admin')
   @Serialize(PlayerListDto)
   @Role(PlayerRole.ADMIN)
-  kickPlayerFromRoom(
+  async adminPatchRoomPlayer(
     @Param('roomCode') roomCode: string,
-    @Param('playerId') playerId: number,
+    @Param('playerId') playerId: string,
+    @Body() patchRoomPlayer: PatchRoomPlayerDto,
     @Player() currentPlayer: PlayerModel,
   ): Promise<PlayerListDto[]> {
-    if (currentPlayer.roomCode !== roomCode) {
+    const adminIsInPlayerRoom = await this.roomService.isPlayerInRoom(
+      currentPlayer.roomCode,
+      parseInt(playerId),
+    );
+
+    if (
+      currentPlayer.roomCode !== roomCode ||
+      !adminIsInPlayerRoom ||
+      currentPlayer.id === parseInt(playerId)
+    ) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
 
-    return this.roomService.kickPlayerFromRoom(roomCode, playerId);
+    await this.roomService.patchRoomPlayerAdmin(patchRoomPlayer, playerId);
+
+    return this.roomService.getAllPlayersInRoom(roomCode);
   }
 }

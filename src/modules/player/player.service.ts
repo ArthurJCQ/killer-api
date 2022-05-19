@@ -92,6 +92,10 @@ export class PlayerService {
       }
     }
 
+    if (player.roomCode === null) {
+      player.role = PlayerRole.PLAYER;
+    }
+
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
 
     if (player.status === PlayerStatus.KILLED) {
