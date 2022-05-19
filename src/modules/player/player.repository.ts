@@ -32,6 +32,7 @@ export class PlayerRepository {
       missionId,
       targetId,
       roomCode,
+      role,
     }: Partial<PlayerModel>,
     id: number,
   ): Promise<PlayerModel> {
@@ -47,6 +48,7 @@ export class PlayerRepository {
         missionId,
         targetId,
         roomCode,
+        role,
       })
       .returning('*');
 

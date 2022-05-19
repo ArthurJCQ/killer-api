@@ -5,8 +5,8 @@ import {
   Get,
   HttpCode,
   Logger,
+  Patch,
   Post,
-  Put,
   Res,
   Session,
 } from '@nestjs/common';
@@ -55,7 +55,7 @@ export class PlayerController {
     return newPlayer;
   }
 
-  @Put()
+  @Patch()
   @Role(PlayerRole.PLAYER)
   async updatePlayer(
     @Body() player: UpdatePlayerDto,
