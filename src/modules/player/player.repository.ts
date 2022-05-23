@@ -4,7 +4,7 @@ import { DatabaseService } from '../database/database.service';
 import { ROOM } from '../room/constants';
 import { RoomModel } from '../room/room.model';
 
-import {PLAYER, PlayerRole} from './constants';
+import { PLAYER, PlayerRole } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { PlayerModel } from './player.model';
 
