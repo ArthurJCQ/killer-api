@@ -115,11 +115,7 @@ export class RoomService {
 
   async patchRoomPlayerAdmin(
     { roomCode }: PatchRoomPlayerDto,
-<<<<<<< HEAD
     playerId: number,
-=======
-    playerId,
->>>>>>> :boom: API refacto : BREAKING CHANGES
   ): Promise<void> {
     if (roomCode !== null) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });

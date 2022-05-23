@@ -102,6 +102,7 @@ export class RoomController {
     ) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
+
     await this.roomService.patchRoomPlayerAdmin(
       patchRoomPlayer,
       parsedPlayerId,
