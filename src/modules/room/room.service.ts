@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
 
 import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
+import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { GameStartingEvent } from './events/game-starting.event';
 import { RoomModel } from './room.model';
@@ -103,13 +105,21 @@ export class RoomService {
     return this.playerService.getAllPlayersInRoom(code);
   }
 
-  async kickPlayerFromRoom(
-    roomCode: string,
-    playerId: number,
-  ): Promise<PlayerModel[]> {
-    await this.playerService.updatePlayer({ roomCode: null }, playerId);
+  async isPlayerInRoom(code: string, playerId: number): Promise<boolean> {
+    const playersInRoom = await this.getAllPlayersInRoom(code);
 
-    return this.getAllPlayersInRoom(roomCode);
+    return playersInRoom.some((player) => player.id === playerId);
+  }
+
+  async patchRoomPlayerAdmin(
+    { roomCode }: PatchRoomPlayerDto,
+    playerId: number,
+  ): Promise<void> {
+    if (roomCode !== null) {
+      throw new ForbiddenException({ key: 'room.FORBIDDEN' });
+    }
+
+    await this.playerService.updatePlayer({ roomCode }, playerId);
   }
 
   async enoughPlayersInRoom(code: string): Promise<boolean> {

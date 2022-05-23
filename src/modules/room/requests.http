@@ -4,8 +4,8 @@ POST http://localhost:3000/room
 ### GET a room
 GET http://localhost:3000/room/XNXX1
 
-### PUT update room
-PUT http://localhost:3000/room/XNXX1
+### PATCH update room
+PATCH http://localhost:3000/room/XNXX1
 Content-Type: application/json
 
 {
@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ### PUT start game
-PUT http://localhost:3000/room/XNXX1
+PATCH http://localhost:3000/room/XNXX1
 Content-Type: application/json
 
 {
@@ -23,3 +23,11 @@ Content-Type: application/json
 
 ### GET all players in room
 GET http://localhost:3000/room/XNXX1/players
+
+### PATCH admin (kick player from room)
+PATCH http://localhost:3000/room/M22B9/player/70/admin
+Content-Type: application/json
+
+{
+  "roomCode": null
+}
