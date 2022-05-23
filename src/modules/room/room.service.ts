@@ -113,7 +113,7 @@ export class RoomService {
 
   async patchRoomPlayerAdmin(
     { roomCode }: PatchRoomPlayerDto,
-    playerId,
+    playerId: number,
   ): Promise<void> {
     if (roomCode !== null) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });

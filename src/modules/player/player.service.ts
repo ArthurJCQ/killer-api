@@ -69,6 +69,7 @@ export class PlayerService {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
+    /** Player update his name without leaving room */
     if (player.name && existingPlayer.roomCode && !player.roomCode) {
       const existingPlayerWithSameNameInRoom =
         await this.playerRepo.getPlayerByNameInRoom(
@@ -84,10 +85,12 @@ export class PlayerService {
       }
     }
 
+    /** Player is joining room */
     if (player.roomCode) {
       await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
     }
 
+    /** Player is quitting room */
     if (player.roomCode === null) {
       player.role = PlayerRole.PLAYER;
     }
@@ -179,7 +182,7 @@ export class PlayerService {
       );
     }
 
-    // If player has a roomCode different than his previous one, send event to the previous room (a player left).
+    // If player has a roomCode different from his previous one, send event to the previous room (a player left).
     if (roomCodeBeforeUpdate && roomCodeBeforeUpdate !== roomCode) {
       this.eventEmitter.emit(
         'push.mercure',

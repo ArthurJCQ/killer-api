@@ -76,26 +76,31 @@ export class RoomController {
   @Patch('/:roomCode/player/:playerId/admin')
   @Serialize(PlayerListDto)
   @Role(PlayerRole.ADMIN)
-  async adminPatchRoomPlayer(
+  async patchRoomPlayerAdmin(
     @Param('roomCode') roomCode: string,
     @Param('playerId') playerId: string,
     @Body() patchRoomPlayer: PatchRoomPlayerDto,
     @Player() currentPlayer: PlayerModel,
   ): Promise<PlayerListDto[]> {
+    const parsedPlayerId = parseInt(playerId);
+
     const adminIsInPlayerRoom = await this.roomService.isPlayerInRoom(
       currentPlayer.roomCode,
-      parseInt(playerId),
+      parsedPlayerId,
     );
 
-    if (
-      currentPlayer.roomCode !== roomCode ||
-      !adminIsInPlayerRoom ||
-      currentPlayer.id === parseInt(playerId)
-    ) {
+    /**
+     * Check if player to update is in the same room as admin
+     * Check if roomCode in URL belongs to admin
+     */
+    if (currentPlayer.roomCode !== roomCode || !adminIsInPlayerRoom) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
 
-    await this.roomService.patchRoomPlayerAdmin(patchRoomPlayer, playerId);
+    await this.roomService.patchRoomPlayerAdmin(
+      patchRoomPlayer,
+      parsedPlayerId,
+    );
 
     return this.roomService.getAllPlayersInRoom(roomCode);
   }
