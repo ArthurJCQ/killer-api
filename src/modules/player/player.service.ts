@@ -106,6 +106,22 @@ export class PlayerService {
       await this.handlePlayerLeavingRoom(existingPlayer);
     }
 
+    if (
+      player.role === PlayerRole.PLAYER &&
+      existingPlayer.role === PlayerRole.ADMIN
+    ) {
+      throw new BadRequestException({
+        key: 'Player.FORBIDDEN.ADMIN_TO_PLAYER',
+      });
+    }
+
+    if (
+      player.role === PlayerRole.ADMIN &&
+      existingPlayer.role === PlayerRole.PLAYER
+    ) {
+      await this.updateAdminRole(player.id);
+    }
+
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
 
     if (player.status === PlayerStatus.KILLED) {
@@ -244,6 +260,23 @@ export class PlayerService {
     }
 
     return true;
+  }
+
+  async updateAdminRole(newPlayerAdminId: number): Promise<void> {
+    const player = await this.playerRepo.getPlayerById(newPlayerAdminId);
+
+    const actualAdminPlayer = await this.playerRepo.getAdminPlayerRoom(
+      player.roomCode,
+    );
+
+    if (!player || !actualAdminPlayer) {
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
+    }
+
+    await this.playerRepo.updatePlayer(
+      { role: PlayerRole.PLAYER },
+      actualAdminPlayer.id,
+    );
   }
 
   private handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
