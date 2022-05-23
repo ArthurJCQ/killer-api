@@ -92,8 +92,13 @@ export class RoomController {
     /**
      * Check if player to update is in the same room as admin
      * Check if roomCode in URL belongs to admin
+     * Check if admin is self updating (forbidden on this route. Use player patch)
      */
-    if (currentPlayer.roomCode !== roomCode || !adminIsInPlayerRoom) {
+    if (
+      currentPlayer.roomCode !== roomCode ||
+      !adminIsInPlayerRoom ||
+      currentPlayer.id === parsedPlayerId
+    ) {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
 
