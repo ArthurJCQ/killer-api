@@ -61,22 +61,22 @@ export class PlayerService {
   }
 
   async updatePlayer(
-    player: Partial<PlayerModel>,
+    updatingData: Partial<PlayerModel>,
     id: number,
     mercureEventType?: MercureEventType,
   ): Promise<PlayerModel> {
-    const existingPlayer = await this.playerRepo.getPlayerById(id);
+    const player = await this.playerRepo.getPlayerById(id);
 
-    if (!existingPlayer) {
+    if (!player) {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     /** Player update his name without leaving room */
-    if (player.name && existingPlayer.roomCode && !player.roomCode) {
+    if (updatingData.name && player.roomCode && !updatingData.roomCode) {
       const existingPlayerWithSameNameInRoom =
         await this.playerRepo.getPlayerByNameInRoom(
-          existingPlayer.roomCode,
-          player.name,
+          player.roomCode,
+          updatingData.name,
         );
 
       if (
@@ -88,49 +88,45 @@ export class PlayerService {
     }
 
     /** Player is joining room */
-    if (player.roomCode && player.roomCode !== existingPlayer.roomCode) {
-      await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
+    if (updatingData.roomCode && updatingData.roomCode !== player.roomCode) {
+      await this.checkRoomBeforeJoining(updatingData.roomCode, player);
 
       /** Player leave a room */
-      if (existingPlayer.roomCode) {
-        await this.handlePlayerLeavingRoom(existingPlayer);
+      if (player.roomCode) {
+        await this.handlePlayerLeavingRoom(player);
       }
 
       player.role = PlayerRole.PLAYER;
     }
 
     /** Player is quitting room */
-    if (player.roomCode === null) {
-      if (existingPlayer.role === PlayerRole.ADMIN) {
-        throw new BadRequestException({
-          key: 'Player.FORBIDDEN.CHANGE_ADMIN',
-        });
-      }
-
+    if (updatingData.roomCode === null) {
       player.role = PlayerRole.PLAYER;
 
-      await this.handlePlayerLeavingRoom(existingPlayer);
+      await this.handlePlayerLeavingRoom(player);
     }
 
+    /** Admin become player without giving admin rights first. */
     if (
-      player.role === PlayerRole.PLAYER &&
-      existingPlayer.role === PlayerRole.ADMIN
+      updatingData.role === PlayerRole.PLAYER &&
+      player.role === PlayerRole.ADMIN
     ) {
       throw new BadRequestException({
         key: 'Player.FORBIDDEN.CHANGE_ADMIN',
       });
     }
 
+    /** Admin role transferring */
     if (
-      player.role === PlayerRole.ADMIN &&
-      existingPlayer.role === PlayerRole.PLAYER
+      updatingData.role === PlayerRole.ADMIN &&
+      player.role === PlayerRole.PLAYER
     ) {
-      await this.updateAdminRole(player.id);
+      await this.updateAdminRole(updatingData.id);
     }
 
-    const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
+    const updatedPlayer = await this.playerRepo.updatePlayer(updatingData, id);
 
-    if (player.status === PlayerStatus.KILLED) {
+    if (updatingData.status === PlayerStatus.KILLED) {
       this.eventEmitter.emit(
         'player.killed',
         new PlayerKilledEvent(
@@ -142,9 +138,9 @@ export class PlayerService {
     }
 
     this.pushUpdatePlayerToMercure(
-      player?.roomCode,
+      updatingData?.roomCode,
       updatedPlayer?.roomCode,
-      existingPlayer?.roomCode,
+      player?.roomCode,
       updatedPlayer,
       mercureEventType,
     );
