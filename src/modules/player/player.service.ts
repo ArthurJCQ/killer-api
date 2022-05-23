@@ -101,6 +101,12 @@ export class PlayerService {
 
     /** Player is quitting room */
     if (player.roomCode === null) {
+      if (existingPlayer.role === PlayerRole.ADMIN) {
+        throw new BadRequestException({
+          key: 'Player.FORBIDDEN.CHANGE_ADMIN',
+        });
+      }
+
       player.role = PlayerRole.PLAYER;
 
       await this.handlePlayerLeavingRoom(existingPlayer);
@@ -111,7 +117,7 @@ export class PlayerService {
       existingPlayer.role === PlayerRole.ADMIN
     ) {
       throw new BadRequestException({
-        key: 'Player.FORBIDDEN.ADMIN_TO_PLAYER',
+        key: 'Player.FORBIDDEN.CHANGE_ADMIN',
       });
     }
 
