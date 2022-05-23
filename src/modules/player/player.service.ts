@@ -94,10 +94,6 @@ export class PlayerService {
       }
     }
 
-    if (player.roomCode === null) {
-      player.role = PlayerRole.PLAYER;
-    }
-
     /** Player is quitting room */
     if (player.roomCode === null) {
       player.role = PlayerRole.PLAYER;
