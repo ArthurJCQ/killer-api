@@ -60,10 +60,6 @@ export class MissionService {
   }
 
   async clearPlayerMissions(player: PlayerModel): Promise<void> {
-    const missions = await this.missionRepo.getMissionsByPlayerId(player);
-
-    await missions.forEach((mission) =>
-      this.missionRepo.deleteMission(mission.id),
-    );
+    return this.missionRepo.clearPlayerMissions(player);
   }
 }
