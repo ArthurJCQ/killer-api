@@ -86,17 +86,18 @@ export class PlayerService {
     }
 
     /** Player is joining room */
-    if (player.roomCode) {
+    if (player.roomCode && player.roomCode !== existingPlayer.roomCode) {
       await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
+      await this.handlePlayerLeavingRoom(existingPlayer);
 
-      if (player.roomCode !== existingPlayer.roomCode) {
-        player.role = PlayerRole.PLAYER;
-      }
+      player.role = PlayerRole.PLAYER;
     }
 
     /** Player is quitting room */
     if (player.roomCode === null) {
       player.role = PlayerRole.PLAYER;
+
+      await this.handlePlayerLeavingRoom(existingPlayer);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -226,5 +227,9 @@ export class PlayerService {
     }
 
     return true;
+  }
+
+  private handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
+    return this.missionService.clearPlayerMissions(player);
   }
 }
