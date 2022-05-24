@@ -13,7 +13,8 @@ import { MercureEventType } from '../sse/models/mercure-event-types';
 import { PlayerRole, PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
-import { PlayerKilledEvent } from './events/player-killed-event';
+import { PlayerKilledEvent } from './events/player-killed.event';
+import { PlayerLeftRoomEvent } from './events/player-left-room.event';
 import { PlayerModel } from './player.model';
 import { PlayerRepository } from './player.repository';
 
@@ -106,7 +107,7 @@ export class PlayerService {
       await this.handlePlayerLeavingRoom(player);
     }
 
-    /** Admin become player without giving admin rights first. */
+    /** Admin can't become player without giving admin rights first. */
     if (
       updatingData.role === PlayerRole.PLAYER &&
       player.role === PlayerRole.ADMIN
@@ -281,7 +282,27 @@ export class PlayerService {
     );
   }
 
-  private handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
-    return this.missionService.clearPlayerMissions(player);
+  private async handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
+    if (player.role === PlayerRole.ADMIN) {
+      const roomPlayers = await this.playerRepo.getAllPlayersInRoom(
+        player.roomCode,
+      );
+
+      const newAdmin = roomPlayers.find(
+        (roomPlayer) => roomPlayer.id !== player.id,
+      );
+
+      /** Give admin right to the first other player found in room. */
+      if (newAdmin !== null) {
+        this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
+      }
+    }
+
+    this.missionService.clearPlayerMissions(player);
+
+    this.eventEmitter.emit(
+      'player.left-room',
+      new PlayerLeftRoomEvent(player),
+    );
   }
 }
