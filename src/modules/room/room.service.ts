@@ -9,6 +9,7 @@ import randomstring from 'randomstring';
 
 import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
+import { MercureEvent } from '../sse/models/mercure-event';
 
 import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
@@ -150,9 +151,11 @@ export class RoomService {
 
     /** Kick players one by one, as there are check and cleaning steps in updatePlayer method */
     await players.forEach((player) =>
-      this.playerService.updatePlayer({ roomCode: null }, player.id),
+      this.playerService.updatePlayer({ roomCode: null }, player.id, false),
     );
 
-    return this.roomRepo.deleteRoom(code);
+    await this.roomRepo.deleteRoom(code);
+
+    this.eventEmitter.emit('push.mercure', new MercureEvent(`room/${code}`));
   }
 }

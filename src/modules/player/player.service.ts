@@ -62,6 +62,7 @@ export class PlayerService {
   async updatePlayer(
     player: Partial<PlayerModel>,
     id: number,
+    triggerMercureEvent = true,
   ): Promise<PlayerModel> {
     const existingPlayer = await this.playerRepo.getPlayerById(id);
 
@@ -113,12 +114,14 @@ export class PlayerService {
       );
     }
 
-    this.pushUpdatePlayerToMercure(
-      player?.roomCode,
-      updatedPlayer?.roomCode,
-      existingPlayer?.roomCode,
-      updatedPlayer,
-    );
+    if (triggerMercureEvent) {
+      this.pushUpdatePlayerToMercure(
+        player?.roomCode,
+        updatedPlayer?.roomCode,
+        existingPlayer?.roomCode,
+        updatedPlayer,
+      );
+    }
 
     return updatedPlayer;
   }
