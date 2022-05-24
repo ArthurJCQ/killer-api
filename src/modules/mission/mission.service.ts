@@ -58,4 +58,12 @@ export class MissionService {
       throw new NotFoundException({ key: 'player.MISSION.NOT_FOUND' });
     }
   }
+
+  async clearPlayerMissions(player: PlayerModel): Promise<void> {
+    const missions = await this.missionRepo.getMissionsByPlayerId(player);
+
+    await missions.forEach((mission) =>
+      this.missionRepo.deleteMission(mission.id),
+    );
+  }
 }

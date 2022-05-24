@@ -97,6 +97,8 @@ export class PlayerService {
     /** Player is quitting room */
     if (player.roomCode === null) {
       player.role = PlayerRole.PLAYER;
+
+      await this.handlePlayerLeavingRoom(existingPlayer);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
@@ -226,5 +228,9 @@ export class PlayerService {
     }
 
     return true;
+  }
+
+  private handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
+    return this.missionService.clearPlayerMissions(player);
   }
 }
