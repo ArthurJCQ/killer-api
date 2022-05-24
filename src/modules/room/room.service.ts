@@ -144,4 +144,15 @@ export class RoomService {
       enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom
     );
   }
+
+  async deleteRoom(code: string): Promise<void> {
+    const players = await this.getAllPlayersInRoom(code);
+
+    /** Kick players one by one, as there are check and cleaning steps in updatePlayer method */
+    await players.forEach((player) =>
+      this.playerService.updatePlayer({ roomCode: null }, player.id),
+    );
+
+    return this.roomRepo.deleteRoom(code);
+  }
 }

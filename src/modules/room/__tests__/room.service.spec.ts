@@ -219,4 +219,39 @@ describe('RoomService', () => {
     expect(getAllPlayersSpy).toHaveBeenCalledWith('CODE3');
     expect(players.length).toEqual(2);
   });
+
+  it('should delete room', async () => {
+    const getAllPlayersInRoomSpy = jest
+      .spyOn(service, 'getAllPlayersInRoom')
+      .mockResolvedValue([
+        {
+          id: 1,
+          name: 'Arty',
+          roomCode: 'CODE1',
+          status: PlayerStatus.ALIVE,
+          role: PlayerRole.PLAYER,
+        },
+        {
+          id: 2,
+          name: 'John',
+          roomCode: 'CODE1',
+          status: PlayerStatus.ALIVE,
+          role: PlayerRole.PLAYER,
+        },
+      ]);
+
+    const updatePlayerSpy = jest
+      .spyOn(playerService, 'updatePlayer')
+      .mockResolvedValue(null);
+
+    const deleteRoomSpy = jest
+      .spyOn(roomRepo, 'deleteRoom')
+      .mockResolvedValue(null);
+
+    await service.deleteRoom('CODE1');
+
+    expect(getAllPlayersInRoomSpy).toHaveBeenCalledWith('CODE1');
+    expect(updatePlayerSpy).toHaveBeenCalledTimes(2);
+    expect(deleteRoomSpy).toHaveBeenCalledWith('CODE1');
+  });
 });
