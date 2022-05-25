@@ -150,9 +150,13 @@ export class RoomService {
     const players = await this.getAllPlayersInRoom(code);
 
     /** Kick players one by one, as there are check and cleaning steps in updatePlayer method */
-    await players.forEach((player) =>
-      this.playerService.updatePlayer({ roomCode: null }, player.id, false),
-    );
+    for (const player of players) {
+      await this.playerService.updatePlayer(
+        { roomCode: null },
+        player.id,
+        false,
+      );
+    }
 
     await this.roomRepo.deleteRoom(code);
 

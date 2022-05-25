@@ -89,7 +89,11 @@ export class PlayerService {
     /** Player is joining room */
     if (player.roomCode && player.roomCode !== existingPlayer.roomCode) {
       await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
-      await this.handlePlayerLeavingRoom(existingPlayer);
+
+      /** Player leave a room */
+      if (existingPlayer.roomCode) {
+        await this.handlePlayerLeavingRoom(existingPlayer);
+      }
 
       player.role = PlayerRole.PLAYER;
     }
