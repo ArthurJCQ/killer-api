@@ -10,6 +10,7 @@ import randomstring from 'randomstring';
 import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
 import { MercureEvent } from '../sse/models/mercure-event';
+import { MercureEventType } from '../sse/models/mercure-event-types';
 
 import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
@@ -154,12 +155,15 @@ export class RoomService {
       await this.playerService.updatePlayer(
         { roomCode: null },
         player.id,
-        false,
+        MercureEventType.NO_EVENT,
       );
     }
 
     await this.roomRepo.deleteRoom(code);
 
-    this.eventEmitter.emit('push.mercure', new MercureEvent(`room/${code}`));
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(`room/${code}`, null, MercureEventType.ROOM_DELETED),
+    );
   }
 }

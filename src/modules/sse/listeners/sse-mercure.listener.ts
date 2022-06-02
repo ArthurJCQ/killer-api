@@ -5,6 +5,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { lastValueFrom, map } from 'rxjs';
 
 import { MercureEvent } from '../models/mercure-event';
+import { MercureEventType } from '../models/mercure-event-types';
 
 @Injectable()
 export class SseMercureListener {
@@ -17,13 +18,19 @@ export class SseMercureListener {
 
   @OnEvent('push.mercure')
   async publishEventToMercure(event: MercureEvent): Promise<void> {
+    if (event.type === MercureEventType.NO_EVENT) {
+      this.logger.log(`No event was sent on topic ${event.topic}`);
+
+      return;
+    }
+
     this.logger.log('Sending event to Mercure...');
 
     const { host: mercureHost, publisherToken } =
       this.configService.get('mercure');
 
     this.logger.log(
-      `Trying to send topic ${event.topic} to mercure host ${mercureHost}`,
+      `Trying to send topic ${event.topic} with event type : ${event.type} to mercure host ${mercureHost}`,
     );
 
     try {

@@ -8,6 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MissionService } from '../mission/mission.service';
 import { RoomStatus } from '../room/constants';
 import { MercureEvent } from '../sse/models/mercure-event';
+import { MercureEventType } from '../sse/models/mercure-event-types';
 
 import { PlayerRole, PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
@@ -62,7 +63,7 @@ export class PlayerService {
   async updatePlayer(
     player: Partial<PlayerModel>,
     id: number,
-    triggerMercureEvent = true,
+    mercureEventType?: MercureEventType,
   ): Promise<PlayerModel> {
     const existingPlayer = await this.playerRepo.getPlayerById(id);
 
@@ -118,14 +119,13 @@ export class PlayerService {
       );
     }
 
-    if (triggerMercureEvent) {
-      this.pushUpdatePlayerToMercure(
-        player?.roomCode,
-        updatedPlayer?.roomCode,
-        existingPlayer?.roomCode,
-        updatedPlayer,
-      );
-    }
+    this.pushUpdatePlayerToMercure(
+      player?.roomCode,
+      updatedPlayer?.roomCode,
+      existingPlayer?.roomCode,
+      updatedPlayer,
+      mercureEventType,
+    );
 
     return updatedPlayer;
   }
@@ -178,6 +178,7 @@ export class PlayerService {
     roomCodeAfterUpdate: string,
     roomCodeBeforeUpdate: string,
     updatedPlayer: Partial<PlayerModel>,
+    eventType?: MercureEventType,
   ): void {
     /**
      * Either:
@@ -190,7 +191,11 @@ export class PlayerService {
     if (roomCode) {
       this.eventEmitter.emit(
         'push.mercure',
-        new MercureEvent(`room/${roomCode}`, JSON.stringify(updatedPlayer)),
+        new MercureEvent(
+          `room/${roomCode}`,
+          JSON.stringify(updatedPlayer),
+          eventType,
+        ),
       );
     }
 
@@ -201,6 +206,7 @@ export class PlayerService {
         new MercureEvent(
           `room/${roomCodeBeforeUpdate}`,
           JSON.stringify(updatedPlayer),
+          eventType,
         ),
       );
     }

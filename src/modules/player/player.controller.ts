@@ -82,10 +82,6 @@ export class PlayerController {
     @Player() player: PlayerModel,
     @Res({ passthrough: true }) response: Response,
   ): PlayerDto {
-    this.logger.debug(
-      `cookieDomain : ${this.configService.get('app.cookieDomain')}`,
-    );
-
     response.cookie(
       'mercureAuthorization',
       this.configService.get('mercure.subscriberToken'),
