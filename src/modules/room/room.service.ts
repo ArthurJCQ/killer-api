@@ -163,11 +163,7 @@ export class RoomService {
 
     this.eventEmitter.emit(
       'push.mercure',
-      new MercureEvent(
-        `room/${code}`,
-        JSON.stringify(code),
-        MercureEventType.ROOM_DELETED,
-      ),
+      new MercureEvent(`room/${code}`, null, MercureEventType.ROOM_DELETED),
     );
   }
 }
