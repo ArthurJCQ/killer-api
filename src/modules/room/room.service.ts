@@ -9,6 +9,8 @@ import randomstring from 'randomstring';
 
 import { PlayerModel } from '../player/player.model';
 import { PlayerService } from '../player/player.service';
+import { MercureEvent } from '../sse/models/mercure-event';
+import { MercureEventType } from '../sse/models/mercure-event-types';
 
 import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
@@ -142,6 +144,26 @@ export class RoomService {
 
     return (
       enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom
+    );
+  }
+
+  async deleteRoom(code: string): Promise<void> {
+    const players = await this.getAllPlayersInRoom(code);
+
+    /** Kick players one by one, as there are check and cleaning steps in updatePlayer method */
+    for (const player of players) {
+      await this.playerService.updatePlayer(
+        { roomCode: null },
+        player.id,
+        MercureEventType.NO_EVENT,
+      );
+    }
+
+    await this.roomRepo.deleteRoom(code);
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(`room/${code}`, null, MercureEventType.ROOM_DELETED),
     );
   }
 }

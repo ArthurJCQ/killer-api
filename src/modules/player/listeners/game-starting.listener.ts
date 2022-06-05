@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { MissionService } from '../../mission/mission.service';
 import { GameStartingEvent } from '../../room/events/game-starting.event';
+import { MercureEvent } from '../../sse/models/mercure-event';
 import { PlayerModel } from '../player.model';
 import { PlayerRepository } from '../player.repository';
 
@@ -11,14 +12,18 @@ export class GameStartingListener {
   constructor(
     private playerRepo: PlayerRepository,
     private missionService: MissionService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   @OnEvent('game.starting')
-  async handleGameStarting(
-    gameStartingEvent: GameStartingEvent,
-  ): Promise<void> {
-    await this.dispatchMissions(gameStartingEvent.roomCode);
-    await this.dispatchTargets(gameStartingEvent.roomCode);
+  async handleGameStarting({ roomCode }: GameStartingEvent): Promise<void> {
+    await this.dispatchMissions(roomCode);
+    await this.dispatchTargets(roomCode);
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(`room/${roomCode}`),
+    );
   }
 
   private async dispatchMissions(roomCode: string): Promise<void> {

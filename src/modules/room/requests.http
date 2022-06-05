@@ -31,3 +31,6 @@ Content-Type: application/json
 {
   "roomCode": null
 }
+
+### DELETE room
+DELETE http://localhost:3000/room/XNXX1

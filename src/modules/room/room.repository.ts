@@ -62,4 +62,8 @@ export class RoomRepository {
 
     return room;
   }
+
+  async deleteRoom(code: string): Promise<void> {
+    return this.db.client<RoomModel>(ROOM).where({ code }).del();
+  }
 }

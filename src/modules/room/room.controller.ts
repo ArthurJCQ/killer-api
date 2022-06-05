@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   Param,
@@ -108,5 +109,11 @@ export class RoomController {
     );
 
     return this.roomService.getAllPlayersInRoom(roomCode);
+  }
+
+  @Delete('/:roomCode')
+  @Role(PlayerRole.ADMIN)
+  deleteRoom(@Param('roomCode') roomCode: string): Promise<void> {
+    return this.roomService.deleteRoom(roomCode);
   }
 }

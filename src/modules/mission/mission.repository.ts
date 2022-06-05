@@ -100,14 +100,14 @@ export class MissionRepository {
 
   clearPlayerMissions(player: PlayerModel): Promise<void> {
     return this.db.client.transaction(async (trx) => {
-      await trx<MissionModel>(MISSION)
-        .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
+      await trx<MissionRoomModel>(MISSION_ROOM)
         .join(PLAYER, `${MISSION_ROOM}.authorId`, `${PLAYER}.id`)
         .where(`${PLAYER}.id`, player.id)
         .andWhere(`${MISSION_ROOM}.roomCode`, player.roomCode)
         .del();
 
-      await trx<MissionRoomModel>(MISSION_ROOM)
+      await trx<MissionModel>(MISSION)
+        .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
         .join(PLAYER, `${MISSION_ROOM}.authorId`, `${PLAYER}.id`)
         .where(`${PLAYER}.id`, player.id)
         .andWhere(`${MISSION_ROOM}.roomCode`, player.roomCode)

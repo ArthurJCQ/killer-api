@@ -48,7 +48,7 @@ export async function seed(knex: Knex): Promise<void> {
         name: 'Roco',
         status: PlayerStatus.ALIVE,
         role: PlayerRole.ADMIN,
-        roomCode: roomCodes[0],
+        roomCode: roomCodes[0].code,
         passcode: 1234,
         targetId: null,
         missionId: null,
@@ -57,7 +57,7 @@ export async function seed(knex: Knex): Promise<void> {
         name: 'Sifredi',
         status: PlayerStatus.ALIVE,
         role: PlayerRole.PLAYER,
-        roomCode: roomCodes[1],
+        roomCode: roomCodes[1].code,
         passcode: 1234,
         targetId: null,
         missionId: null,
@@ -78,14 +78,14 @@ export async function seed(knex: Knex): Promise<void> {
 
   await knex(MISSION_ROOM).insert([
     {
-      roomCode: roomCodes[0],
-      missionId: missionIds[0],
-      authorId: playerIds[0],
+      roomCode: roomCodes[0].code,
+      missionId: missionIds[0].id,
+      authorId: playerIds[0].id,
     },
     {
-      roomCode: roomCodes[1],
-      missionId: missionIds[1],
-      authorId: playerIds[1],
+      roomCode: roomCodes[1].code,
+      missionId: missionIds[1].id,
+      authorId: playerIds[1].id,
     },
   ]);
 }
