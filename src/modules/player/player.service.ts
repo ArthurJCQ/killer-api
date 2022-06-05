@@ -128,6 +128,9 @@ export class PlayerService {
   }
 
   async checkAllPlayerInRoomHavePasscode(roomCode: string): Promise<boolean> {
+    console.log(`Skipping passcode checking for room ${roomCode}`);
+
+    /* To uncomment when adding passcode feature
     const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
     const isSomePlayerHaveNoPasscode = players.some(
@@ -137,6 +140,7 @@ export class PlayerService {
     if (isSomePlayerHaveNoPasscode) {
       throw new BadRequestException({ key: 'player.BAD_REQUEST.NO_PASSCODE' });
     }
+   */
 
     return true;
   }
