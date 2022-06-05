@@ -36,12 +36,18 @@ export class SseMercureListener {
     try {
       await lastValueFrom(
         this.httpService
-          .post(mercureHost, `topic=${event.topic}&data=${event.data}`, {
-            headers: {
-              Authorization: `Bearer ${publisherToken}`,
-              'Content-Type': 'application/x-www-form-urlencoded',
+          .post(
+            mercureHost,
+            `topic=${event.topic}&data={${event.data},${JSON.stringify({
+              type: event.type ?? null,
+            })}}`,
+            {
+              headers: {
+                Authorization: `Bearer ${publisherToken}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
             },
-          })
+          )
           .pipe(
             map((resp) => {
               this.logger.log(
