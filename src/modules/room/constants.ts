@@ -6,4 +6,4 @@ export enum RoomStatus {
 
 export const ROOM = 'room';
 
-export const MAX_PLAYER_IN_ROOM = 1;
+export const MINIMUM_PLAYER_IN_ROOM = 3;

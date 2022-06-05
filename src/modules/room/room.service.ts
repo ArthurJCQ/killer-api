@@ -12,7 +12,7 @@ import { PlayerService } from '../player/player.service';
 import { MercureEvent } from '../sse/models/mercure-event';
 import { MercureEventType } from '../sse/models/mercure-event-types';
 
-import { MAX_PLAYER_IN_ROOM, RoomStatus } from './constants';
+import { MINIMUM_PLAYER_IN_ROOM, RoomStatus } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { GameStartingEvent } from './events/game-starting.event';
@@ -127,7 +127,7 @@ export class RoomService {
   async enoughPlayersInRoom(code: string): Promise<boolean> {
     const playersInRoom = await this.getAllPlayersInRoom(code);
 
-    if (playersInRoom.length <= MAX_PLAYER_IN_ROOM) {
+    if (playersInRoom.length < MINIMUM_PLAYER_IN_ROOM) {
       throw new BadRequestException({ key: 'room.NOT_ENOUGH_PLAYERS' });
     }
 
