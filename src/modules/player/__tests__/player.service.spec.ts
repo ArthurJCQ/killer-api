@@ -453,48 +453,48 @@ describe('PlayerService', () => {
     expect(players).toEqual(expectedPlayers);
   });
 
-  it('should return true if all player have passcode', async () => {
-    const expectedPlayers = [
-      {
-        id: 1,
-        name: 'Arty',
-        roomCode: 'CODE1',
-        passcode: '1234',
-        status: PlayerStatus.ALIVE,
-        role: PlayerRole.PLAYER,
-      },
-    ];
+  // it('should return true if all player have passcode', async () => {
+  //   const expectedPlayers = [
+  //     {
+  //       id: 1,
+  //       name: 'Arty',
+  //       roomCode: 'CODE1',
+  //       passcode: '1234',
+  //       status: PlayerStatus.ALIVE,
+  //       role: PlayerRole.PLAYER,
+  //     },
+  //   ];
+  //
+  //   const getAllPlayerSpy = jest
+  //     .spyOn(playerRepo, 'getAllPlayersInRoom')
+  //     .mockResolvedValue(expectedPlayers);
+  //
+  //   const res = await service.checkAllPlayerInRoomHavePasscode('CODE1');
+  //
+  //   expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
+  //   expect(res).toBeTruthy();
+  // });
 
-    const getAllPlayerSpy = jest
-      .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockResolvedValue(expectedPlayers);
-
-    const res = await service.checkAllPlayerInRoomHavePasscode('CODE1');
-
-    expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
-    expect(res).toBeTruthy();
-  });
-
-  it('should return false if 1 player does not have passcode', async () => {
-    const expectedPlayers = [
-      {
-        id: 1,
-        name: 'Arty',
-        roomCode: 'CODE1',
-        status: PlayerStatus.ALIVE,
-        role: PlayerRole.PLAYER,
-      },
-    ];
-
-    const getAllPlayerSpy = jest
-      .spyOn(playerRepo, 'getAllPlayersInRoom')
-      .mockResolvedValue(expectedPlayers);
-
-    await expect(
-      service.checkAllPlayerInRoomHavePasscode('CODE1'),
-    ).rejects.toThrowError(BadRequestException);
-    expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
-  });
+  // it('should return false if 1 player does not have passcode', async () => {
+  //   const expectedPlayers = [
+  //     {
+  //       id: 1,
+  //       name: 'Arty',
+  //       roomCode: 'CODE1',
+  //       status: PlayerStatus.ALIVE,
+  //       role: PlayerRole.PLAYER,
+  //     },
+  //   ];
+  //
+  //   const getAllPlayerSpy = jest
+  //     .spyOn(playerRepo, 'getAllPlayersInRoom')
+  //     .mockResolvedValue(expectedPlayers);
+  //
+  //   await expect(
+  //     service.checkAllPlayerInRoomHavePasscode('CODE1'),
+  //   ).rejects.toThrowError(BadRequestException);
+  //   expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
+  // });
 
   it('should return true if there is enough mission in room', async () => {
     const expectedPlayers = [
