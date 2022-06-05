@@ -19,8 +19,7 @@ export class PlayerLeftRoomListener {
       playersInRoom.length === 0 ||
       (playersInRoom.length === 1 && playersInRoom[0].id === player.id)
     ) {
-      // Create endpoint
-      // this.roomService.deleteRoom(player.roomCode);
+      return this.roomService.deleteRoom(player.roomCode);
     }
   }
 }

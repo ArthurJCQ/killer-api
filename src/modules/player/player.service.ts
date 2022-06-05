@@ -300,9 +300,6 @@ export class PlayerService {
 
     this.missionService.clearPlayerMissions(player);
 
-    this.eventEmitter.emit(
-      'player.left-room',
-      new PlayerLeftRoomEvent(player),
-    );
+    this.eventEmitter.emit('player.left-room', new PlayerLeftRoomEvent(player));
   }
 }
