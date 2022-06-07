@@ -24,10 +24,6 @@ export class SseMercureListener {
       return;
     }
 
-    const eventType = JSON.stringify({
-      type: event.type ?? null,
-    });
-
     this.logger.log('Sending event to Mercure...');
 
     const { host: mercureHost, publisherToken } =
@@ -37,7 +33,10 @@ export class SseMercureListener {
       `Trying to send topic ${event.topic} with event type : ${event.type} to mercure host ${mercureHost}`,
     );
 
-    const eventData = event.data ? `${event.data},${eventType}` : eventType;
+    const eventData = JSON.stringify({
+      payload: event.data ? JSON.parse(event.data) : null,
+      type: event.type ?? null,
+    });
 
     try {
       await lastValueFrom(
