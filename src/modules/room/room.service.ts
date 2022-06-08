@@ -128,7 +128,9 @@ export class RoomService {
     const playersInRoom = await this.getAllPlayersInRoom(code);
 
     if (playersInRoom.length < MINIMUM_PLAYER_IN_ROOM) {
-      throw new BadRequestException({ key: 'room.NOT_ENOUGH_PLAYERS' });
+      throw new BadRequestException({
+        key: 'room.START_GAME.NOT_ENOUGH_PLAYERS',
+      });
     }
 
     return true;
