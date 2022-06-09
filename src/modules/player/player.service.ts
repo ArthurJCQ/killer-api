@@ -122,7 +122,7 @@ export class PlayerService {
       updatingData.role === PlayerRole.ADMIN &&
       player.role === PlayerRole.PLAYER
     ) {
-      await this.updateAdminRole(updatingData.id);
+      await this.removeAdmin(player.roomCode);
     }
 
     const updatedPlayer = await this.playerRepo.updatePlayer(updatingData, id);
@@ -265,14 +265,12 @@ export class PlayerService {
     return true;
   }
 
-  async updateAdminRole(newPlayerAdminId: number): Promise<void> {
-    const player = await this.playerRepo.getPlayerById(newPlayerAdminId);
-
+  async removeAdmin(roomCode: string): Promise<void> {
     const actualAdminPlayer = await this.playerRepo.getAdminPlayerRoom(
-      player.roomCode,
+      roomCode,
     );
 
-    if (!player || !actualAdminPlayer) {
+    if (!actualAdminPlayer) {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 

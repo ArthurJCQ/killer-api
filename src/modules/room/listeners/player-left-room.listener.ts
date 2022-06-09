@@ -16,7 +16,7 @@ export class PlayerLeftRoomListener {
 
     /** If no player in room or if the only player left is the leaving one, delete room */
     if (
-      playersInRoom.length === 0 ||
+      !playersInRoom.length ||
       (playersInRoom.length === 1 && playersInRoom[0].id === player.id)
     ) {
       return this.roomService.deleteRoom(player.roomCode);
