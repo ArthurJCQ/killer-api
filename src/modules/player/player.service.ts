@@ -13,7 +13,8 @@ import { MercureEventType } from '../sse/models/mercure-event-types';
 import { PlayerRole, PlayerStatus } from './constants';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
-import { PlayerKilledEvent } from './events/player-killed-event';
+import { PlayerKilledEvent } from './events/player-killed.event';
+import { PlayerLeftRoomEvent } from './events/player-left-room.event';
 import { PlayerModel } from './player.model';
 import { PlayerRepository } from './player.repository';
 
@@ -61,22 +62,22 @@ export class PlayerService {
   }
 
   async updatePlayer(
-    player: Partial<PlayerModel>,
+    updatingData: Partial<PlayerModel>,
     id: number,
     mercureEventType?: MercureEventType,
   ): Promise<PlayerModel> {
-    const existingPlayer = await this.playerRepo.getPlayerById(id);
+    const player = await this.playerRepo.getPlayerById(id);
 
-    if (!existingPlayer) {
+    if (!player) {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
 
     /** Player update his name without leaving room */
-    if (player.name && existingPlayer.roomCode && !player.roomCode) {
+    if (updatingData.name && player.roomCode && !updatingData.roomCode) {
       const existingPlayerWithSameNameInRoom =
         await this.playerRepo.getPlayerByNameInRoom(
-          existingPlayer.roomCode,
-          player.name,
+          player.roomCode,
+          updatingData.name,
         );
 
       if (
@@ -88,27 +89,45 @@ export class PlayerService {
     }
 
     /** Player is joining room */
-    if (player.roomCode && player.roomCode !== existingPlayer.roomCode) {
-      await this.checkRoomBeforeJoining(player.roomCode, existingPlayer);
+    if (updatingData.roomCode && updatingData.roomCode !== player.roomCode) {
+      await this.checkRoomBeforeJoining(updatingData.roomCode, player);
 
       /** Player leave a room */
-      if (existingPlayer.roomCode) {
-        await this.handlePlayerLeavingRoom(existingPlayer);
+      if (player.roomCode) {
+        await this.handlePlayerLeavingRoom(player);
       }
 
       player.role = PlayerRole.PLAYER;
     }
 
     /** Player is quitting room */
-    if (player.roomCode === null) {
+    if (updatingData.roomCode === null) {
       player.role = PlayerRole.PLAYER;
 
-      await this.handlePlayerLeavingRoom(existingPlayer);
+      await this.handlePlayerLeavingRoom(player);
     }
 
-    const updatedPlayer = await this.playerRepo.updatePlayer(player, id);
+    /** Admin can't become player without giving admin rights first. */
+    if (
+      updatingData.role === PlayerRole.PLAYER &&
+      player.role === PlayerRole.ADMIN
+    ) {
+      throw new BadRequestException({
+        key: 'Player.FORBIDDEN.CHANGE_ADMIN',
+      });
+    }
 
-    if (player.status === PlayerStatus.KILLED) {
+    /** Admin role transferring */
+    if (
+      updatingData.role === PlayerRole.ADMIN &&
+      player.role === PlayerRole.PLAYER
+    ) {
+      await this.removeAdmin(player.roomCode);
+    }
+
+    const updatedPlayer = await this.playerRepo.updatePlayer(updatingData, id);
+
+    if (updatingData.status === PlayerStatus.KILLED) {
       this.eventEmitter.emit(
         'player.killed',
         new PlayerKilledEvent(
@@ -120,9 +139,9 @@ export class PlayerService {
     }
 
     this.pushUpdatePlayerToMercure(
-      player?.roomCode,
+      updatingData?.roomCode,
       updatedPlayer?.roomCode,
-      existingPlayer?.roomCode,
+      player?.roomCode,
       updatedPlayer,
       mercureEventType,
     );
@@ -246,7 +265,39 @@ export class PlayerService {
     return true;
   }
 
-  private handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
-    return this.missionService.clearPlayerMissions(player);
+  async removeAdmin(roomCode: string): Promise<void> {
+    const actualAdminPlayer = await this.playerRepo.getAdminPlayerRoom(
+      roomCode,
+    );
+
+    if (!actualAdminPlayer) {
+      throw new NotFoundException({ key: 'player.NOT_FOUND' });
+    }
+
+    await this.playerRepo.updatePlayer(
+      { role: PlayerRole.PLAYER },
+      actualAdminPlayer.id,
+    );
+  }
+
+  private async handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
+    if (player.role === PlayerRole.ADMIN) {
+      const roomPlayers = await this.playerRepo.getAllPlayersInRoom(
+        player.roomCode,
+      );
+
+      const newAdmin = roomPlayers.find(
+        (roomPlayer) => roomPlayer.id !== player.id,
+      );
+
+      /** Give admin right to the first other player found in room. */
+      if (newAdmin !== null) {
+        this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
+      }
+    }
+
+    this.missionService.clearPlayerMissions(player);
+
+    this.eventEmitter.emit('player.left-room', new PlayerLeftRoomEvent(player));
   }
 }

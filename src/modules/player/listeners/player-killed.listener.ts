@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { PlayerKilledEvent } from '../events/player-killed-event';
+import { PlayerKilledEvent } from '../events/player-killed.event';
 import { PlayerService } from '../player.service';
 
 @Injectable()

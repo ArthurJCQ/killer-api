@@ -4,7 +4,7 @@ import { DatabaseService } from '../database/database.service';
 import { ROOM } from '../room/constants';
 import { RoomModel } from '../room/room.model';
 
-import { PLAYER } from './constants';
+import { PLAYER, PlayerRole } from './constants';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { PlayerModel } from './player.model';
 
@@ -159,5 +159,14 @@ export class PlayerRepository {
     } catch (error) {
       throw new Error(`Error while dispatching targets : ${error}`);
     }
+  }
+
+  async getAdminPlayerRoom(roomCode: string): Promise<PlayerModel> {
+    const [player] = await this.db
+      .client<PlayerModel>(PLAYER)
+      .where({ roomCode })
+      .andWhere('role', PlayerRole.ADMIN);
+
+    return player;
   }
 }
