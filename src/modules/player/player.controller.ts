@@ -23,6 +23,7 @@ import { Role } from './decorators/role.decorator';
 import { CreatePlayerDto } from './dtos/create-player.dto';
 import { GetMyPlayerDto } from './dtos/get-my-player.dto';
 import { PlayerDto } from './dtos/player.dto';
+import { TargetDto } from './dtos/target.dto';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
 import { PlayerModel } from './player.model';
 import { PlayerService } from './player.service';
@@ -98,5 +99,12 @@ export class PlayerController {
     session.playerId = null;
 
     await this.playerService.deletePlayer(session.playerId);
+  }
+
+  @Get('/target')
+  @Role(PlayerRole.PLAYER)
+  @Serialize(TargetDto)
+  getTarget(@Player() currentPlayer: PlayerModel): Promise<PlayerModel> {
+    return this.playerService.getPlayerById(currentPlayer.targetId);
   }
 }
