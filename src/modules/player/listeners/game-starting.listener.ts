@@ -4,6 +4,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { MissionService } from '../../mission/mission.service';
 import { GameStartingEvent } from '../../room/events/game-starting.event';
 import { MercureEvent } from '../../sse/models/mercure-event';
+import { MercureEventType } from '../../sse/models/mercure-event-types';
 import { PlayerModel } from '../player.model';
 import { PlayerRepository } from '../player.repository';
 
@@ -22,7 +23,7 @@ export class GameStartingListener {
 
     this.eventEmitter.emit(
       'push.mercure',
-      new MercureEvent(`room/${roomCode}`),
+      new MercureEvent(`room/${roomCode}`, null, MercureEventType.ROOM_IN_GAME),
     );
   }
 
