@@ -9,6 +9,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
@@ -59,6 +60,9 @@ export class MissionController {
 
   @Get('/player')
   @Role(PlayerRole.PLAYER)
+  @ApiOperation({
+    summary: 'Get all missions authored by a player',
+  })
   getMissionsByPlayerId(
     @Player() currentPlayer: PlayerModel,
   ): Promise<MissionModel[]> {
@@ -107,6 +111,9 @@ export class MissionController {
 
   @Get()
   @Role(PlayerRole.PLAYER)
+  @ApiOperation({
+    summary: 'Get the mission the player have to do to kill the target',
+  })
   getPlayerMission(
     @Player() currentPlayer: PlayerModel,
   ): Promise<MissionModel> {
