@@ -88,6 +88,16 @@ export class PlayerService {
       }
     }
 
+    /** Admin can't become player without giving admin rights first. */
+    if (
+      updatingData.role === PlayerRole.PLAYER &&
+      player.role === PlayerRole.ADMIN
+    ) {
+      throw new BadRequestException({
+        key: 'player.FORBIDDEN.CHANGE_ADMIN',
+      });
+    }
+
     /** Player is joining room */
     if (updatingData.roomCode && updatingData.roomCode !== player.roomCode) {
       await this.checkRoomBeforeJoining(updatingData.roomCode, player);
@@ -105,16 +115,6 @@ export class PlayerService {
       updatingData.role = PlayerRole.PLAYER;
 
       await this.handlePlayerLeavingRoom(player);
-    }
-
-    /** Admin can't become player without giving admin rights first. */
-    if (
-      updatingData.role === PlayerRole.PLAYER &&
-      player.role === PlayerRole.ADMIN
-    ) {
-      throw new BadRequestException({
-        key: 'Player.FORBIDDEN.CHANGE_ADMIN',
-      });
     }
 
     /** Admin role transferring */
