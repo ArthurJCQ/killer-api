@@ -97,12 +97,12 @@ export class PlayerService {
         await this.handlePlayerLeavingRoom(player);
       }
 
-      player.role = PlayerRole.PLAYER;
+      updatingData.role = PlayerRole.PLAYER;
     }
 
     /** Player is quitting room */
     if (updatingData.roomCode === null) {
-      player.role = PlayerRole.PLAYER;
+      updatingData.role = PlayerRole.PLAYER;
 
       await this.handlePlayerLeavingRoom(player);
     }
@@ -291,7 +291,7 @@ export class PlayerService {
       );
 
       /** Give admin right to the first other player found in room. */
-      if (newAdmin !== null) {
+      if (newAdmin) {
         this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
       }
     }
