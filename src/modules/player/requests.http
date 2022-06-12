@@ -63,3 +63,7 @@ GET http://localhost:3000/player/me
 
 ### DELETE current player
 DELETE http://localhost:3000/player
+
+
+### GET player target
+GET http://localhost:3000/player/target

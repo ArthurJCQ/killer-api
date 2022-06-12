@@ -62,4 +62,14 @@ export class MissionService {
   async clearPlayerMissions(player: PlayerModel): Promise<void> {
     return this.missionRepo.clearPlayerMissions(player);
   }
+
+  async getPlayerMission(player: PlayerModel): Promise<MissionModel> {
+    const mission = this.missionRepo.getPlayerMission(player);
+
+    if (!mission) {
+      throw new NotFoundException({ key: 'mission.NOT_FOUND' });
+    }
+
+    return mission;
+  }
 }

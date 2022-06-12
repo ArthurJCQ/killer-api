@@ -22,3 +22,6 @@ Content-Type: application/json
 
 ### DELETE mission
 DELETE http://localhost:3000/mission/4
+
+### GET player mission
+GET http://localhost:3000/mission

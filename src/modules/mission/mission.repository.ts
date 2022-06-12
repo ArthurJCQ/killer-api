@@ -114,4 +114,12 @@ export class MissionRepository {
         .del();
     });
   }
+
+  async getPlayerMission(player: PlayerModel): Promise<MissionModel> {
+    const [mission] = await this.db
+      .client<MissionModel>(MISSION)
+      .where('id', player.missionId);
+
+    return mission;
+  }
 }

@@ -190,4 +190,24 @@ describe('MissionService', () => {
     expect(checkMissionSpy).toHaveBeenCalledWith(1, player);
     expect(deleteMissionSpy).not.toHaveBeenCalled();
   });
+
+  it('should return player mission', async () => {
+    const player = {
+      id: 1,
+      name: 'Arty',
+      roomCode: 'CODE1',
+      status: PlayerStatus.ALIVE,
+      role: PlayerRole.PLAYER,
+      missionId: 1,
+    };
+
+    const getPlayerMissionSpy = jest
+      .spyOn(missionRepo, 'getPlayerMission')
+      .mockResolvedValue({ id: 1, content: 'mission' });
+
+    const mission = await service.getPlayerMission(player);
+
+    expect(getPlayerMissionSpy).toHaveBeenCalledWith(player);
+    expect(mission).toEqual({ id: 1, content: 'mission' });
+  });
 });

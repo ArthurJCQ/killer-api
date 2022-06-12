@@ -104,4 +104,12 @@ export class MissionController {
       ),
     );
   }
+
+  @Get()
+  @Role(PlayerRole.PLAYER)
+  async getPlayerMission(
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<MissionModel> {
+    return this.missionService.getPlayerMission(currentPlayer);
+  }
 }
