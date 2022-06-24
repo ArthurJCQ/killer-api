@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
+import { PlayerKilledEvent } from '../../player/events/player-killed.event';
 import { PlayerLeftRoomEvent } from '../../player/events/player-left-room.event';
 import { RoomService } from '../room.service';
 
 @Injectable()
 export class PlayerLeftRoomListener {
-  constructor(private readonly roomService: RoomService) {}
+  constructor(
+    private readonly roomService: RoomService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @OnEvent('player.left-room')
   async handlePlayerLeft({ player }: PlayerLeftRoomEvent): Promise<void> {
@@ -20,6 +24,19 @@ export class PlayerLeftRoomListener {
       (playersInRoom.length === 1 && playersInRoom[0].id === player.id)
     ) {
       return this.roomService.deleteRoom(player.roomCode);
+    }
+
+    // Player leaving room is considered as killed to keep game playable
+    if (player.targetId && player.missionId) {
+      this.eventEmitter.emit(
+        'player.killed',
+        new PlayerKilledEvent(
+          player.id,
+          player.targetId,
+          player.missionId,
+          player.roomCode,
+        ),
+      );
     }
   }
 }

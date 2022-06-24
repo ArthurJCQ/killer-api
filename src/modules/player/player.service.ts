@@ -108,11 +108,13 @@ export class PlayerService {
       }
 
       updatingData.role = PlayerRole.PLAYER;
+      updatingData.status = PlayerStatus.ALIVE;
     }
 
     /** Player is quitting room */
     if (updatingData.roomCode === null) {
       updatingData.role = PlayerRole.PLAYER;
+      updatingData.status = PlayerStatus.ALIVE;
 
       await this.handlePlayerLeavingRoom(player);
     }
@@ -134,6 +136,7 @@ export class PlayerService {
           id,
           updatedPlayer.targetId,
           updatedPlayer.missionId,
+          updatedPlayer.roomCode,
         ),
       );
     }
