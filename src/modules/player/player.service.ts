@@ -144,6 +144,8 @@ export class PlayerService {
           player.roomCode,
         ),
       );
+
+      return updatedPlayer;
     }
 
     this.pushUpdatePlayerToMercure(
@@ -310,7 +312,7 @@ export class PlayerService {
 
     this.logger.log(`Player ${player.id} is leaving room`);
 
-    this.missionService.clearPlayerMissions(player);
+    await this.missionService.clearPlayerMissions(player);
 
     this.eventEmitter.emit('player.left-room', new PlayerLeftRoomEvent(player));
   }

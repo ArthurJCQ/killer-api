@@ -16,7 +16,6 @@ import { Player } from '../player/decorators/player.decorator';
 import { Role } from '../player/decorators/role.decorator';
 import { PlayerListDto } from '../player/dtos/player-list.dto';
 import { PlayerModel } from '../player/player.model';
-import { MercureEvent } from '../sse/models/mercure-event';
 
 import { ROOM } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
@@ -58,10 +57,10 @@ export class RoomController {
 
     const room = await this.roomService.updateRoom(roomData, code);
 
-    this.eventEmitter.emit(
+    /*  this.eventEmitter.emit(
       'push.mercure',
       new MercureEvent(`room/${code}`, JSON.stringify(room)),
-    );
+    ); */
 
     return room;
   }

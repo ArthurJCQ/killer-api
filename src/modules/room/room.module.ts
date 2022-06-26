@@ -5,6 +5,7 @@ import { DatabaseModule } from '../database/database.module';
 import { PlayerModule } from '../player/player.module';
 
 import { RoomStatusGuard } from './guards/room-status.guard';
+import { PlayerLeftRoomListener } from './listeners/player-left-room.listener';
 import { RoomController } from './room.controller';
 import { RoomRepository } from './room.repository';
 import { RoomService } from './room.service';
@@ -18,6 +19,7 @@ import { RoomService } from './room.service';
       provide: APP_GUARD,
       useClass: RoomStatusGuard,
     },
+    PlayerLeftRoomListener,
   ],
   controllers: [RoomController],
   exports: [RoomService],
