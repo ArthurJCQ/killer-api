@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { MissionService } from '../../mission/mission.service';
@@ -10,6 +10,8 @@ import { PlayerRepository } from '../player.repository';
 
 @Injectable()
 export class GameStartingListener {
+  private readonly logger = new Logger();
+
   constructor(
     private playerRepo: PlayerRepository,
     private missionService: MissionService,
@@ -20,6 +22,8 @@ export class GameStartingListener {
   async handleGameStarting({ roomCode }: GameStartingEvent): Promise<void> {
     await this.dispatchMissions(roomCode);
     await this.dispatchTargets(roomCode);
+
+    this.logger.log(`Missions and targets dispatched for room ${roomCode}`);
 
     this.eventEmitter.emit(
       'push.mercure',

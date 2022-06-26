@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { PlayerKilledEvent } from '../../player/events/player-killed.event';
@@ -7,6 +7,8 @@ import { RoomService } from '../room.service';
 
 @Injectable()
 export class PlayerLeftRoomListener {
+  private readonly logger = new Logger();
+
   constructor(
     private readonly roomService: RoomService,
     private eventEmitter: EventEmitter2,
@@ -23,6 +25,8 @@ export class PlayerLeftRoomListener {
       !playersInRoom.length ||
       (playersInRoom.length === 1 && playersInRoom[0].id === player.id)
     ) {
+      this.logger.log(`Deleting room ${player.roomCode} because it's empty`);
+
       return this.roomService.deleteRoom(player.roomCode);
     }
 

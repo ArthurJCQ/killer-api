@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -20,6 +21,8 @@ import { PlayerRepository } from './player.repository';
 
 @Injectable()
 export class PlayerService {
+  private readonly logger = new Logger();
+
   constructor(
     private playerRepo: PlayerRepository,
     private missionService: MissionService,
@@ -66,6 +69,8 @@ export class PlayerService {
     id: number,
     mercureEventType?: MercureEventType,
   ): Promise<PlayerModel> {
+    this.logger.log(`Update player ${id}`);
+
     const player = await this.playerRepo.getPlayerById(id);
 
     if (!player) {
@@ -134,9 +139,9 @@ export class PlayerService {
         'player.killed',
         new PlayerKilledEvent(
           id,
-          updatedPlayer.targetId,
-          updatedPlayer.missionId,
-          updatedPlayer.roomCode,
+          player.targetId,
+          player.missionId,
+          player.roomCode,
         ),
       );
     }
@@ -265,6 +270,8 @@ export class PlayerService {
       throw new BadRequestException({ key: 'player.ALREADY_EXIST' });
     }
 
+    this.logger.log(`Player ${player.id} can join room ${roomCode}`);
+
     return true;
   }
 
@@ -276,6 +283,8 @@ export class PlayerService {
     if (!actualAdminPlayer) {
       throw new NotFoundException({ key: 'player.NOT_FOUND' });
     }
+
+    this.logger.log(`Remove admin rights of player ${actualAdminPlayer.id}`);
 
     await this.playerRepo.updatePlayer(
       { role: PlayerRole.PLAYER },
@@ -295,9 +304,11 @@ export class PlayerService {
 
       /** Give admin right to the first other player found in room. */
       if (newAdmin) {
-        this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
+        await this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
       }
     }
+
+    this.logger.log(`Player ${player.id} is leaving room`);
 
     this.missionService.clearPlayerMissions(player);
 

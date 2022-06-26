@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { MercureEvent } from '../../sse/models/mercure-event';
@@ -8,6 +8,8 @@ import { PlayerService } from '../player.service';
 
 @Injectable()
 export class PlayerKilledListener {
+  private readonly logger = new Logger();
+
   constructor(
     private playerService: PlayerService,
     private eventEmitter: EventEmitter2,
@@ -27,6 +29,10 @@ export class PlayerKilledListener {
       playerKilledEvent.missionId,
     );
     await this.cleanTargetAndMissionFromVictim(playerKilledEvent.playerId);
+
+    this.logger.log(
+      `Player ${playerKilledEvent.playerId} killed, mission and target dispatched`,
+    );
 
     this.eventEmitter.emit(
       'push.mercure',

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -21,6 +22,8 @@ import { RoomRepository } from './room.repository';
 
 @Injectable()
 export class RoomService {
+  private readonly logger = new Logger();
+
   constructor(
     private roomRepo: RoomRepository,
     private playerService: PlayerService,
@@ -144,9 +147,12 @@ export class RoomService {
         this.enoughPlayersInRoom(code),
       ]);
 
-    return (
-      enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom
-    );
+    const canStart =
+      enoughMissionsInRoom && allPlayersHavePasscode && enoughPlayersInRoom;
+
+    this.logger.log(`canStartGame = ${canStart} for ${code}`);
+
+    return canStart;
   }
 
   async deleteRoom(code: string): Promise<void> {
@@ -160,6 +166,10 @@ export class RoomService {
         MercureEventType.NO_EVENT,
       );
     }
+
+    this.logger.log(
+      `All players in room ${code} were kicked before deleting it.`,
+    );
 
     await this.roomRepo.deleteRoom(code);
 
