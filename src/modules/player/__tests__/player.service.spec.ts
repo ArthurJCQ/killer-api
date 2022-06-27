@@ -9,11 +9,13 @@ import { MissionService } from '../../mission/mission.service';
 import { RoomStatus } from '../../room/constants';
 import { PlayerRole, PlayerStatus } from '../constants';
 import { PlayerRepository } from '../player.repository';
-import { PlayerService } from '../player.service';
+import { PlayerKilledService } from '../services/player-killed.service';
+import { PlayerService } from '../services/player.service';
 
 describe('PlayerService', () => {
   let service: PlayerService;
   let playerRepo: PlayerRepository;
+  let playerKilledService: PlayerKilledService;
   let missionService: MissionService;
 
   beforeEach(async () => {
@@ -22,6 +24,7 @@ describe('PlayerService', () => {
       providers: [
         PlayerService,
         PlayerRepository,
+        PlayerKilledService,
         MissionService,
         EventEmitter2,
       ],
@@ -36,6 +39,7 @@ describe('PlayerService', () => {
     service = module.get(PlayerService);
     playerRepo = module.get(PlayerRepository);
     missionService = module.get(MissionService);
+    playerKilledService = module.get(PlayerKilledService);
   });
 
   it('should be defined', () => {
@@ -278,6 +282,10 @@ describe('PlayerService', () => {
       .spyOn(playerRepo, 'getPlayerByNameInRoom')
       .mockResolvedValue(null);
 
+    const handlePlayerKilled = jest
+      .spyOn(playerKilledService, 'handlePlayerKilled')
+      .mockResolvedValue(null);
+
     const player = await service.updatePlayer(
       {
         name: 'Arthur',
@@ -297,6 +305,7 @@ describe('PlayerService', () => {
       },
       1,
     );
+    expect(handlePlayerKilled).toHaveBeenCalledWith(expectedPlayer);
     expect(player).toBeDefined();
     expect(player).toEqual({
       ...expectedPlayer,
@@ -376,6 +385,10 @@ describe('PlayerService', () => {
       'getPlayerByNameInRoom',
     );
 
+    const handlePlayerKilled = jest
+      .spyOn(playerKilledService, 'handlePlayerKilled')
+      .mockResolvedValue(null);
+
     const player = await service.updatePlayer(
       {
         name: 'Arthur',
@@ -395,6 +408,7 @@ describe('PlayerService', () => {
       },
       1,
     );
+    expect(handlePlayerKilled).toHaveBeenCalledWith(expectedPlayer);
     expect(player).toEqual({
       ...expectedPlayer,
       status: PlayerStatus.KILLED,

@@ -8,17 +8,17 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import randomstring from 'randomstring';
 
-import { PlayerModel } from '../player/player.model';
-import { PlayerService } from '../player/player.service';
-import { MercureEvent } from '../sse/models/mercure-event';
-import { MercureEventType } from '../sse/models/mercure-event-types';
+import { PlayerModel } from '../../player/player.model';
+import { PlayerService } from '../../player/services/player.service';
+import { MercureEvent } from '../../sse/models/mercure-event';
+import { MercureEventType } from '../../sse/models/mercure-event-types';
+import { MINIMUM_PLAYER_IN_ROOM, RoomStatus } from '../constants';
+import { PatchRoomPlayerDto } from '../dtos/patch-room-player.dto';
+import { UpdateRoomDto } from '../dtos/update-room.dto';
+import { RoomModel } from '../room.model';
+import { RoomRepository } from '../room.repository';
 
-import { MINIMUM_PLAYER_IN_ROOM, RoomStatus } from './constants';
-import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
-import { UpdateRoomDto } from './dtos/update-room.dto';
-import { GameStartingEvent } from './events/game-starting.event';
-import { RoomModel } from './room.model';
-import { RoomRepository } from './room.repository';
+import { GameStartingService } from './game-starting.service';
 
 @Injectable()
 export class RoomService {
@@ -28,6 +28,7 @@ export class RoomService {
     private roomRepo: RoomRepository,
     private playerService: PlayerService,
     private eventEmitter: EventEmitter2,
+    private gameStartingService: GameStartingService,
   ) {}
 
   async createRoom({
@@ -75,29 +76,39 @@ export class RoomService {
     roomUpdateData: UpdateRoomDto,
     code: string,
   ): Promise<RoomModel> {
-    const existingRoom = await this.roomRepo.getRoomByCode(code);
+    let mercureEventType = MercureEventType.ROOM_UPDATED;
+    const room = await this.roomRepo.getRoomByCode(code);
 
-    if (!existingRoom) {
+    if (!room) {
       throw new NotFoundException({ key: 'room.NOT_FOUND' });
     }
 
-    if (existingRoom.status === RoomStatus.ENDED) {
+    if (room.status === RoomStatus.ENDED) {
       throw new BadRequestException({ key: 'room.WRONG_STATUS.ALREADY_ENDED' });
     }
 
     if (roomUpdateData.status === RoomStatus.IN_GAME) {
-      if (existingRoom.status === RoomStatus.IN_GAME) {
+      if (room.status === RoomStatus.IN_GAME) {
         throw new BadRequestException({
           key: 'room.WRONG_STATUS.ALREADY_STARTED',
         });
       }
 
       await this.canStartGame(code);
+      await this.gameStartingService.handleGameStarting(room.code);
 
-      this.eventEmitter.emit('game.starting', new GameStartingEvent(code));
+      mercureEventType = MercureEventType.ROOM_IN_GAME;
     }
 
-    return this.roomRepo.updateRoom(roomUpdateData, code);
+    const updatedRoom = await this.roomRepo.updateRoom(roomUpdateData, code);
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(`room/${code}`, JSON.stringify(room)),
+      mercureEventType,
+    );
+
+    return updatedRoom;
   }
 
   async getAllPlayersInRoom(code: string): Promise<PlayerModel[]> {

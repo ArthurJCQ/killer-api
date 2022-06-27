@@ -5,20 +5,31 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseService } from '../../database/database.service';
 import { PlayerRole, PlayerStatus } from '../../player/constants';
 import { PlayerRepository } from '../../player/player.repository';
-import { PlayerService } from '../../player/player.service';
+import { PlayerKilledService } from '../../player/services/player-killed.service';
+import { PlayerService } from '../../player/services/player.service';
+import { MercureEvent } from '../../sse/models/mercure-event';
 import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
-import { RoomService } from '../room.service';
+import { GameStartingService } from '../services/game-starting.service';
+import { RoomService } from '../services/room.service';
 
 describe('RoomService', () => {
   let service: RoomService;
   let roomRepo: RoomRepository;
   let playerService: PlayerService;
+  let gameStartingService: GameStartingService;
   let eventEmmiter: EventEmitter2;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RoomService, RoomRepository, PlayerService, EventEmitter2],
+      providers: [
+        RoomService,
+        RoomRepository,
+        PlayerService,
+        PlayerKilledService,
+        GameStartingService,
+        EventEmitter2,
+      ],
     })
       .useMocker((token) => {
         if (token === DatabaseService || PlayerRepository) {
@@ -30,6 +41,7 @@ describe('RoomService', () => {
     service = module.get<RoomService>(RoomService);
     roomRepo = module.get<RoomRepository>(RoomRepository);
     playerService = module.get<PlayerService>(PlayerService);
+    gameStartingService = module.get<GameStartingService>(GameStartingService);
     eventEmmiter = module.get<EventEmitter2>(EventEmitter2);
   });
 
@@ -147,6 +159,9 @@ describe('RoomService', () => {
     const eventEmmitterSpy = jest
       .spyOn(eventEmmiter, 'emit')
       .mockImplementation();
+    const handleGameStartingSpy = jest
+      .spyOn(gameStartingService, 'handleGameStarting')
+      .mockResolvedValue(null);
 
     const room = await service.updateRoom(
       { status: RoomStatus.IN_GAME },
@@ -155,13 +170,12 @@ describe('RoomService', () => {
 
     expect(getRoomSpy).toHaveBeenCalledWith('CODE1');
     expect(canStartGameSpy).toHaveBeenCalledWith('CODE1');
+    expect(handleGameStartingSpy).toHaveBeenCalledWith('CODE1');
     expect(updateRoomSpy).toHaveBeenCalledWith(
       { status: RoomStatus.IN_GAME },
       'CODE1',
     );
-    expect(eventEmmitterSpy).toHaveBeenCalledWith('game.starting', {
-      roomCode: 'CODE1',
-    });
+    expect(eventEmmitterSpy).toHaveBeenCalled();
     expect(room).toBeDefined();
     expect(room).toEqual({ ...expectedRoom, status: RoomStatus.IN_GAME });
   });

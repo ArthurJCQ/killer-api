@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { RoomStatus } from '../constants';
-import { RoomService } from '../room.service';
+import { RoomService } from '../services/room.service';
 
 @Injectable()
 export class RoomStatusGuard implements CanActivate {

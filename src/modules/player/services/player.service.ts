@@ -1,23 +1,25 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { MissionService } from '../mission/mission.service';
-import { RoomStatus } from '../room/constants';
-import { MercureEvent } from '../sse/models/mercure-event';
-import { MercureEventType } from '../sse/models/mercure-event-types';
+import { MissionService } from '../../mission/mission.service';
+import { RoomStatus } from '../../room/constants';
+import { MercureEvent } from '../../sse/models/mercure-event';
+import { MercureEventType } from '../../sse/models/mercure-event-types';
+import { PlayerRole, PlayerStatus } from '../constants';
+import { CreatePlayerDto } from '../dtos/create-player.dto';
+import { GetMyPlayerDto } from '../dtos/get-my-player.dto';
+import { PlayerLeftRoomEvent } from '../events/player-left-room.event';
+import { PlayerModel } from '../player.model';
+import { PlayerRepository } from '../player.repository';
 
-import { PlayerRole, PlayerStatus } from './constants';
-import { CreatePlayerDto } from './dtos/create-player.dto';
-import { GetMyPlayerDto } from './dtos/get-my-player.dto';
-import { PlayerKilledEvent } from './events/player-killed.event';
-import { PlayerLeftRoomEvent } from './events/player-left-room.event';
-import { PlayerModel } from './player.model';
-import { PlayerRepository } from './player.repository';
+import { PlayerKilledService } from './player-killed.service';
 
 @Injectable()
 export class PlayerService {
@@ -27,6 +29,8 @@ export class PlayerService {
     private playerRepo: PlayerRepository,
     private missionService: MissionService,
     private eventEmitter: EventEmitter2,
+    @Inject(forwardRef(() => PlayerKilledService))
+    private playerKilledService: PlayerKilledService,
   ) {}
 
   async createPlayer({
@@ -67,7 +71,7 @@ export class PlayerService {
   async updatePlayer(
     updatingData: Partial<PlayerModel>,
     id: number,
-    mercureEventType?: MercureEventType,
+    mercureEventType: MercureEventType = MercureEventType.PLAYER_UPDATED,
   ): Promise<PlayerModel> {
     this.logger.log(`Update player ${id}`);
 
@@ -110,6 +114,11 @@ export class PlayerService {
       /** Player leave a room */
       if (player.roomCode) {
         await this.handlePlayerLeavingRoom(player);
+
+        /** Player leaving room is considered as killed to keep game playable */
+        if (player.targetId && player.missionId) {
+          mercureEventType = MercureEventType.PLAYER_KILLED;
+        }
       }
 
       updatingData.role = PlayerRole.PLAYER;
@@ -122,6 +131,11 @@ export class PlayerService {
       updatingData.status = PlayerStatus.ALIVE;
 
       await this.handlePlayerLeavingRoom(player);
+
+      /** Player leaving room is considered as killed to keep game playable */
+      if (player.targetId && player.missionId) {
+        mercureEventType = MercureEventType.PLAYER_KILLED;
+      }
     }
 
     /** Admin role transferring */
@@ -135,17 +149,9 @@ export class PlayerService {
     const updatedPlayer = await this.playerRepo.updatePlayer(updatingData, id);
 
     if (updatingData.status === PlayerStatus.KILLED) {
-      this.eventEmitter.emit(
-        'player.killed',
-        new PlayerKilledEvent(
-          id,
-          player.targetId,
-          player.missionId,
-          player.roomCode,
-        ),
-      );
+      await this.playerKilledService.handlePlayerKilled(player);
 
-      return updatedPlayer;
+      mercureEventType = MercureEventType.PLAYER_KILLED;
     }
 
     this.pushUpdatePlayerToMercure(
@@ -214,6 +220,7 @@ export class PlayerService {
     eventType?: MercureEventType,
   ): void {
     /**
+     * Send event to roomCode if player is in room.
      * Either:
      *  - Player has a new room code => join_room case
      *  - Player has still a roomCode after update => simply an update on another field
@@ -292,6 +299,18 @@ export class PlayerService {
       { role: PlayerRole.PLAYER },
       actualAdminPlayer.id,
     );
+  }
+
+  setMissionIdToPlayers(
+    updatedPlayers: Pick<PlayerModel, 'id' | 'missionId'>[],
+  ): Promise<void> {
+    return this.playerRepo.setMissionIdToPlayers(updatedPlayers);
+  }
+
+  setTargetIdToPlayers(
+    updatedPlayers: Pick<PlayerModel, 'id' | 'targetId'>[],
+  ): Promise<void> {
+    return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
   }
 
   private async handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
