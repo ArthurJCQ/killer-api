@@ -7,7 +7,6 @@ import { PlayerRole, PlayerStatus } from '../../player/constants';
 import { PlayerRepository } from '../../player/player.repository';
 import { PlayerKilledService } from '../../player/services/player-killed.service';
 import { PlayerService } from '../../player/services/player.service';
-import { MercureEvent } from '../../sse/models/mercure-event';
 import { RoomStatus } from '../constants';
 import { RoomRepository } from '../room.repository';
 import { GameStartingService } from '../services/game-starting.service';
