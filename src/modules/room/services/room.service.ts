@@ -104,8 +104,7 @@ export class RoomService {
 
     this.eventEmitter.emit(
       'push.mercure',
-      new MercureEvent(`room/${code}`, JSON.stringify(room)),
-      mercureEventType,
+      new MercureEvent(`room/${code}`, JSON.stringify(room), mercureEventType),
     );
 
     return updatedRoom;

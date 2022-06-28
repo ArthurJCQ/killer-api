@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
+import { MercureEventType } from '../../sse/models/mercure-event-types';
 import { PlayerModel } from '../player.model';
 
 import { PlayerService } from './player.service';
@@ -33,7 +34,11 @@ export class PlayerKilledService {
     targetId: number,
     missionId: number,
   ): Promise<void> {
-    await this.playerService.updatePlayer({ targetId, missionId }, killerId);
+    await this.playerService.updatePlayer(
+      { targetId, missionId },
+      killerId,
+      MercureEventType.NO_EVENT,
+    );
   }
 
   private async cleanTargetAndMissionFromVictim(
@@ -42,6 +47,7 @@ export class PlayerKilledService {
     await this.playerService.updatePlayer(
       { targetId: null, missionId: null },
       playerId,
+      MercureEventType.NO_EVENT,
     );
   }
 }
