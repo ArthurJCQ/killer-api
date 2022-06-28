@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { PlayerRole } from '../player/constants';
@@ -16,20 +15,16 @@ import { Player } from '../player/decorators/player.decorator';
 import { Role } from '../player/decorators/role.decorator';
 import { PlayerListDto } from '../player/dtos/player-list.dto';
 import { PlayerModel } from '../player/player.model';
-import { MercureEvent } from '../sse/models/mercure-event';
 
 import { ROOM } from './constants';
 import { PatchRoomPlayerDto } from './dtos/patch-room-player.dto';
 import { RoomDto } from './dtos/room.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
-import { RoomService } from './room.service';
+import { RoomService } from './services/room.service';
 
 @Controller(ROOM)
 export class RoomController {
-  constructor(
-    private roomService: RoomService,
-    private eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private roomService: RoomService) {}
 
   @Post()
   @Role(PlayerRole.PLAYER)
@@ -56,14 +51,7 @@ export class RoomController {
       throw new ForbiddenException({ key: 'room.FORBIDDEN' });
     }
 
-    const room = await this.roomService.updateRoom(roomData, code);
-
-    this.eventEmitter.emit(
-      'push.mercure',
-      new MercureEvent(`room/${code}`, JSON.stringify(room)),
-    );
-
-    return room;
+    return this.roomService.updateRoom(roomData, code);
   }
 
   @Get('/:roomCode/players')

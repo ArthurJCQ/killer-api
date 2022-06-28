@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 
 import { PlayerController } from '../player.controller';
-import { PlayerService } from '../player.service';
+import { PlayerService } from '../services/player.service';
 
 describe('PlayerController', () => {
   let controller: PlayerController;

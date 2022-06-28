@@ -16,6 +16,7 @@ import { Response } from 'express';
 
 import { Serialize } from '../../interceptors/serializer.interceptor';
 import { MercureEvent } from '../sse/models/mercure-event';
+import { MercureEventType } from '../sse/models/mercure-event-types';
 
 import { PLAYER, PlayerRole } from './constants';
 import { Player } from './decorators/player.decorator';
@@ -26,7 +27,7 @@ import { PlayerDto } from './dtos/player.dto';
 import { TargetDto } from './dtos/target.dto';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
 import { PlayerModel } from './player.model';
-import { PlayerService } from './player.service';
+import { PlayerService } from './services/player.service';
 
 @Controller(PLAYER)
 @Serialize(PlayerDto)
@@ -49,6 +50,7 @@ export class PlayerController {
     this.eventEmitter.emit(
       'push.mercure',
       new MercureEvent(`room/${newPlayer.roomCode}`, JSON.stringify(newPlayer)),
+      MercureEventType.PLAYER_CREATED,
     );
 
     session.playerId = newPlayer.id;

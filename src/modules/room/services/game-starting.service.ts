@@ -1,35 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { MissionService } from '../../mission/mission.service';
-import { GameStartingEvent } from '../../room/events/game-starting.event';
-import { MercureEvent } from '../../sse/models/mercure-event';
-import { MercureEventType } from '../../sse/models/mercure-event-types';
-import { PlayerModel } from '../player.model';
-import { PlayerRepository } from '../player.repository';
+import { PlayerModel } from '../../player/player.model';
+import { PlayerService } from '../../player/services/player.service';
 
 @Injectable()
-export class GameStartingListener {
+export class GameStartingService {
+  private readonly logger = new Logger();
+
   constructor(
-    private playerRepo: PlayerRepository,
+    private playerService: PlayerService,
     private missionService: MissionService,
-    private eventEmitter: EventEmitter2,
   ) {}
 
-  @OnEvent('game.starting')
-  async handleGameStarting({ roomCode }: GameStartingEvent): Promise<void> {
+  async handleGameStarting(roomCode: string): Promise<void> {
     await this.dispatchMissions(roomCode);
     await this.dispatchTargets(roomCode);
 
-    this.eventEmitter.emit(
-      'push.mercure',
-      new MercureEvent(`room/${roomCode}`, null, MercureEventType.ROOM_IN_GAME),
-    );
+    this.logger.log(`Missions and targets dispatched for room ${roomCode}`);
   }
 
   private async dispatchMissions(roomCode: string): Promise<void> {
     const [players, missions] = await Promise.all([
-      this.playerRepo.getAllPlayersInRoom(roomCode),
+      this.playerService.getAllPlayersInRoom(roomCode),
       this.missionService.getMissions(roomCode),
     ]);
 
@@ -47,11 +40,11 @@ export class GameStartingListener {
       [],
     );
 
-    return this.playerRepo.setMissionIdToPlayers(updatedPlayers);
+    return this.playerService.setMissionIdToPlayers(updatedPlayers);
   }
 
   private async dispatchTargets(roomCode: string): Promise<void> {
-    const allPlayers = await this.playerRepo.getAllPlayersInRoom(roomCode);
+    const allPlayers = await this.playerService.getAllPlayersInRoom(roomCode);
 
     const targets = allPlayers.slice();
 
@@ -89,6 +82,6 @@ export class GameStartingListener {
       [],
     );
 
-    return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
+    return this.playerService.setTargetIdToPlayers(updatedPlayers);
   }
 }

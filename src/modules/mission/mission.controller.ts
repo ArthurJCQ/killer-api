@@ -19,6 +19,7 @@ import { PlayerModel } from '../player/player.model';
 import { RoomStatus } from '../room/constants';
 import { Status } from '../room/decorators/status.decorator';
 import { MercureEvent } from '../sse/models/mercure-event';
+import { MercureEventType } from '../sse/models/mercure-event-types';
 
 import { MISSION } from './constants';
 import { CreateMissionDto } from './dtos/create-mission.dto';
@@ -52,6 +53,7 @@ export class MissionController {
       new MercureEvent(
         `room/${currentPlayer.roomCode}/mission/${newMission.id}`,
         JSON.stringify(newMission.id),
+        MercureEventType.MISSION_CREATED,
       ),
     );
 
@@ -105,6 +107,7 @@ export class MissionController {
       new MercureEvent(
         `room/${currentPlayer.roomCode}/mission/${id}`,
         JSON.stringify(id),
+        MercureEventType.MISSION_DELETED,
       ),
     );
   }
