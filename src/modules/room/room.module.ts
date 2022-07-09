@@ -6,6 +6,7 @@ import { MissionModule } from '../mission/mission.module';
 import { PlayerModule } from '../player/player.module';
 
 import { RoomStatusGuard } from './guards/room-status.guard';
+import { EndRoomListener } from './listeners/end-room.listener';
 import { PlayerLeftRoomListener } from './listeners/player-left-room.listener';
 import { RoomController } from './room.controller';
 import { RoomRepository } from './room.repository';
@@ -19,6 +20,7 @@ import { RoomService } from './services/room.service';
     RoomRepository,
     GameStartingService,
     PlayerLeftRoomListener,
+    EndRoomListener,
     {
       provide: APP_GUARD,
       useClass: RoomStatusGuard,
