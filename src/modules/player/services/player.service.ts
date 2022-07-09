@@ -323,6 +323,27 @@ export class PlayerService {
     return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
   }
 
+  async checkPlayersTodEndRoom(roomCode: string): Promise<boolean> {
+    const room = await this.playerRepo.getPlayerRoom(roomCode);
+    const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
+
+    // Can only end a room in IN_GAME status
+    if (room.status !== RoomStatus.IN_GAME) {
+      return;
+    }
+
+    const playersAlive = players.filter(
+      (player) => player.status === PlayerStatus.ALIVE,
+    );
+
+    // If more than one player alive, game still goes on
+    if (playersAlive.length > 1) {
+      return;
+    }
+
+    this.eventEmitter.emit('room.end', roomCode);
+  }
+
   private async handlePlayerLeavingRoom(player: PlayerModel): Promise<void> {
     if (player.role === PlayerRole.ADMIN) {
       const roomPlayers = await this.playerRepo.getAllPlayersInRoom(
