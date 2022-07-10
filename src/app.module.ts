@@ -27,8 +27,8 @@ import { SseModule } from './modules/sse/sse.module';
       load: [appConfig, databaseConfig, mercureConfig],
       isGlobal: true,
     }),
-    RoomModule,
     PlayerModule,
+    RoomModule,
     MissionModule,
     DatabaseModule,
     EventEmitterModule.forRoot({
