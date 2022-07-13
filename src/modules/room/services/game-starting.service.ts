@@ -46,42 +46,14 @@ export class GameStartingService {
   private async dispatchTargets(roomCode: string): Promise<void> {
     const allPlayers = await this.playerService.getAllPlayersInRoom(roomCode);
 
-    const targets = allPlayers.slice();
+    const targets = allPlayers.slice().sort(() => Math.random() - 0.5);
 
-    const updatedPlayers = allPlayers.reduce(
-      (players: Pick<PlayerModel, 'id' | 'targetId'>[], currentPlayer) => {
-        const playerTargets = targets.filter(
-          (target) =>
-            target.id !== currentPlayer.id &&
-            target.targetId !== currentPlayer.id,
-        );
+    targets.map((player: Pick<PlayerModel, 'targetId'>, index: number) => {
+      targets[index + 1]
+        ? (player.targetId = targets[index + 1].id)
+        : (player.targetId = targets[0].id);
+    });
 
-        const randomTargetIndex = Math.floor(
-          Math.random() * playerTargets.length,
-        );
-        const target = playerTargets[randomTargetIndex];
-
-        players.push({ id: currentPlayer.id, targetId: target.id });
-
-        for (const key of Object.keys(targets)) {
-          if (targets[key] === target) {
-            targets.splice(parseInt(key), 1);
-            break;
-          }
-        }
-
-        allPlayers.forEach((player) => {
-          if (player.id === currentPlayer.id) {
-            player.targetId = target.id;
-            return;
-          }
-        });
-
-        return players;
-      },
-      [],
-    );
-
-    return this.playerService.setTargetIdToPlayers(updatedPlayers);
+    return this.playerService.setTargetIdToPlayers(targets);
   }
 }
