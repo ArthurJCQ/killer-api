@@ -1,4 +1,4 @@
-import { PlayerModel } from './modules/player/player.model';
+import { PlayerModel } from './modules/killer/models/player.model';
 
 interface Class {
   new (...args: unknown[]): unknown;

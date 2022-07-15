@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { MISSION_ROOM } from '../../src/modules/mission/constants';
+import { MISSION_ROOM } from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(MISSION_ROOM, (table) => {

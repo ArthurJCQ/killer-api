@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { ROOM, RoomStatus } from '../../src/modules/room/constants';
+import { ROOM, RoomStatus } from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(ROOM, (table) => {
