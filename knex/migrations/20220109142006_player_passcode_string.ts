@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { PLAYER } from '../../src/modules/player/constants';
+import { PLAYER } from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.alterTable(PLAYER, (table) => {

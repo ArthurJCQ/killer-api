@@ -16,9 +16,7 @@ import { I18nJsonParser, I18nModule } from 'nestjs-i18n';
 import { appConfig, databaseConfig, mercureConfig } from './app.config';
 import { HttpExceptionFilter } from './exceptions/http-exception.filter';
 import { DatabaseModule } from './modules/database/database.module';
-import { MissionModule } from './modules/mission/mission.module';
-import { PlayerModule } from './modules/player/player.module';
-import { RoomModule } from './modules/room/room.module';
+import { KillerModule } from './modules/killer/killer.module';
 import { SseModule } from './modules/sse/sse.module';
 
 @Module({
@@ -27,9 +25,6 @@ import { SseModule } from './modules/sse/sse.module';
       load: [appConfig, databaseConfig, mercureConfig],
       isGlobal: true,
     }),
-    PlayerModule,
-    RoomModule,
-    MissionModule,
     DatabaseModule,
     EventEmitterModule.forRoot({
       wildcard: true,
@@ -43,6 +38,7 @@ import { SseModule } from './modules/sse/sse.module';
       },
     }),
     SseModule,
+    KillerModule,
   ],
   providers: [
     {

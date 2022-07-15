@@ -2,10 +2,10 @@ import { Knex } from 'knex';
 
 import {
   PLAYER,
+  ROOM,
   PlayerRole,
   PlayerStatus,
-} from '../../src/modules/player/constants';
-import { ROOM } from '../../src/modules/room/constants';
+} from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(PLAYER, (table) => {

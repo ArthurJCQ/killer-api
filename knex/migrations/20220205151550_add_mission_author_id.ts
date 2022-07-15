@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 
-import { MISSION_ROOM } from '../../src/modules/mission/constants';
-import { PLAYER } from '../../src/modules/player/constants';
+import { MISSION_ROOM, PLAYER } from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.alterTable(MISSION_ROOM, (table) => {

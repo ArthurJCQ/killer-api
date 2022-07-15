@@ -1,12 +1,13 @@
 import { Knex } from 'knex';
 
-import { MISSION, MISSION_ROOM } from '../../src/modules/mission/constants';
+import { MISSION, MISSION_ROOM } from '../../src/modules/killer/constants';
 import {
   PLAYER,
   PlayerRole,
   PlayerStatus,
-} from '../../src/modules/player/constants';
-import { ROOM, RoomStatus } from '../../src/modules/room/constants';
+  ROOM,
+  RoomStatus,
+} from '../../src/modules/killer/constants';
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries

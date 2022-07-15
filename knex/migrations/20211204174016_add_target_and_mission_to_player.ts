@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 
-import { MISSION } from '../../src/modules/mission/constants';
-import { PLAYER } from '../../src/modules/player/constants';
+import { MISSION, PLAYER } from '../../src/modules/killer/constants';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.table(PLAYER, (table) => {

@@ -1,0 +1,122 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ApiOperation } from '@nestjs/swagger';
+
+import { Serialize } from '../../../interceptors/serializer.interceptor';
+import { MercureEvent } from '../../sse/models/mercure-event';
+import { MercureEventType } from '../../sse/models/mercure-event-types';
+import { MISSION, PlayerRole, RoomStatus } from '../constants';
+import { Player } from '../decorators/player.decorator';
+import { Role } from '../decorators/role.decorator';
+import { Status } from '../decorators/status.decorator';
+import { CreateMissionDto } from '../dtos/create-mission.dto';
+import { MissionDto } from '../dtos/mission.dto';
+import { UpdateMissionDto } from '../dtos/update-mission.dto';
+import { MissionModel } from '../models/mission.model';
+import { PlayerModel } from '../models/player.model';
+import { MissionService } from '../services/mission.service';
+
+@Controller(MISSION)
+@Serialize(MissionDto)
+export class MissionController {
+  constructor(
+    private missionService: MissionService,
+    private eventEmitter: EventEmitter2,
+  ) {}
+
+  @Post()
+  @Role(PlayerRole.PLAYER)
+  @Status(RoomStatus.PENDING)
+  async createMission(
+    @Body() mission: CreateMissionDto,
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<MissionDto> {
+    const newMission = await this.missionService.createMission(
+      mission.content,
+      currentPlayer,
+    );
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `room/${currentPlayer.roomCode}/mission/${newMission.id}`,
+        JSON.stringify(newMission.id),
+        MercureEventType.MISSION_CREATED,
+      ),
+    );
+
+    return newMission;
+  }
+
+  @Get('/player')
+  @Role(PlayerRole.PLAYER)
+  @ApiOperation({
+    summary: 'Get all missions authored by a player',
+  })
+  getMissionsByPlayerId(
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<MissionModel[]> {
+    return this.missionService.getMissionsByPlayer(currentPlayer);
+  }
+
+  @Get('/room')
+  @Role(PlayerRole.PLAYER)
+  countAllMissionsInRoom(
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<number> {
+    return this.missionService.countAllMissionsInRoom(currentPlayer);
+  }
+
+  @Patch('/:id')
+  @Role(PlayerRole.PLAYER)
+  updateMission(
+    @Param('id') id: string,
+    @Player() currentPlayer: PlayerModel,
+    @Body() updateMission: UpdateMissionDto,
+  ): Promise<MissionModel> {
+    return this.missionService.updateMission(
+      parseInt(id),
+      currentPlayer,
+      updateMission.content,
+    );
+  }
+
+  @Delete('/:id')
+  @Role(PlayerRole.PLAYER)
+  @HttpCode(204)
+  async deleteMission(
+    @Param('id') id: string,
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<void> {
+    await this.missionService.deleteMission(currentPlayer, parseInt(id));
+
+    this.eventEmitter.emit(
+      'push.mercure',
+      new MercureEvent(
+        `room/${currentPlayer.roomCode}/mission/${id}`,
+        JSON.stringify(id),
+        MercureEventType.MISSION_DELETED,
+      ),
+    );
+  }
+
+  @Get()
+  @Role(PlayerRole.PLAYER)
+  @ApiOperation({
+    summary: 'Get the mission the player have to do to kill the target',
+  })
+  getPlayerMission(
+    @Player() currentPlayer: PlayerModel,
+  ): Promise<MissionModel> {
+    return this.missionService.getPlayerMission(currentPlayer);
+  }
+}
