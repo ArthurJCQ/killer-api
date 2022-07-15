@@ -84,12 +84,15 @@ export class PlayerController {
   me(
     @Player() player: PlayerModel,
     @Res({ passthrough: true }) response: Response,
+    @Session() session,
   ): PlayerDto {
     response.cookie(
       'mercureAuthorization',
       this.configService.get('mercure.subscriberToken'),
       { domain: this.configService.get('app.cookieDomain') },
     );
+
+    session.refreshedAt = new Date();
 
     return player;
   }

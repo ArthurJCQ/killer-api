@@ -10,7 +10,7 @@ declare global {
       currentPlayer?: PlayerModel;
       session?: {
         playerId?: number;
-        refreshTime?: number;
+        refreshedAt?: Date;
       };
     }
   }
