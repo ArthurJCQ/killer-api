@@ -116,11 +116,7 @@ export class PlayerService {
         await this.handlePlayerLeavingRoom(player);
 
         /** Player leaving room is considered as killed to keep game playable */
-        if (
-          player.targetId &&
-          player.missionId &&
-          mercureEventType !== MercureEventType.NO_EVENT
-        ) {
+        if (player.targetId && player.missionId) {
           mercureEventType = MercureEventType.PLAYER_KILLED;
         }
       }
@@ -137,11 +133,7 @@ export class PlayerService {
       await this.handlePlayerLeavingRoom(player);
 
       /** Player leaving room is considered as killed to keep game playable */
-      if (
-        player.targetId &&
-        player.missionId &&
-        mercureEventType !== MercureEventType.NO_EVENT
-      ) {
+      if (player.targetId && player.missionId) {
         mercureEventType = MercureEventType.PLAYER_KILLED;
       }
     }
@@ -159,9 +151,7 @@ export class PlayerService {
     if (updatingData.status === PlayerStatus.KILLED) {
       await this.playerKilledService.handlePlayerKilled(player);
 
-      if (mercureEventType !== MercureEventType.NO_EVENT) {
-        mercureEventType = MercureEventType.PLAYER_KILLED;
-      }
+      mercureEventType = MercureEventType.PLAYER_KILLED;
     }
 
     this.pushUpdatePlayerToMercure(
@@ -335,13 +325,7 @@ export class PlayerService {
 
       /** Give admin right to the first other player found in room. */
       if (newAdmin) {
-        await Promise.all([
-          await this.removeAdmin(player.roomCode),
-          await this.playerRepo.updatePlayer(
-            { role: PlayerRole.ADMIN },
-            newAdmin.id,
-          ),
-        ]);
+        await this.updatePlayer({ role: PlayerRole.ADMIN }, newAdmin.id);
       }
     }
 
