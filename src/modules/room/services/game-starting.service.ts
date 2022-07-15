@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { MissionModel } from '../../mission/mission.model';
 import { MissionService } from '../../mission/mission.service';
 import { PlayerModel } from '../../player/player.model';
 import { PlayerService } from '../../player/services/player.service';
@@ -26,21 +27,33 @@ export class GameStartingService {
       this.missionService.getMissions(roomCode),
     ]);
 
-    const updatedPlayers = players.reduce(
-      (players: Pick<PlayerModel, 'id' | 'missionId'>[], player) => {
-        const randomMissionIndex = Math.floor(Math.random() * missions.length);
-        const mission = missions[randomMissionIndex];
+    const updatedPlayers = [];
 
-        players.push({ id: player.id, missionId: mission.id });
+    for (const player of players) {
+      const missionId = await this.assignMissionIdToPlayer(player, missions);
 
-        missions.splice(randomMissionIndex, 1);
-
-        return players;
-      },
-      [],
-    );
+      updatedPlayers.push({ id: player.id, missionId });
+    }
 
     return this.playerService.setMissionIdToPlayers(updatedPlayers);
+  }
+
+  private async assignMissionIdToPlayer(
+    player: PlayerModel,
+    missions: MissionModel[],
+  ): Promise<number> {
+    const randomMissionIndex = Math.floor(Math.random() * missions.length);
+    const mission = missions[randomMissionIndex];
+
+    if (
+      await this.missionService.checkMissionBelongToPlayer(mission.id, player)
+    ) {
+      return this.assignMissionIdToPlayer(player, missions);
+    }
+
+    missions.splice(randomMissionIndex, 1);
+
+    return mission.id;
   }
 
   private async dispatchTargets(roomCode: string): Promise<void> {
