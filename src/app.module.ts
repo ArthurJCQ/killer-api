@@ -65,7 +65,7 @@ export class AppModule implements NestModule {
       .apply(
         cookieSession({
           keys: [this.configService.get<string>('app.cookieSessionKey')],
-          maxAge: 60000,
+          maxAge: 120000,
         }),
         cookieParser(),
       )
