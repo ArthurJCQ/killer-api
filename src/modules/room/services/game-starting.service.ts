@@ -15,8 +15,8 @@ export class GameStartingService {
   ) {}
 
   async handleGameStarting(roomCode: string): Promise<void> {
-    await this.dispatchMissions(roomCode);
     await this.dispatchTargets(roomCode);
+    await this.dispatchMissions(roomCode);
 
     this.logger.log(`Missions and targets dispatched for room ${roomCode}`);
   }
@@ -45,8 +45,10 @@ export class GameStartingService {
     const randomMissionIndex = Math.floor(Math.random() * missions.length);
     const mission = missions[randomMissionIndex];
 
+    const target = await this.playerService.getPlayerById(player.targetId);
+
     if (
-      await this.missionService.checkMissionBelongToPlayer(mission.id, player)
+      await this.missionService.checkMissionBelongToPlayer(mission.id, target)
     ) {
       return this.assignMissionIdToPlayer(player, missions);
     }

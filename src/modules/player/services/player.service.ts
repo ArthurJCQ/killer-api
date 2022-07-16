@@ -199,6 +199,17 @@ export class PlayerService {
       });
     }
 
+    // Check if at least 2 different players posted missions
+    const missionsByPlayerId = missions.filter(
+      (mission) => mission.id !== missions[0].id,
+    );
+
+    if (missionsByPlayerId?.length === 0) {
+      throw new BadRequestException({
+        key: 'player.BAD_REQUEST.NOT_ENOUGH_MISSION',
+      });
+    }
+
     return true;
   }
 
