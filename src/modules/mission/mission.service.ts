@@ -24,6 +24,10 @@ export class MissionService {
     return this.missionRepo.getMissionsByPlayerId(player);
   }
 
+  getMissionsGroupedByPlayerId(roomCode: string): Promise<MissionModel[]> {
+    return this.missionRepo.getMissionsGroupedByPlayerId(roomCode);
+  }
+
   countAllMissionsInRoom(player: PlayerModel): Promise<number> {
     return this.missionRepo.countAllMissionsInRoom(player);
   }

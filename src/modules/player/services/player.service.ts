@@ -199,12 +199,11 @@ export class PlayerService {
       });
     }
 
-    // Check if at least 2 different players posted missions
-    const missionsByPlayerId = missions.filter(
-      (mission) => mission.id !== missions[0].id,
-    );
+    const missionsGroupedByPlayer =
+      await this.missionService.getMissionsGroupedByPlayerId(roomCode);
 
-    if (missionsByPlayerId?.length === 0) {
+    // Check if at least 2 different players posted missions
+    if (missionsGroupedByPlayer?.length < 2) {
       throw new BadRequestException({
         key: 'player.BAD_REQUEST.NOT_ENOUGH_MISSION',
       });
