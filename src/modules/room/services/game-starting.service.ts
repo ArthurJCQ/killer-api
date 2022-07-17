@@ -46,13 +46,12 @@ export class GameStartingService {
   private async dispatchTargets(roomCode: string): Promise<void> {
     const allPlayers = await this.playerService.getAllPlayersInRoom(roomCode);
 
-    const targets = allPlayers.slice().sort(() => Math.random() - 0.5);
-
-    targets.map((player: Pick<PlayerModel, 'targetId'>, index: number) => {
-      targets[index + 1]
-        ? (player.targetId = targets[index + 1].id)
-        : (player.targetId = targets[0].id);
-    });
+    const targets = allPlayers
+      .sort(() => Math.random() - 0.5)
+      .map((player, index) => ({
+        ...player,
+        targetId: targets[index + 1]?.id ?? targets[0].id,
+      }));
 
     return this.playerService.setTargetIdToPlayers(targets);
   }
