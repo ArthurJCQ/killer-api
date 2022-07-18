@@ -47,9 +47,12 @@ export class GameStartingService {
 
     const target = await this.playerService.getPlayerById(player.targetId);
 
-    if (
-      await this.missionService.checkMissionBelongToPlayer(mission.id, target)
-    ) {
+    const missionBelongToPlayer = this.missionService.isMissionBelongToPlayer(
+      mission.id,
+      target,
+    );
+
+    if (missionBelongToPlayer) {
       return this.assignMissionIdToPlayer(player, missions);
     }
 

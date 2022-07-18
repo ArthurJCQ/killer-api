@@ -7,6 +7,7 @@
   "BAD_REQUEST": {
     "ALREADY_IN_ROOM": "Player is already in a room",
     "NOT_ENOUGH_MISSION": "There is not enough mission in this room.",
+    "NOT_ENOUGH_PLAYER_MISSION": "There is not enough players who posted mission (min. 2).",
     "NO_PASSCODE": "Some player have no passcode yet."
   },
   "ALREADY_EXIST": "Player with this pseudo already exists in this room",

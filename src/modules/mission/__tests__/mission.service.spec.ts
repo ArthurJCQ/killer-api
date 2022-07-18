@@ -114,7 +114,7 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
+      .spyOn(service, 'isMissionBelongToPlayer')
       .mockResolvedValue(true);
     const updateMissionSpy = jest
       .spyOn(missionRepo, 'updateMission')
@@ -137,7 +137,7 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
+      .spyOn(service, 'isMissionBelongToPlayer')
       .mockResolvedValue(false);
     const updateMissionSpy = jest.spyOn(missionRepo, 'updateMission');
 
@@ -158,7 +158,7 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
+      .spyOn(service, 'isMissionBelongToPlayer')
       .mockResolvedValue(true);
     const deleteMissionSpy = jest
       .spyOn(missionRepo, 'deleteMission')
@@ -180,7 +180,7 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
+      .spyOn(service, 'isMissionBelongToPlayer')
       .mockResolvedValue(false);
     const deleteMissionSpy = jest.spyOn(missionRepo, 'deleteMission');
 

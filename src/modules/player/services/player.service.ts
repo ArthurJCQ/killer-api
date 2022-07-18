@@ -205,7 +205,7 @@ export class PlayerService {
     // Check if at least 2 different players posted missions
     if (missionsGroupedByPlayer?.length < 2) {
       throw new BadRequestException({
-        key: 'player.BAD_REQUEST.NOT_ENOUGH_MISSION',
+        key: 'player.BAD_REQUEST.NOT_ENOUGH_PLAYER_MISSION',
       });
     }
 

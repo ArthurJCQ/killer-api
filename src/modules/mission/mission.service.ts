@@ -37,7 +37,7 @@ export class MissionService {
     player: PlayerModel,
     updateMissionContent: string,
   ): Promise<MissionModel> {
-    const canDeleteMission = await this.checkMissionBelongToPlayer(
+    const canDeleteMission = await this.isMissionBelongToPlayer(
       missionId,
       player,
     );
@@ -50,7 +50,7 @@ export class MissionService {
   }
 
   async deleteMission(player: PlayerModel, missionId): Promise<void> {
-    const canDeleteMission = await this.checkMissionBelongToPlayer(
+    const canDeleteMission = await this.isMissionBelongToPlayer(
       missionId,
       player,
     );
@@ -62,7 +62,7 @@ export class MissionService {
     return this.missionRepo.deleteMission(missionId);
   }
 
-  async checkMissionBelongToPlayer(
+  async isMissionBelongToPlayer(
     missionId: number,
     player: PlayerModel,
   ): Promise<boolean> {
