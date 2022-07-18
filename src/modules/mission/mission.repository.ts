@@ -52,6 +52,17 @@ export class MissionRepository {
     return query;
   }
 
+  async getMissionsGroupedByPlayerId(
+    roomCode: string,
+  ): Promise<MissionModel[]> {
+    return this.db
+      .client<MissionModel>(MISSION)
+      .select(`${MISSION}.id`)
+      .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
+      .where(`${MISSION_ROOM}.roomCode`, roomCode)
+      .groupBy(`${MISSION_ROOM}.authorId`);
+  }
+
   getMissionsByPlayerId(player: PlayerModel): Promise<MissionModel[]> {
     return this.db
       .client<MissionModel>(MISSION)

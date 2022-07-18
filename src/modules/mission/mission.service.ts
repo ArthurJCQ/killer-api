@@ -24,6 +24,10 @@ export class MissionService {
     return this.missionRepo.getMissionsByPlayerId(player);
   }
 
+  getMissionsGroupedByPlayerId(roomCode: string): Promise<MissionModel[]> {
+    return this.missionRepo.getMissionsGroupedByPlayerId(roomCode);
+  }
+
   countAllMissionsInRoom(player: PlayerModel): Promise<number> {
     return this.missionRepo.countAllMissionsInRoom(player);
   }
@@ -33,30 +37,40 @@ export class MissionService {
     player: PlayerModel,
     updateMissionContent: string,
   ): Promise<MissionModel> {
-    await this.checkMissionBelongToPlayer(missionId, player);
+    const canDeleteMission = await this.isMissionBelongToPlayer(
+      missionId,
+      player,
+    );
+
+    if (!canDeleteMission) {
+      throw new NotFoundException({ key: 'player.MISSION.NOT_FOUND' });
+    }
 
     return this.missionRepo.updateMission(missionId, updateMissionContent);
   }
 
   async deleteMission(player: PlayerModel, missionId): Promise<void> {
-    await this.checkMissionBelongToPlayer(missionId, player);
+    const canDeleteMission = await this.isMissionBelongToPlayer(
+      missionId,
+      player,
+    );
+
+    if (!canDeleteMission) {
+      throw new NotFoundException({ key: 'player.MISSION.NOT_FOUND' });
+    }
 
     return this.missionRepo.deleteMission(missionId);
   }
 
-  async checkMissionBelongToPlayer(
+  async isMissionBelongToPlayer(
     missionId: number,
     player: PlayerModel,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const playerMissions = await this.getMissionsByPlayer(player);
 
-    const mission = playerMissions.find(
+    return !!playerMissions.find(
       (playerMission) => playerMission?.id === missionId,
     );
-
-    if (!mission) {
-      throw new NotFoundException({ key: 'player.MISSION.NOT_FOUND' });
-    }
   }
 
   async clearPlayerMissions(player: PlayerModel): Promise<void> {

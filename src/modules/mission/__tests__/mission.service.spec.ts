@@ -114,8 +114,8 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockImplementation();
+      .spyOn(service, 'isMissionBelongToPlayer')
+      .mockResolvedValue(true);
     const updateMissionSpy = jest
       .spyOn(missionRepo, 'updateMission')
       .mockResolvedValue(updatedMission);
@@ -137,8 +137,8 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockRejectedValue(new NotFoundException());
+      .spyOn(service, 'isMissionBelongToPlayer')
+      .mockResolvedValue(false);
     const updateMissionSpy = jest.spyOn(missionRepo, 'updateMission');
 
     await expect(
@@ -158,8 +158,8 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockImplementation();
+      .spyOn(service, 'isMissionBelongToPlayer')
+      .mockResolvedValue(true);
     const deleteMissionSpy = jest
       .spyOn(missionRepo, 'deleteMission')
       .mockImplementation();
@@ -180,8 +180,8 @@ describe('MissionService', () => {
     };
 
     const checkMissionSpy = jest
-      .spyOn(service, 'checkMissionBelongToPlayer')
-      .mockRejectedValue(new NotFoundException());
+      .spyOn(service, 'isMissionBelongToPlayer')
+      .mockResolvedValue(false);
     const deleteMissionSpy = jest.spyOn(missionRepo, 'deleteMission');
 
     await expect(service.deleteMission(player, 1)).rejects.toThrowError(

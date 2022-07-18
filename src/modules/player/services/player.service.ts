@@ -199,6 +199,16 @@ export class PlayerService {
       });
     }
 
+    const missionsGroupedByPlayer =
+      await this.missionService.getMissionsGroupedByPlayerId(roomCode);
+
+    // Check if at least 2 different players posted missions
+    if (missionsGroupedByPlayer?.length < 2) {
+      throw new BadRequestException({
+        key: 'player.BAD_REQUEST.NOT_ENOUGH_PLAYER_MISSION',
+      });
+    }
+
     return true;
   }
 

@@ -526,6 +526,10 @@ describe('PlayerService', () => {
         id: 1,
         content: 'Mission',
       },
+      {
+        id: 2,
+        content: 'Mission2',
+      },
     ];
 
     const getAllPlayerSpy = jest
@@ -535,10 +539,15 @@ describe('PlayerService', () => {
       .spyOn(missionService, 'getMissions')
       .mockResolvedValue(expectedMissions);
 
+    const getMissionsGroupedByPlayerIdSpy = jest
+      .spyOn(missionService, 'getMissionsGroupedByPlayerId')
+      .mockResolvedValue(expectedMissions);
+
     const res = await service.checkIfEnoughMissionInRoom('CODE1');
 
     expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
     expect(getMissionsSpy).toHaveBeenCalledWith('CODE1');
+    expect(getMissionsGroupedByPlayerIdSpy).toHaveBeenCalledWith('CODE1');
     expect(res).toBeTruthy();
   });
 
