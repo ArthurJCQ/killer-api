@@ -8,7 +8,7 @@ export class UpdateRoomDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  @MinLength(1)
+  @MinLength(1, { message: 'player.BAD_NAME' })
   @Trim()
   name?: string;
 

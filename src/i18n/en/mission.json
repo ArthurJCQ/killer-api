@@ -1,5 +1,6 @@
 {
   "NOT_FOUND": "Mission not found",
   "FORBIDDEN": "You are not allowed to perform action on this mission",
-  "BAD_REQUEST": ""
+  "BAD_REQUEST": "",
+  "BAD_CONTENT": "Content of the mission must be longer than 2 characters."
 }

@@ -1,6 +1,7 @@
 {
   "NOT_FOUND": "Room not found",
   "FORBIDDEN": "You are not allowed to perform action on this room",
+  "BAD_ROOMCODE": "The roomCode need to be provided with a correct format (5 characters).",
   "BAD_REQUEST": "",
   "WRONG_STATUS": {
     "ALREADY_ENDED": "This room is actually closed",

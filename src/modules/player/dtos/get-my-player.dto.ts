@@ -7,7 +7,7 @@ import { Trim } from '../../../decorators/trim.decorator';
 export class GetMyPlayerDto {
   @ApiProperty()
   @IsString()
-  @MinLength(1)
+  @MinLength(1, { message: 'player.BAD_NAME' })
   @Trim()
   name: string;
 
