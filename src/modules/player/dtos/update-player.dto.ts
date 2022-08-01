@@ -28,7 +28,7 @@ export class UpdatePlayerDto {
 
   @ApiProperty()
   @IsString()
-  @Length(5, 5)
+  @Length(5, 5, { message: 'room.BAD_ROOMCODE' })
   @IsOptional()
   @Trim()
   @Capitalize()

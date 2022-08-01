@@ -20,23 +20,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const exceptionBody = exception.getResponse() as ExceptionResponse;
 
-    let responseBody = {
+    response.status(statusCode).json({
       statusCode,
-      errorCode: '',
-      message: exceptionBody.message,
-    };
-
-    if (exceptionBody.key) {
-      responseBody = {
-        ...responseBody,
-        errorCode: exceptionBody.key.toUpperCase(),
-        message: await this.i18n.translate(exceptionBody.key, {
-          lang: ctx.getRequest().i18nLang,
-          args: exceptionBody.args,
-        }),
-      };
-    }
-
-    response.status(statusCode).json(responseBody);
+      errorCode: (exceptionBody.key || exceptionBody.message[0]).toUpperCase(),
+      message: await this.i18n.translate(
+        exceptionBody.key || exceptionBody.message[0],
+        { lang: ctx.getRequest().i18nLang, args: exceptionBody.args },
+      ),
+    });
   }
 }

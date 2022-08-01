@@ -13,5 +13,6 @@
   "ALREADY_EXIST": "Player with this pseudo already exists in this room",
   "MISSION": {
     "NOT_FOUND": "No mission with this id has been found for this player"
-  }
+  },
+  "BAD_NAME": "Pseudo must be longer than 1 character."
 }

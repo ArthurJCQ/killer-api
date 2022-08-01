@@ -7,7 +7,7 @@ import { Trim } from '../../../decorators/trim.decorator';
 export class CreatePlayerDto {
   @ApiProperty()
   @IsString()
-  @Length(5, 5)
+  @Length(5, 5, { message: 'room.BAD_ROOMCODE' })
   @IsOptional()
   @Trim()
   @Capitalize()
@@ -15,7 +15,7 @@ export class CreatePlayerDto {
 
   @ApiProperty()
   @IsString()
-  @MinLength(1)
+  @MinLength(1, { message: 'player.BAD_NAME' })
   @Trim()
   name: string;
 }
