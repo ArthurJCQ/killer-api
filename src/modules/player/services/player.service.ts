@@ -199,8 +199,9 @@ export class PlayerService {
       });
     }
 
-    const missionsGroupedByPlayer =
-      await this.missionService.getMissionsGroupedByPlayerId(roomCode);
+    const missionsGroupedByPlayer = Array.from(
+      new Set(missions.map(({ authorId }) => authorId)),
+    );
 
     // Check if at least 2 different players posted missions
     if (missionsGroupedByPlayer?.length < 2) {

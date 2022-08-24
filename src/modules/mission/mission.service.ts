@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PlayerModel } from '../player/player.model';
 
+import { MissionRoomModel } from './mission-room.model';
 import { MissionModel } from './mission.model';
 import { MissionRepository } from './mission.repository';
 
@@ -22,10 +23,6 @@ export class MissionService {
 
   getMissionsByPlayer(player: PlayerModel): Promise<MissionModel[]> {
     return this.missionRepo.getMissionsByPlayerId(player);
-  }
-
-  getMissionsGroupedByPlayerId(roomCode: string): Promise<MissionModel[]> {
-    return this.missionRepo.getMissionsGroupedByPlayerId(roomCode);
   }
 
   countAllMissionsInRoom(player: PlayerModel): Promise<number> {

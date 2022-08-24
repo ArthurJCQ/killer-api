@@ -27,12 +27,31 @@ export class GameStartingService {
       this.missionService.getMissions(roomCode),
     ]);
 
+    const playersWithMissionCount = players
+      .reduce((acc, player) => {
+        acc = [
+          {
+            nbMissions: missions.filter(
+              (mission) => mission.authorId === player.id,
+            ).length,
+            ...player,
+          },
+          ...acc,
+        ];
+        return acc;
+      }, [])
+      .sort((player1, player2) => player1.nbMissions - player2.nbMissions);
+
     const updatedPlayers = [];
 
-    for (const player of players) {
-      const missionId = await this.assignMissionIdToPlayer(player, missions);
+    for (const player of playersWithMissionCount) {
+      // const missionId = await this.assignMissionIdToPlayer(player, missions);
+      const randomMissionIndex = Math.floor(Math.random() * missions.length);
+      const mission = missions[randomMissionIndex];
 
-      updatedPlayers.push({ id: player.id, missionId });
+      updatedPlayers.push({ id: player.id, missionId: mission.id });
+
+      missions.splice(randomMissionIndex, 1);
     }
 
     return this.playerService.setMissionIdToPlayers(updatedPlayers);
@@ -62,15 +81,15 @@ export class GameStartingService {
   }
 
   private async dispatchTargets(roomCode: string): Promise<void> {
-    const allPlayers = await this.playerService.getAllPlayersInRoom(roomCode);
+    const allPlayers = (
+      await this.playerService.getAllPlayersInRoom(roomCode)
+    ).sort(() => Math.random() - 0.5);
 
-    const targets = allPlayers
-      .sort(() => Math.random() - 0.5)
-      .map((player, index) => ({
-        ...player,
-        targetId: targets[index + 1]?.id ?? targets[0].id,
-      }));
+    const targets = allPlayers.map((player, index) => ({
+      ...player,
+      targetId: allPlayers[index + 1]?.id ?? allPlayers[0].id,
+    }));
 
-    return this.playerService.setTargetIdToPlayers(targets);
+    await this.playerService.setTargetIdToPlayers(targets);
   }
 }

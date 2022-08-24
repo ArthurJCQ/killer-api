@@ -43,24 +43,14 @@ export class MissionRepository {
 
     if (roomCode) {
       query
-        .select(`${MISSION}.id`)
+        .select(`${MISSION}.id`, `${MISSION_ROOM}.authorId`)
         .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
         .where(`${MISSION_ROOM}.roomCode`, roomCode)
-        .groupBy(`${MISSION}.id`);
+        .groupBy(`${MISSION}.id`)
+        .groupBy(`${MISSION_ROOM}.authorId`);
     }
 
     return query;
-  }
-
-  async getMissionsGroupedByPlayerId(
-    roomCode: string,
-  ): Promise<MissionModel[]> {
-    return this.db
-      .client<MissionModel>(MISSION)
-      .select(`${MISSION}.id`)
-      .join(MISSION_ROOM, `${MISSION}.id`, `${MISSION_ROOM}.missionId`)
-      .where(`${MISSION_ROOM}.roomCode`, roomCode)
-      .groupBy(`${MISSION_ROOM}.authorId`);
   }
 
   getMissionsByPlayerId(player: PlayerModel): Promise<MissionModel[]> {
