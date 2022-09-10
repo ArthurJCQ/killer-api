@@ -520,15 +520,25 @@ describe('PlayerService', () => {
         status: PlayerStatus.ALIVE,
         role: PlayerRole.PLAYER,
       },
+      {
+        id: 2,
+        name: 'Arty2',
+        roomCode: 'CODE1',
+        passcode: '1235',
+        status: PlayerStatus.ALIVE,
+        role: PlayerRole.PLAYER,
+      },
     ];
     const expectedMissions = [
       {
         id: 1,
         content: 'Mission',
+        authorId: 1,
       },
       {
         id: 2,
         content: 'Mission2',
+        authorId: 2,
       },
     ];
 
@@ -539,15 +549,10 @@ describe('PlayerService', () => {
       .spyOn(missionService, 'getMissions')
       .mockResolvedValue(expectedMissions);
 
-    const getMissionsGroupedByPlayerIdSpy = jest
-      .spyOn(missionService, 'getMissionsGroupedByPlayerId')
-      .mockResolvedValue(expectedMissions);
-
     const res = await service.checkIfEnoughMissionInRoom('CODE1');
 
     expect(getAllPlayerSpy).toHaveBeenCalledWith('CODE1');
     expect(getMissionsSpy).toHaveBeenCalledWith('CODE1');
-    expect(getMissionsGroupedByPlayerIdSpy).toHaveBeenCalledWith('CODE1');
     expect(res).toBeTruthy();
   });
 

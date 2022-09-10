@@ -29,29 +29,25 @@ export class GameStartingService {
 
     const playersWithMissionCount = players
       .reduce((acc, player) => {
-        acc = [
-          {
-            nbMissions: missions.filter(
-              (mission) => mission.authorId === player.id,
-            ).length,
-            ...player,
-          },
-          ...acc,
-        ];
+        const playerMission = {
+          nbMissions: missions.filter(
+            (mission) => mission.authorId === player.id,
+          ).length,
+          ...player,
+        };
+
+        acc.push(playerMission);
+
         return acc;
       }, [])
-      .sort((player1, player2) => player1.nbMissions - player2.nbMissions);
+      .sort((player1, player2) => player2.nbMissions - player1.nbMissions);
 
     const updatedPlayers = [];
 
     for (const player of playersWithMissionCount) {
-      // const missionId = await this.assignMissionIdToPlayer(player, missions);
-      const randomMissionIndex = Math.floor(Math.random() * missions.length);
-      const mission = missions[randomMissionIndex];
+      const missionId = await this.assignMissionIdToPlayer(player, missions);
 
-      updatedPlayers.push({ id: player.id, missionId: mission.id });
-
-      missions.splice(randomMissionIndex, 1);
+      updatedPlayers.push({ id: player.id, missionId });
     }
 
     return this.playerService.setMissionIdToPlayers(updatedPlayers);
@@ -66,10 +62,8 @@ export class GameStartingService {
 
     const target = await this.playerService.getPlayerById(player.targetId);
 
-    const missionBelongToPlayer = this.missionService.isMissionBelongToPlayer(
-      mission.id,
-      target,
-    );
+    const missionBelongToPlayer =
+      await this.missionService.isMissionBelongToPlayer(mission.id, target);
 
     if (missionBelongToPlayer) {
       return this.assignMissionIdToPlayer(player, missions);

@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PlayerModel } from '../player/player.model';
 
-import { MissionRoomModel } from './mission-room.model';
 import { MissionModel } from './mission.model';
 import { MissionRepository } from './mission.repository';
 
