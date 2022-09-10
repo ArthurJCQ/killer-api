@@ -29,15 +29,15 @@ export class GameStartingService {
 
     const playersWithMissionCount = players
       .reduce((acc, player) => {
-        acc = [
-          {
-            nbMissions: missions.filter(
-              (mission) => mission.authorId === player.id,
-            ).length,
-            ...player,
-          },
-          ...acc,
-        ];
+        const playerMission = {
+          nbMissions: missions.filter(
+            (mission) => mission.authorId === player.id,
+          ).length,
+          ...player,
+        };
+
+        acc.push(playerMission);
+
         return acc;
       }, [])
       .sort((player1, player2) => player2.nbMissions - player1.nbMissions);
