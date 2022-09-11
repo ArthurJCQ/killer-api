@@ -40,25 +40,29 @@ export class GameStartingService {
       }, [])
       .sort((player1, player2) => player2.nbMissions - player1.nbMissions);
 
-    const updatedPlayers = [];
+    const updatedPlayers = playersWithMissionCount.map(
+      ({ targetId, id: playerId }) => {
+        const possibleMissions = missions.filter(
+          ({ authorId }) => authorId !== targetId,
+        );
 
-    for (const player of playersWithMissionCount) {
-      const possibleMissions = missions.filter(
-        (mission) => mission.authorId !== player.targetId,
-      );
+        // Get mission for player among possible missions array
+        const randomMissionIndex = Math.floor(
+          Math.random() * possibleMissions.length,
+        );
 
-      // Get mission for player among possible missions array
-      const randomMissionIndex = Math.floor(
-        Math.random() * possibleMissions.length,
-      );
-      const missionForPlayer = possibleMissions[randomMissionIndex];
+        const missionForPlayer = possibleMissions[randomMissionIndex];
 
-      // Fetch corresponding mission in all missions array and delete it
-      const missionIndexInAllMissions = missions.indexOf(missionForPlayer);
-      missions.splice(missionIndexInAllMissions, 1);
+        // Fetch corresponding mission in all missions array and delete it
+        const missionIndexInAllMissions = missions.indexOf(missionForPlayer);
+        missions.splice(missionIndexInAllMissions, 1);
 
-      updatedPlayers.push({ id: player.id, missionId: missionForPlayer.id });
-    }
+        return {
+          id: playerId,
+          missionId: missionForPlayer.id,
+        };
+      },
+    );
 
     return this.playerService.setMissionIdToPlayers(updatedPlayers);
   }
