@@ -24,7 +24,7 @@ export class PlayerKilledService {
     );
     await this.cleanTargetAndMissionFromVictim(player.id);
 
-    await this.playerService.checkPlayersTodEndRoom(player.roomCode);
+    await this.playerService.checkPlayersToEndRoom(player.roomCode);
 
     this.logger.log(
       `Player ${player.id} killed, mission and target dispatched`,

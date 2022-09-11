@@ -181,8 +181,6 @@ export class RoomService {
       `All players in room ${code} were kicked before deleting it.`,
     );
 
-    await this.roomRepo.deleteRoom(code);
-
     this.eventEmitter.emit(
       'push.mercure',
       new MercureEvent(`room/${code}`, null, MercureEventType.ROOM_DELETED),

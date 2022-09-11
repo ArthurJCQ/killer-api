@@ -324,8 +324,13 @@ export class PlayerService {
     return this.playerRepo.setTargetIdToPlayers(updatedPlayers);
   }
 
-  async checkPlayersTodEndRoom(roomCode: string): Promise<boolean> {
+  async checkPlayersToEndRoom(roomCode: string): Promise<boolean> {
     const room = await this.playerRepo.getPlayerRoom(roomCode);
+
+    if (!room) {
+      return;
+    }
+
     const players = await this.playerRepo.getAllPlayersInRoom(roomCode);
 
     // Can only end a room in IN_GAME status
