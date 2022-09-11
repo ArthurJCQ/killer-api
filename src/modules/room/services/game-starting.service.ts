@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { MissionModel } from '../../mission/mission.model';
 import { MissionService } from '../../mission/mission.service';
-import { PlayerModel } from '../../player/player.model';
 import { PlayerService } from '../../player/services/player.service';
 
 @Injectable()
@@ -42,36 +40,31 @@ export class GameStartingService {
       }, [])
       .sort((player1, player2) => player2.nbMissions - player1.nbMissions);
 
-    const updatedPlayers = [];
+    const updatedPlayers = playersWithMissionCount.map(
+      ({ targetId, id: playerId }) => {
+        const possibleMissions = missions.filter(
+          ({ authorId }) => authorId !== targetId,
+        );
 
-    for (const player of playersWithMissionCount) {
-      const missionId = await this.assignMissionIdToPlayer(player, missions);
+        // Get mission for player among possible missions array
+        const randomMissionIndex = Math.floor(
+          Math.random() * possibleMissions.length,
+        );
 
-      updatedPlayers.push({ id: player.id, missionId });
-    }
+        const missionForPlayer = possibleMissions[randomMissionIndex];
+
+        // Fetch corresponding mission in all missions array and delete it
+        const missionIndexInAllMissions = missions.indexOf(missionForPlayer);
+        missions.splice(missionIndexInAllMissions, 1);
+
+        return {
+          id: playerId,
+          missionId: missionForPlayer.id,
+        };
+      },
+    );
 
     return this.playerService.setMissionIdToPlayers(updatedPlayers);
-  }
-
-  private async assignMissionIdToPlayer(
-    player: PlayerModel,
-    missions: MissionModel[],
-  ): Promise<number> {
-    const randomMissionIndex = Math.floor(Math.random() * missions.length);
-    const mission = missions[randomMissionIndex];
-
-    const target = await this.playerService.getPlayerById(player.targetId);
-
-    const missionBelongToPlayer =
-      await this.missionService.isMissionBelongToPlayer(mission.id, target);
-
-    if (missionBelongToPlayer) {
-      return this.assignMissionIdToPlayer(player, missions);
-    }
-
-    missions.splice(randomMissionIndex, 1);
-
-    return mission.id;
   }
 
   private async dispatchTargets(roomCode: string): Promise<void> {
