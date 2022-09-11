@@ -257,14 +257,9 @@ describe('RoomService', () => {
       .spyOn(playerService, 'updatePlayer')
       .mockResolvedValue(null);
 
-    const deleteRoomSpy = jest
-      .spyOn(roomRepo, 'deleteRoom')
-      .mockResolvedValue(null);
-
     await service.deleteRoom('CODE1');
 
     expect(getAllPlayersInRoomSpy).toHaveBeenCalledWith('CODE1');
     expect(updatePlayerSpy).toHaveBeenCalledTimes(2);
-    expect(deleteRoomSpy).toHaveBeenCalledWith('CODE1');
   });
 });

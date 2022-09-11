@@ -10,7 +10,7 @@ export class EndRoomListener {
 
   constructor(private readonly roomService: RoomService) {}
 
-  @OnEvent('end.room')
+  @OnEvent('room.end')
   async handleEndRoom(roomCode: string): Promise<void> {
     this.logger.log(`Room ${roomCode} is automatically ending`);
 
